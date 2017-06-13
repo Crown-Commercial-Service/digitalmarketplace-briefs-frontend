@@ -20,7 +20,7 @@ class TestStatus(BaseApplicationTest):
         self._search_api_client_patch.stop()
 
     def test_should_return_200_from_elb_status_check(self):
-        status_response = self.client.get('/_status?ignore-dependencies')
+        status_response = self.client.get('/buyers/_status?ignore-dependencies')
         assert status_response.status_code == 200
         assert self._data_api_client.called is False
 
@@ -33,7 +33,7 @@ class TestStatus(BaseApplicationTest):
             'status': 'ok'
         }
 
-        status_response = self.client.get('/_status')
+        status_response = self.client.get('/buyers/_status')
         assert status_response.status_code == 200
 
         json_data = json.loads(status_response.get_data().decode('utf-8'))
@@ -51,7 +51,7 @@ class TestStatus(BaseApplicationTest):
             'status': 'ok'
         }
 
-        response = self.client.get('/_status')
+        response = self.client.get('/buyers/_status')
         assert response.status_code == 500
 
         json_data = json.loads(response.get_data().decode('utf-8'))
@@ -68,7 +68,7 @@ class TestStatus(BaseApplicationTest):
 
         self._search_api_client.get_status.return_value = None
 
-        response = self.client.get('/_status')
+        response = self.client.get('/buyers/_status')
         assert response.status_code == 500
 
         json_data = json.loads(response.get_data().decode('utf-8'))
@@ -91,7 +91,7 @@ class TestStatus(BaseApplicationTest):
             'message': 'Cannot connect to elasticsearch'
         }
 
-        response = self.client.get('/_status')
+        response = self.client.get('/buyers/_status')
         assert response.status_code == 500
 
         json_data = json.loads(response.get_data().decode('utf-8'))
