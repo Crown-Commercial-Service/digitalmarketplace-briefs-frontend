@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
 import os
@@ -12,6 +13,27 @@ from werkzeug.http import parse_cookie
 
 from dmutils.formats import DATETIME_FORMAT
 
+from flask import Blueprint
+from dmutils.user import User
+from flask_login import login_user
+
+
+login_for_tests = Blueprint('login_for_tests', __name__)
+
+
+@login_for_tests.route('/auto-buyer-login')
+def auto_buyer_login():
+    user_json = {"users": {
+        'id': 123,
+        'name': u'Ā Buyer',
+        'emailAddress': 'buyer@email.com',
+        'role': 'buyer'
+    }
+    }
+    user = User.from_json(user_json)
+    login_user(user)
+    return "OK"
+
 
 class BaseApplicationTest(object):
     def setup_method(self, method):
@@ -22,6 +44,7 @@ class BaseApplicationTest(object):
         data_api_client.find_frameworks = mock.Mock()
         data_api_client.find_frameworks.return_value = self._get_frameworks_list_fixture_data()
         self.app = create_app('test')
+        self.app.register_blueprint(login_for_tests)
         self.client = self.app.test_client()
         self.get_user_patch = None
 
@@ -154,65 +177,20 @@ class BaseApplicationTest(object):
         if self.get_user_patch is not None:
             self.get_user_patch.stop()
 
-    def login_as_supplier(self):
-        with patch('app.main.views.login.data_api_client') as login_api_client:
-            login_api_client.authenticate_user.return_value = self.user(
-                123, "email@email.com", 1234, 'Supplier Name', 'Name', role='supplier')
-
-            self.get_user_patch = patch.object(
-                data_api_client,
-                'get_user',
-                return_value=self.user(123, "email@email.com", 1234, 'Supplier Name', 'Name', role='supplier')
-            )
-            self.get_user_patch.start()
-
-            self.client.post("/login", data={
-                'email_address': 'valid@email.com',
-                'password': '1234567890'
-            })
-
-            login_api_client.authenticate_user.assert_called_once_with(
-                "valid@email.com", "1234567890")
-
     def login_as_buyer(self):
-        with patch('app.main.views.login.data_api_client') as login_api_client:
+        with patch('app.data_api_client') as login_api_client:
+
             login_api_client.authenticate_user.return_value = self.user(
-                123, "buyer@email.com", None, None, 'Name')
+                123, "buyer@email.com", None, None, u'Ā Buyer', role='buyer')
 
             self.get_user_patch = patch.object(
                 data_api_client,
                 'get_user',
-                return_value=self.user(123, "buyer@email.com", None, None, 'Some Buyer')
+                return_value=self.user(123, "buyer@email.com", None, None, u'Ā Buyer', role='buyer')
             )
             self.get_user_patch.start()
-
-            self.client.post("/login", data={
-                'email_address': 'valid@email.com',
-                'password': '1234567890'
-            })
-
-            login_api_client.authenticate_user.assert_called_once_with(
-                "valid@email.com", "1234567890")
-
-    def login_as_admin(self):
-        with patch('app.main.views.login.data_api_client') as login_api_client:
-            login_api_client.authenticate_user.return_value = self.user(
-                123, "admin@email.com", None, None, 'Name', role='admin')
-
-            self.get_user_patch = patch.object(
-                data_api_client,
-                'get_user',
-                return_value=self.user(123, "admin@email.com", None, None, 'Some Admin', role='admin')
-            )
-            self.get_user_patch.start()
-
-            self.client.post("/login", data={
-                'email_address': 'valid@email.com',
-                'password': '1234567890'
-            })
-
-            login_api_client.authenticate_user.assert_called_once_with(
-                "valid@email.com", "1234567890")
+        response = self.client.get("/auto-buyer-login")
+        assert response.status_code == 200
 
     @staticmethod
     def get_cookie_by_name(response, name):
