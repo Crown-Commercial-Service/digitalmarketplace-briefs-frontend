@@ -71,7 +71,7 @@ npm install
 To run the whole testsuite:
 
 ```
-./scripts/run_tests.sh
+make test
 ```
 
 To only run the JavaScript tests:
@@ -87,7 +87,7 @@ script, which sets the required environment variables to defaults if they have
 not already been set:
 
 ```
-./scripts/run_app.sh
+make run_app
 ```
 
 More generally, the command to start the server is:
@@ -138,5 +138,3 @@ Note: `npm run frontend-install` is run automatically as a post-install task whe
 ## Frontend tests
 
 To run the JavaScript tests, navigate to `spec/javascripts/support/` and open `LocalTestRunner.html` in a browser.
-
-TODO: Add a Gulp task which is run as part of `./scripts/run_tests.sh`.
