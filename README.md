@@ -95,7 +95,7 @@ More generally, the command to start the server is:
 python application.py runserver
 ```
 
-The buyer app runs on port 5002 by default. Use the app at [http://127.0.0.1:5002/](http://127.0.0.1:5002/)
+The buyer app runs on port 5005 by default. Use the app at [http://127.0.0.1:5005/](http://127.0.0.1:5005/)
 
 ### Using FeatureFlags
 
