@@ -1,7 +1,7 @@
 # Digital Marketplace Buyer Frontend
 
-[![Coverage Status](https://coveralls.io/repos/alphagov/digitalmarketplace-buyer-frontend/badge.svg?branch=master&service=github)](https://coveralls.io/github/alphagov/digitalmarketplace-buyer-frontend?branch=master)
-[![Requirements Status](https://requires.io/github/alphagov/digitalmarketplace-buyer-frontend/requirements.svg?branch=master)](https://requires.io/github/alphagov/digitalmarketplace-buyer-frontend/requirements/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/alphagov/digitalmarketplace-briefs-frontend/badge.svg?branch=master&service=github)](https://coveralls.io/github/alphagov/digitalmarketplace-briefs-frontend?branch=master)
+[![Requirements Status](https://requires.io/github/alphagov/digitalmarketplace-briefs-frontend/requirements.svg?branch=master)](https://requires.io/github/alphagov/digitalmarketplace-briefs-frontend/requirements/?branch=master)
 
 Frontend buyer application for the digital marketplace.
 
@@ -60,7 +60,7 @@ Install new Python dependencies with pip
 
 ```pip install -r requirements_for_test.txt```
 
-[Install frontend dependencies](https://github.com/alphagov/digitalmarketplace-buyer-frontend#front-end) with npm and gulp
+[Install frontend dependencies](https://github.com/alphagov/digitalmarketplace-briefs-frontend#front-end) with npm and gulp
 
 ```
 npm install
