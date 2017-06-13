@@ -1,10 +1,8 @@
-import datetime
-
 import mock
 import pytest
 from werkzeug.exceptions import NotFound
 
-import app.buyers.helpers as helpers
+import app.main.helpers as helpers
 from dmcontent.content_loader import ContentLoader
 
 from dmapiclient import api_stubs

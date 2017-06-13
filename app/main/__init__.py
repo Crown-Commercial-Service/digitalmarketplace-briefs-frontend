@@ -2,7 +2,7 @@ from flask import Blueprint, current_app, flash
 from flask_login import current_user, login_required
 from dmcontent.content_loader import ContentLoader
 
-buyers = Blueprint('buyers', __name__)
+main = Blueprint('buyers', __name__)
 dos = Blueprint('dos', __name__)
 
 content_loader = ContentLoader('app/content')
@@ -17,7 +17,7 @@ content_loader.load_manifest('digital-outcomes-and-specialists-2', 'brief-respon
 content_loader.load_manifest('digital-outcomes-and-specialists-2', 'clarification_question', 'clarification_question')
 
 
-@buyers.before_request
+@main.before_request
 @login_required
 def require_login():
     if current_user.is_authenticated() and current_user.role != 'buyer':
@@ -25,7 +25,7 @@ def require_login():
         return current_app.login_manager.unauthorized()
 
 
-@buyers.after_request
+@main.after_request
 def add_cache_control(response):
     response.cache_control.no_cache = True
     return response

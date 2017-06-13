@@ -42,13 +42,11 @@ def create_app(config_name):
                 content_loader.load_manifest(framework_data['slug'], 'briefs', 'display_brief')
 
     from .main import main as main_blueprint
+    from .main import dos as dos_blueprint
     from .status import status as status_blueprint
-    from .buyers import buyers as buyers_blueprint
-    from .buyers import dos as dos_blueprint
 
-    application.register_blueprint(status_blueprint)
-    application.register_blueprint(main_blueprint)
-    application.register_blueprint(buyers_blueprint, url_prefix='/buyers')
+    application.register_blueprint(status_blueprint, url_prefix='/buyers')
+    application.register_blueprint(main_blueprint, url_prefix='/buyers')
     application.register_blueprint(dos_blueprint, url_prefix='/buyers')
 
     login_manager.login_view = 'main.render_login'

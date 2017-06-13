@@ -2,7 +2,7 @@ import mock
 import unittest
 import functools
 
-import app.buyers.helpers.ods as ods
+import app.main.helpers.ods as ods
 
 from hypothesis import strategies as st
 from hypothesis import given, example, assume
