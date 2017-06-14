@@ -12,7 +12,6 @@ from config import configs
 
 login_manager = LoginManager()
 data_api_client = dmapiclient.DataAPIClient()
-search_api_client = dmapiclient.SearchAPIClient()
 feature_flags = flask_featureflags.FeatureFlag()
 csrf = CsrfProtect()
 
@@ -28,7 +27,6 @@ def create_app(config_name):
         data_api_client=data_api_client,
         feature_flags=feature_flags,
         login_manager=login_manager,
-        search_api_client=search_api_client
     )
 
     for framework_data in data_api_client.find_frameworks().get('frameworks'):

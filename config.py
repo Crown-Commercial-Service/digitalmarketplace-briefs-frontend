@@ -32,12 +32,7 @@ class Config(object):
 
     DM_DATA_API_URL = None
     DM_DATA_API_AUTH_TOKEN = None
-    DM_SEARCH_API_URL = None
-    DM_SEARCH_API_AUTH_TOKEN = None
     DM_MANDRILL_API_KEY = None
-
-    # matches api(s)
-    DM_SEARCH_PAGE_SIZE = 100
 
     # This is just a placeholder
     ES_ENABLED = True
@@ -100,8 +95,6 @@ class Test(Config):
 
     DM_DATA_API_URL = "http://wrong.completely.invalid:5000"
     DM_DATA_API_AUTH_TOKEN = "myToken"
-    DM_SEARCH_API_URL = "http://wrong.completely.invalid:5001"
-    DM_SEARCH_API_AUTH_TOKEN = "myToken"
 
     DM_MANDRILL_API_KEY = 'MANDRILL'
     SHARED_EMAIL_KEY = "KEY"
@@ -114,12 +107,9 @@ class Development(Config):
     DEBUG = True
     DM_PLAIN_TEXT_LOGS = True
     SESSION_COOKIE_SECURE = False
-    DM_SEARCH_PAGE_SIZE = 5
 
     DM_DATA_API_URL = "http://localhost:5000"
     DM_DATA_API_AUTH_TOKEN = "myToken"
-    DM_SEARCH_API_URL = "http://localhost:5001"
-    DM_SEARCH_API_AUTH_TOKEN = "myToken"
 
     DM_MANDRILL_API_KEY = "not_a_real_key"
     SECRET_KEY = "verySecretKey"
