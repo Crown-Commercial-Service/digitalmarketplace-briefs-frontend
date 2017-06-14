@@ -1,9 +1,9 @@
-# Digital Marketplace Buyer Frontend
+# Digital Marketplace Briefs Frontend
 
-[![Coverage Status](https://coveralls.io/repos/alphagov/digitalmarketplace-buyer-frontend/badge.svg?branch=master&service=github)](https://coveralls.io/github/alphagov/digitalmarketplace-buyer-frontend?branch=master)
-[![Requirements Status](https://requires.io/github/alphagov/digitalmarketplace-buyer-frontend/requirements.svg?branch=master)](https://requires.io/github/alphagov/digitalmarketplace-buyer-frontend/requirements/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/alphagov/digitalmarketplace-briefs-frontend/badge.svg?branch=master&service=github)](https://coveralls.io/github/alphagov/digitalmarketplace-briefs-frontend?branch=master)
+[![Requirements Status](https://requires.io/github/alphagov/digitalmarketplace-briefs-frontend/requirements.svg?branch=master)](https://requires.io/github/alphagov/digitalmarketplace-briefs-frontend/requirements/?branch=master)
 
-Frontend buyer application for the digital marketplace.
+Frontend briefs application for the digital marketplace.
 
 - Python app, based on the [Flask framework](http://flask.pocoo.org/)
 
@@ -27,25 +27,21 @@ Install [Virtualenv](https://virtualenv.pypa.io/en/latest/)
 sudo easy_install virtualenv
 ```
 
-The buyer frontend app requires access to both the API (for service pages) and
-to the search API (for search results). The location and access tokens for 
-these services is set with environment variables.
+The briefs frontend app requires access to the API. The location and access tokens for 
+the API is set with environment variables.
 
 
 For development you can either point the environment variables to use the 
-preview environment's `API` and `Search API` boxes, or use local API instances if 
-you have them running:
+preview environment's `API` boxes, or use local API instances if you have
+them running:
 
 ```
 export DM_DATA_API_URL=http://localhost:5000
 export DM_DATA_API_AUTH_TOKEN=<auth_token_accepted_by_api>
-export DM_SEARCH_API_URL=http://localhost:5001
-export DM_SEARCH_API_AUTH_TOKEN=<auth_token_accepted_by_search_api>
 ```
 
 Where `DM_DATA_API_AUTH_TOKEN` is a token accepted by the Data API 
-instance pointed to by `DM_API_URL`, and `DM_SEARCH_API_AUTH_TOKEN` 
-is a token accepted by the Search API instance pointed to by `DM_SEARCH_API_URL`.
+instance pointed to by `DM_API_URL`.
 
 ### Create and activate the virtual environment
 
@@ -60,7 +56,7 @@ Install new Python dependencies with pip
 
 ```pip install -r requirements_for_test.txt```
 
-[Install frontend dependencies](https://github.com/alphagov/digitalmarketplace-buyer-frontend#front-end) with npm and gulp
+[Install frontend dependencies](https://github.com/alphagov/digitalmarketplace-briefs-frontend#front-end) with npm and gulp
 
 ```
 npm install
@@ -71,7 +67,7 @@ npm install
 To run the whole testsuite:
 
 ```
-./scripts/run_tests.sh
+make test
 ```
 
 To only run the JavaScript tests:
@@ -82,12 +78,12 @@ npm test
 
 ### Run the development server
 
-To run the Buyer Frontend App for local development you can use the convenient run 
+To run the Briefs Frontend App for local development you can use the convenient run 
 script, which sets the required environment variables to defaults if they have
 not already been set:
 
 ```
-./scripts/run_app.sh
+make run_app
 ```
 
 More generally, the command to start the server is:
@@ -95,7 +91,7 @@ More generally, the command to start the server is:
 python application.py runserver
 ```
 
-The buyer app runs on port 5002 by default. Use the app at [http://127.0.0.1:5002/](http://127.0.0.1:5002/)
+The app runs on port 5005 by default. Use the app at [http://127.0.0.1:5005/](http://127.0.0.1:5005/)
 
 ### Using FeatureFlags
 
@@ -138,5 +134,3 @@ Note: `npm run frontend-install` is run automatically as a post-install task whe
 ## Frontend tests
 
 To run the JavaScript tests, navigate to `spec/javascripts/support/` and open `LocalTestRunner.html` in a browser.
-
-TODO: Add a Gulp task which is run as part of `./scripts/run_tests.sh`.

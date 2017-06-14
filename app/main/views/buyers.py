@@ -8,7 +8,7 @@ from flask.views import View
 from flask_login import current_user
 
 from app import data_api_client
-from .. import buyers, content_loader
+from .. import main, content_loader
 from ..helpers.buyers_helpers import (
     get_framework_and_lot, get_sorted_responses_for_brief, count_unanswered_questions,
     brief_can_be_edited, add_unanswered_counts_to_briefs, is_brief_correct,
@@ -30,7 +30,7 @@ from io import BytesIO
 from collections import Counter
 
 
-@buyers.route('')
+@main.route('')
 def buyer_dashboard():
     user_briefs = data_api_client.find_briefs(current_user.id).get('briefs', [])
 
@@ -49,7 +49,7 @@ def buyer_dashboard():
     )
 
 
-@buyers.route('/frameworks/<framework_slug>/requirements/<lot_slug>/create', methods=['GET'])
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/create', methods=['GET'])
 def start_new_brief(framework_slug, lot_slug):
 
     framework, lot = get_framework_and_lot(framework_slug, lot_slug, data_api_client,
@@ -71,7 +71,7 @@ def start_new_brief(framework_slug, lot_slug):
     ), 200
 
 
-@buyers.route('/frameworks/<framework_slug>/requirements/<lot_slug>/create', methods=['POST'])
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/create', methods=['POST'])
 def create_new_brief(framework_slug, lot_slug):
 
     framework, lot = get_framework_and_lot(framework_slug, lot_slug, data_api_client,
@@ -116,7 +116,7 @@ def create_new_brief(framework_slug, lot_slug):
                 brief_id=brief['id']))
 
 
-@buyers.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/copy', methods=['POST'])
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/copy', methods=['POST'])
 def copy_brief(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id, allow_withdrawn=True):
@@ -141,7 +141,7 @@ def copy_brief(framework_slug, lot_slug, brief_id):
     ))
 
 
-@buyers.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>', methods=['GET'])
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>', methods=['GET'])
 def view_brief_overview(framework_slug, lot_slug, brief_id):
     framework, lot = get_framework_and_lot(
         framework_slug,
@@ -190,7 +190,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
     ), 200
 
 
-@buyers.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/<section_slug>', methods=['GET'])
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/<section_slug>', methods=['GET'])
 def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug):
     get_framework_and_lot(
         framework_slug,
@@ -218,7 +218,7 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
     ), 200
 
 
-@buyers.route(
+@main.route(
     '/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/edit/<section_slug>/<question_id>',
     methods=['GET'])
 def edit_brief_question(framework_slug, lot_slug, brief_id, section_slug, question_id):
@@ -246,7 +246,7 @@ def edit_brief_question(framework_slug, lot_slug, brief_id, section_slug, questi
     ), 200
 
 
-@buyers.route(
+@main.route(
     '/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/edit/<section_id>/<question_id>',
     methods=['POST'])
 def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, question_id):
@@ -308,7 +308,7 @@ def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, ques
     )
 
 
-@buyers.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/responses', methods=['GET'])
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/responses', methods=['GET'])
 def view_brief_responses(framework_slug, lot_slug, brief_id):
     get_framework_and_lot(
         framework_slug,
@@ -571,12 +571,12 @@ class DownloadBriefResponsesView(View):
         return self.create_response(context)
 
 
-buyers.add_url_rule('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/responses/download',
-                    view_func=DownloadBriefResponsesView.as_view(str('download_brief_responses')),
-                    methods=['GET'])
+main.add_url_rule('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/responses/download',
+                  view_func=DownloadBriefResponsesView.as_view(str('download_brief_responses')),
+                  methods=['GET'])
 
 
-@buyers.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/publish', methods=['GET', 'POST'])
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/publish', methods=['GET', 'POST'])
 def publish_brief(framework_slug, lot_slug, brief_id):
     get_framework_and_lot(framework_slug, lot_slug, data_api_client, allowed_statuses=['live'], must_allow_brief=True)
     brief = data_api_client.get_brief(brief_id)["briefs"]
@@ -628,7 +628,7 @@ def publish_brief(framework_slug, lot_slug, brief_id):
         ), 200
 
 
-@buyers.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/timeline', methods=['GET'])
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/timeline', methods=['GET'])
 def view_brief_timeline(framework_slug, lot_slug, brief_id):
     get_framework_and_lot(
         framework_slug,
@@ -652,7 +652,7 @@ def view_brief_timeline(framework_slug, lot_slug, brief_id):
     ), 200
 
 
-@buyers.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/delete', methods=['POST'])
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/delete', methods=['POST'])
 def delete_a_brief(framework_slug, lot_slug, brief_id):
     get_framework_and_lot(
         framework_slug,
@@ -671,7 +671,7 @@ def delete_a_brief(framework_slug, lot_slug, brief_id):
     return redirect(url_for('.buyer_dashboard'))
 
 
-@buyers.route(
+@main.route(
     "/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/supplier-questions",
     methods=["GET"])
 def supplier_questions(framework_slug, lot_slug, brief_id):
@@ -701,7 +701,7 @@ def supplier_questions(framework_slug, lot_slug, brief_id):
     )
 
 
-@buyers.route(
+@main.route(
     "/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/supplier-questions/answer-question",
     methods=["GET", "POST"])
 def add_supplier_question(framework_slug, lot_slug, brief_id):

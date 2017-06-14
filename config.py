@@ -69,7 +69,7 @@ class Config(object):
     DM_LOG_LEVEL = 'DEBUG'
     DM_PLAIN_TEXT_LOGS = False
     DM_LOG_PATH = None
-    DM_APP_NAME = 'buyer-frontend'
+    DM_APP_NAME = 'briefs-frontend'
     DM_DOWNSTREAM_REQUEST_ID_HEADER = 'X-Amz-Cf-Id'
 
     #: For some frameworks (represented by the keys in this map), we store no framework content. But

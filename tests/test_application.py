@@ -2,28 +2,16 @@ from .helpers import BaseApplicationTest
 
 
 class TestApplication(BaseApplicationTest):
-    def test_index(self):
-        response = self.client.get('/')
-        assert 200 == response.status_code
-
     def test_404(self):
-        response = self.client.get('/not-found')
+        response = self.client.get('/buyers/not-found')
         assert 404 == response.status_code
 
     def test_trailing_slashes(self):
-        response = self.client.get('')
+        response = self.client.get('/buyers/')
         assert 301 == response.status_code
-        assert "http://localhost/" == response.location
-        response = self.client.get('/trailing/')
-        assert 301 == response.status_code
-        assert "http://localhost/trailing" == response.location
-
-    def test_trailing_slashes_with_query_parameters(self):
-        response = self.client.get('/search/?q=r&s=t')
-        assert 301 == response.status_code
-        assert "http://localhost/search?q=r&s=t" == response.location
+        assert "http://localhost/buyers" == response.location
 
     def test_header_xframeoptions_set_to_deny(self):
-        res = self.client.get('/')
-        assert 200 == res.status_code
+        res = self.client.get('/buyers')
+        assert 302 == res.status_code
         assert 'DENY', res.headers['X-Frame-Options']
