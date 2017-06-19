@@ -35,6 +35,23 @@ def auto_buyer_login():
     return "OK"
 
 
+@login_for_tests.route('/auto-supplier-login')
+def auto_supplier_login():
+    user_json = {"users": {
+        'id': 123,
+        'name': u'Ā Buyer',
+        'emailAddress': 'supplier@email.com',
+        'supplierId': 1234,
+        'supplierName': 'Supplier Name',
+        'name': 'Name',
+        'role': 'supplier',
+    }
+    }
+    user = User.from_json(user_json)
+    login_user(user)
+    return "OK"
+
+
 class BaseApplicationTest(object):
     def setup_method(self, method):
         # We need to mock the API client in create_app, however we can't use patch the constructor,
@@ -177,6 +194,21 @@ class BaseApplicationTest(object):
         if self.get_user_patch is not None:
             self.get_user_patch.stop()
 
+    def login_as_supplier(self):
+        with patch('app.data_api_client') as login_api_client:
+            login_api_client.authenticate_user.return_value = self.user(
+                123, "supplier@email.com", 1234, 'Supplier Name', 'Name', role='supplier')
+
+            self.get_user_patch = patch.object(
+                data_api_client,
+                'get_user',
+                return_value=self.user(123, "supplier@email.com", 1234, 'Supplier Name', 'Name', role='supplier')
+            )
+            self.get_user_patch.start()
+
+        response = self.client.get('/auto-supplier-login')
+        assert response.status_code == 200
+
     def login_as_buyer(self):
         with patch('app.data_api_client') as login_api_client:
 
@@ -189,6 +221,7 @@ class BaseApplicationTest(object):
                 return_value=self.user(123, "buyer@email.com", None, None, u'Ā Buyer', role='buyer')
             )
             self.get_user_patch.start()
+
         response = self.client.get("/auto-buyer-login")
         assert response.status_code == 200
 

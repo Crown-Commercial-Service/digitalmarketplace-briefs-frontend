@@ -39,15 +39,17 @@ def create_app(config_name):
             elif framework_data['framework'] == 'digital-outcomes-and-specialists':
                 content_loader.load_manifest(framework_data['slug'], 'briefs', 'display_brief')
 
-    from .main import main as main_blueprint
-    from .main import external as external_blueprint
+    from .create_buyer.views.create_buyer import create_buyer as create_buyer_blueprint
     from .main import dos as dos_blueprint
+    from .external.views.external import external as external_blueprint
+    from .main import main as main_blueprint
     from .status import status as status_blueprint
 
-    application.register_blueprint(status_blueprint, url_prefix='/buyers')
-    application.register_blueprint(main_blueprint, url_prefix='/buyers')
-    application.register_blueprint(external_blueprint)
+    application.register_blueprint(create_buyer_blueprint, url_prefix='/buyers')
     application.register_blueprint(dos_blueprint, url_prefix='/buyers')
+    application.register_blueprint(external_blueprint)
+    application.register_blueprint(main_blueprint, url_prefix='/buyers')
+    application.register_blueprint(status_blueprint, url_prefix='/buyers')
 
     login_manager.login_view = '/login'
     login_manager.login_message_category = "must_login"
