@@ -1,6 +1,6 @@
 import six
 
-from flask import current_app, render_template, url_for, abort, redirect, session
+from flask import current_app, render_template, url_for, abort, redirect, session, Blueprint
 
 from dmapiclient.audit import AuditTypes
 from dmutils.email import generate_token, send_email
@@ -8,21 +8,22 @@ from dmutils.email.exceptions import EmailError
 
 from app import data_api_client
 
-from .. import create
 from ..helpers.hash_email import hash_email
 from ..forms.auth_forms import EmailAddressForm
 
+create_buyer = Blueprint('create_buyer', __name__)
 
-@create.route('/create', methods=["GET"])
+
+@create_buyer.route('/create', methods=["GET"])
 def create_buyer_account():
     form = EmailAddressForm()
 
     return render_template(
-        "create/create_buyer_account.html",
+        "create_buyer/create_buyer_account.html",
         form=form), 200
 
 
-@create.route('/create', methods=['POST'])
+@create_buyer.route('/create', methods=['POST'])
 def submit_create_buyer_account():
     current_app.logger.info(
         "buyercreate: post create-buyer-account")
@@ -32,7 +33,7 @@ def submit_create_buyer_account():
         email_address = form.email_address.data
         if not data_api_client.is_email_address_with_valid_buyer_domain(email_address):
             return render_template(
-                "create/create_buyer_user_error.html",
+                "create_buyer/create_buyer_user_error.html",
                 error='invalid_buyer_domain'), 400
         else:
             token = generate_token(
@@ -72,7 +73,7 @@ def submit_create_buyer_account():
             return redirect(url_for('external.create_your_account_complete'), 302)
     else:
         return render_template(
-            "create/create_buyer_account.html",
+            "create_buyer/create_buyer_account.html",
             form=form,
             email_address=form.email_address.data
         ), 400

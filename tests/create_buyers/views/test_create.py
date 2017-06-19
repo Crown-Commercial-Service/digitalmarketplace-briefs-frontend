@@ -13,8 +13,8 @@ class TestBuyersCreation(BaseApplicationTest):
         assert res.status_code == 200
         assert 'Create a buyer account' in res.get_data(as_text=True)
 
-    @mock.patch('app.main.views.create.send_email')
-    @mock.patch('app.main.views.create.data_api_client')
+    @mock.patch('app.create_buyer.views.create_buyer.send_email')
+    @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
     def test_should_be_able_to_submit_valid_email_address(self, data_api_client, send_email):
         res = self.client.post(
             '/buyers/create',
@@ -24,8 +24,8 @@ class TestBuyersCreation(BaseApplicationTest):
         assert res.status_code == 302
         assert res.location == 'http://localhost/create-your-account-complete'
 
-    @mock.patch('app.main.views.create.send_email')
-    @mock.patch('app.main.views.create.data_api_client')
+    @mock.patch('app.create_buyer.views.create_buyer.send_email')
+    @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
     def test_creating_account_doesnt_affect_csrf_token(self, data_api_client, send_email):
         with self.client as c:
             res = c.get(
@@ -74,7 +74,7 @@ class TestBuyersCreation(BaseApplicationTest):
         assert 'Create a buyer account' in data
         assert 'You must provide an email address' in data
 
-    @mock.patch('app.main.views.create.data_api_client')
+    @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
     def test_should_show_error_page_for_unrecognised_email_domain(self, data_api_client):
         data_api_client.is_email_address_with_valid_buyer_domain.return_value = False
         res = self.client.post(
@@ -87,8 +87,8 @@ class TestBuyersCreation(BaseApplicationTest):
         assert "You must use a public sector email address" in data
         assert "The email you used doesn't belong to a recognised public sector domain." in data
 
-    @mock.patch('app.main.views.create.data_api_client')
-    @mock.patch('app.main.views.create.send_email')
+    @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
+    @mock.patch('app.create_buyer.views.create_buyer.send_email')
     def test_should_503_if_email_fails_to_send(self, send_email, data_api_client):
         data_api_client.is_email_address_with_valid_buyer_domain.return_value = True
         send_email.side_effect = EmailError("Arrrgh")
@@ -100,8 +100,8 @@ class TestBuyersCreation(BaseApplicationTest):
         assert res.status_code == 503
         assert USER_CREATION_EMAIL_ERROR in res.get_data(as_text=True)
 
-    @mock.patch('app.main.views.create.send_email')
-    @mock.patch('app.main.views.create.data_api_client')
+    @mock.patch('app.create_buyer.views.create_buyer.send_email')
+    @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
     def test_should_create_audit_event_when_email_sent(self, data_api_client, send_email):
         res = self.client.post(
             '/buyers/create',
