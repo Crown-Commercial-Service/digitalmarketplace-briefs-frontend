@@ -41,7 +41,7 @@ def create_app(config_name):
 
     from .create_buyer.views.create_buyer import create_buyer as create_buyer_blueprint
     from .main import dos as dos_blueprint
-    from .main import external as external_blueprint
+    from .external.views.external import external as external_blueprint
     from .main import main as main_blueprint
     from .status import status as status_blueprint
 
