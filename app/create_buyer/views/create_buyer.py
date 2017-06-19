@@ -5,10 +5,10 @@ from flask import current_app, render_template, url_for, abort, redirect, sessio
 from dmapiclient.audit import AuditTypes
 from dmutils.email import generate_token, send_email
 from dmutils.email.exceptions import EmailError
+from dmutils.email.helpers import hash_string
 
 from app import data_api_client
 
-from ..helpers.hash_email import hash_email
 from ..forms.auth_forms import EmailAddressForm
 
 create_buyer = Blueprint('create_buyer', __name__)
@@ -63,7 +63,7 @@ def submit_create_buyer_account():
                     "error {error} email_hash {email_hash}",
                     extra={
                         'error': six.text_type(e),
-                        'email_hash': hash_email(email_address)})
+                        'email_hash': hash_string(email_address)})
                 abort(503, response="Failed to send user creation email.")
 
             data_api_client.create_audit_event(
