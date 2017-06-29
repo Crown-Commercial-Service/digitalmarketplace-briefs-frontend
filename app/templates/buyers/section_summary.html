@@ -71,7 +71,9 @@
               {{ summary.text("Not answered") }}
             {% endif %}
           {% else %}
-            {{ summary[question.type](question.display_value or question.value) }}
+            {% with question_value = summary[question.type](question.display_value or question.value) %}
+              {{ (question_value | preserve_line_breaks) if question.type == 'textbox_large' else question_value }}
+            {% endwith %}
           {% endif %}
 
           {% if brief.get('status') == 'draft' %}
