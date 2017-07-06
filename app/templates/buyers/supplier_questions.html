@@ -52,9 +52,9 @@
         {% call summary.row() %}
           {% call summary.field(first=True, wide=False) -%}
             <span aria-label="question">{{ question.number }}.</span>
-            {{ question.question }}
+            {{ question.question | preserve_line_breaks }}
           {%- endcall %}
-          {{ summary.text(question.answer) }}
+          {{ summary.text(question.answer) | preserve_line_breaks }}
         {% endcall %}
       {% endcall %}
 
