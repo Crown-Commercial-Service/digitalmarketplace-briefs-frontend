@@ -16,7 +16,7 @@ sudo easy_install virtualenv
 
 Install dependencies, run migrations and run the app
 ```
-make run_all
+make run-all
 ````
 
 ## Setup
@@ -54,7 +54,7 @@ source ./venv/bin/activate
 
 Install new Python dependencies with pip
 
-```pip install -r requirements_for_test.txt```
+```pip install -r requirements-dev.txt```
 
 [Install frontend dependencies](https://github.com/alphagov/digitalmarketplace-briefs-frontend#front-end) with npm and gulp
 
@@ -83,7 +83,7 @@ script, which sets the required environment variables to defaults if they have
 not already been set:
 
 ```
-make run_app
+make run-app
 ```
 
 More generally, the command to start the server is:
@@ -92,6 +92,19 @@ python application.py runserver
 ```
 
 The app runs on port 5005 by default. Use the app at [http://127.0.0.1:5005/](http://127.0.0.1:5005/)
+
+### Updating application dependencies
+
+`requirements.txt` file is generated from the `requirements-app.txt` in order to pin
+versions of all nested dependecies. If `requirements-app.txt` has been changed (or
+we want to update the unpinned nested dependencies) `requirements.txt` should be
+regenerated with
+
+```
+make freeze-requirements
+```
+
+`requirements.txt` should be commited alongside `requirements-app.txt` changes.
 
 ### Using FeatureFlags
 
