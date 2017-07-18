@@ -11,6 +11,7 @@ import pytest
 
 from app.main.views import buyers
 from dmapiclient import DataAPIClient
+from freezegun import freeze_time
 import functools
 import inflection
 import sys
@@ -1368,14 +1369,17 @@ class TestPublishBrief(BaseApplicationTest):
         })
         data_api_client.get_brief.return_value = brief_json
 
-        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
-                              "digital-specialists/1234/publish")
-        page_html = res.get_data(as_text=True)
+        with freeze_time('2016-12-31 23:59:59'):
+            res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
+                                  "digital-specialists/1234/publish")
+            page_html = res.get_data(as_text=True)
 
         assert res.status_code == 200
         assert 'Your requirements will be open for 1 week.' in page_html
         assert 'This will show you what the supplier application deadline will be' not in page_html
         assert 'Your requirements will be open for 2 weeks' not in page_html
+        assert 'If you publish your requirements today (31 December)' in page_html
+        assert 'suppliers will be able to apply until Saturday 7 January 2017 at 11:59pm GMT' in page_html
 
     def test_correct_content_is_displayed_if_requirementLength_is_2_weeks(self, data_api_client):
         self.login_as_buyer()
@@ -1394,14 +1398,17 @@ class TestPublishBrief(BaseApplicationTest):
         })
         data_api_client.get_brief.return_value = brief_json
 
-        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
-                              "digital-specialists/1234/publish")
-        page_html = res.get_data(as_text=True)
+        with freeze_time('2017-07-17 23:59:59'):
+            res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
+                                  "digital-specialists/1234/publish")
+            page_html = res.get_data(as_text=True)
 
         assert res.status_code == 200
         assert 'Your requirements will be open for 2 weeks.' in page_html
         assert 'This will show you what the supplier application deadline will be' not in page_html
         assert 'Your requirements will be open for 1 week' not in page_html
+        assert 'If you publish your requirements today (17 July)' in page_html
+        assert 'suppliers will be able to apply until Monday 31 July 2017 at 11:59pm GMT' in page_html
 
     def test_correct_content_is_displayed_if_requirementLength_is_not_set(self, data_api_client):
         self.login_as_buyer()
