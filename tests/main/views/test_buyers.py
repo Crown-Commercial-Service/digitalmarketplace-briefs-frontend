@@ -566,20 +566,11 @@ class TestEveryDamnPage(BaseApplicationTest):
             framework_status='expired'
         )
 
-    def test_expired_framework_post_edit_brief_question(self):
+    @pytest.mark.parametrize("lot_slug", ('digital-outcomes', 'digital-specialists'))
+    def test_expired_framework_post_edit_brief_question(self, lot_slug):
         data = {"required1": True}
         self._load_page(
-            "/digital-outcomes/1234/edit/section-1/required1",
-            404,
-            method='post',
-            data=data,
-            framework_status='expired'
-        )
-
-    def test_expired_framework_post_edit_brief_question(self):
-        data = {"required1": True}
-        self._load_page(
-            "/digital-specialists/1234/edit/section-1/required1",
+            "/{}/1234/edit/section-1/required1".format(lot_slug),
             404,
             method='post',
             data=data,
@@ -1743,6 +1734,52 @@ class TestBriefSummaryPage(BaseApplicationTest):
                 assert "Because" in page_html
                 assert "Answer a supplier question" in page_html
                 assert "No questions or answers have been published" not in page_html
+
+    def test_clarification_questions_page_returns_404_if_not_live_brief(self, data_api_client):
+        with self.app.app_context():
+            self.login_as_buyer()
+            data_api_client.get_framework.return_value = api_stubs.framework(
+                slug='digital-outcomes-and-specialists',
+                status='live',
+                lots=[
+                    api_stubs.lot(slug='digital-specialists', allows_brief=True),
+                ]
+            )
+            data_api_client.get_brief.return_value = api_stubs.brief(status="expired", clarification_questions=[
+                {"question": "Why is my question a question?",
+                 "answer": "Because",
+                 "publishedAt": "2016-01-01T00:00:00.000000Z"}
+            ])
+
+            res = self.client.get(
+                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/supplier-questions"  # noqa
+            )
+
+            assert res.status_code == 404
+
+    def test_clarification_questions_page_returns_404_if_brief_not_correct(self, data_api_client):
+        with self.app.app_context():
+            self.login_as_buyer()
+            data_api_client.get_framework.return_value = api_stubs.framework(
+                slug='digital-outcomes-and-specialists',
+                status='live',
+                lots=[
+                    api_stubs.lot(slug='digital-specialists', allows_brief=True),  # 'Incorrect' lot slug
+                ]
+            )
+            brief_json = api_stubs.brief(status="live", clarification_questions=[
+                {"question": "Why is my question a question?",
+                 "answer": "Because",
+                 "publishedAt": "2016-01-01T00:00:00.000000Z"}
+            ])
+            brief_json['briefs']['lotSlug'] = "wrong lot slug"
+            data_api_client.get_brief.return_value = brief_json
+
+            res = self.client.get(
+                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/supplier-questions"  # noqa
+            )
+
+            assert res.status_code == 404
 
     def test_404_if_framework_does_not_allow_brief(self, data_api_client):
         with self.app.app_context():
