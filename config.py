@@ -49,7 +49,8 @@ class Config(object):
     RESET_PASSWORD_SALT = 'ResetPasswordSalt'
     INVITE_EMAIL_SALT = 'InviteEmailSalt'
 
-    ASSET_PATH = '/static/'
+    STATIC_URL_PATH = '/buyers/static'
+    ASSET_PATH = STATIC_URL_PATH + '/'
     BASE_TEMPLATE_DATA = {
         'header_class': 'with-proposition',
         'asset_path': ASSET_PATH,

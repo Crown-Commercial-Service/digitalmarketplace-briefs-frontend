@@ -19,7 +19,9 @@ content_loader = ContentLoader('app/content')
 
 
 def create_app(config_name):
-    application = Flask(__name__)
+    application = Flask(__name__,
+                        static_folder='static/',
+                        static_url_path=configs[config_name].STATIC_URL_PATH)
 
     init_app(
         application,
