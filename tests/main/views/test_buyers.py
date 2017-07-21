@@ -3098,3 +3098,87 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
             )
 
             assert res.status_code == 404
+
+
+class TestAwardBrief(BaseApplicationTest):
+    brief_responses = {
+        "briefResponses": [
+            {"id": 1, "supplierId": 1, "supplierName": "Aobbins"},
+            {"id": 2, "supplierId": 2, "supplierName": "Bobbins"},
+            {"id": 3, "supplierId": 3, "supplierName": "Cobbins"},
+            {"id": 4, "supplierId": 4, "supplierName": "Dobbins"},
+        ]
+    }
+    url = "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/{brief_id}/award"
+
+    def setup_method(self, method):
+        super(TestAwardBrief, self).setup_method(method)
+
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-outcomes', allows_brief=True),
+            ]
+        )
+
+        brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='closed')
+        self.data_api_client.get_brief.return_value = brief_stub
+
+        self.data_api_client.find_brief_responses.return_value = self.brief_responses
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super(TestAwardBrief, self).teardown_method(method)
+
+    def test_award_brief_get_returns_200_with_content(self):
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234))
+        page = res.get_data(as_text=True)
+
+        assert res.status_code == 200
+        assert "Who won the" in page
+        assert "Save and continue" in page
+
+    def test_award_brief_get_lists_suppliers_who_applied_for_this_brief_alphabetically(self):
+        pass
+
+    def test_award_brief_get_populates_form_with_existing_data_if_present(self):
+        pass
+
+    def test_award_brief_get_redirects_to_login_if_not_authenticated(self):
+        target_url = self.url.format(brief_id=1234)
+        res = self.client.get(target_url)
+        assert res.status_code == 302
+        assert res.location == 'http://localhost/login?next={}'.format(target_url.replace('/', '%2F'))
+
+    def test_award_brief_get_returns_404_if_brief_not_closed(self):
+        brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='live')
+        self.data_api_client.get_brief.return_value = brief_stub
+
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234))
+        assert res.status_code == 404
+
+    @mock.patch('app.main.views.buyers.is_brief_correct')
+    def test_award_brief_get_returns_404_if_brief_not_correct(self, is_brief_correct):
+        is_brief_correct.return_value = False
+
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234))
+        assert res.status_code == 404
+
+    def test_award_brief_no_suppliers_applied_for_brief_does_something(self):
+        pass
+
+    def test_award_brief_post_raises_400_if_required_fields_not_filled(self):
+        pass
+
+    def test_award_brief_post_raises_400_if_form_not_valid(self):
+        pass
+
+    def test_award_brief_post_valid_form_calls_api_and_redirects_to_next_question(self):
+        pass
