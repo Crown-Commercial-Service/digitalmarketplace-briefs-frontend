@@ -16,6 +16,7 @@ from ..helpers.buyers_helpers import (
 )
 
 from ..helpers.ods import SpreadSheet
+from ..forms.awards import AwardedSupplierForm
 
 from dmapiclient import HTTPError
 from dmutils.dates import get_publishing_dates
@@ -342,6 +343,54 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
         response_counts={"failed": counter[False], "eligible": counter[True]},
         brief_responses_require_evidence=brief_responses_require_evidence,
         brief=brief
+    ), 200
+
+
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award', methods=['GET', 'POST'])
+def award_brief(framework_slug, lot_slug, brief_id):
+    get_framework_and_lot(
+        framework_slug,
+        lot_slug,
+        data_api_client,
+        allowed_statuses=['live', 'expired'],
+        must_allow_brief=True,
+    )
+    brief = data_api_client.get_brief(brief_id)["briefs"]
+
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
+        abort(404)
+
+    if brief['status'] != "closed":
+        abort(404)
+
+    brief_responses = data_api_client.find_brief_responses(brief_id)['briefResponses']
+    suppliers = [
+        {'id': 1, 'name': 'Deloitte'},
+        {'id': 2, 'name': 'CBeebies'},
+        {'id': 3, 'name': 'CapGemini'},
+    ]
+
+    if request.method == "POST":
+        form = AwardedSupplierForm(request.form, suppliers=suppliers)
+        if not form.validate_on_submit():
+            form_errors = [{'question': form[key].label.text, 'input_name': key} for key in form.errors]
+            return render_template(
+                "buyers/award.html",
+                brief=brief,
+                form=form,
+                form_errors=form_errors,
+            ), 400
+        if form.data:
+            # TODO: They clicked something! Check the POST data and do something.
+            print('Answered form', form.data)
+
+    else:
+        form = AwardedSupplierForm(suppliers=suppliers)
+
+    return render_template(
+        "buyers/award.html",
+        brief=brief,
+        form=form
     ), 200
 
 
