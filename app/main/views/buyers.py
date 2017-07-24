@@ -365,10 +365,16 @@ def award_brief(framework_slug, lot_slug, brief_id):
 
     brief_responses = data_api_client.find_brief_responses(brief_id)['briefResponses']
     suppliers = [
-        {'id': 1, 'name': 'Deloitte'},
-        {'id': 2, 'name': 'CBeebies'},
-        {'id': 3, 'name': 'CapGemini'},
+        {'id': b['supplierId'], 'name': b['supplierName']} for b in brief_responses
     ]
+
+    if not suppliers:
+        return render_template(
+            "buyers/award.html",
+            brief=brief,
+            form=None,
+            form_errors=None,
+        ), 200
 
     if request.method == "POST":
         form = AwardedSupplierForm(request.form, suppliers=suppliers)

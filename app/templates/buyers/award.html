@@ -23,36 +23,40 @@
 
 {% block main_content %}
   <div class="single-question-page">
-  {% with
-        heading = "Who won the '{}' contract?".format(brief.title),
-        smaller = true
-      %}
-        {% include 'toolkit/page-heading.html' %}
-  {% endwith %}
-
-  <form method="POST" action="{{ url_for(".award_brief", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-   {%
-      with
-      name = "supplier",
-      question = "Which supplier won the contract?",
-      type = "radio",
-      options = form.supplier.toolkit_macro_options,
-      error = form.supplier.errors[0]
-    %}
-      {% include "toolkit/forms/selection-buttons.html" %}
-    {% endwith %}
-
-    {% block save_button %}
-      {%
-        with
-        label="Save and continue",
-        name="save_and_continue",
-        type="save"
-      %}
-        {% include "toolkit/button.html" %}
+  {% if form %}
+      {% with
+            heading = "Who won the '{}' contract?".format(brief.title),
+            smaller = true
+          %}
+            {% include 'toolkit/page-heading.html' %}
       {% endwith %}
-    {% endblock %}
-    </form>
+
+      <form method="POST" action="{{ url_for(".award_brief", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+       {%
+          with
+          name = "supplier",
+          question = "Which supplier won the contract?",
+          type = "radio",
+          options = form.supplier.toolkit_macro_options,
+          error = form.supplier.errors[0]
+        %}
+          {% include "toolkit/forms/selection-buttons.html" %}
+        {% endwith %}
+
+        {% block save_button %}
+          {%
+            with
+            label="Save and continue",
+            name="save_and_continue",
+            type="save"
+          %}
+            {% include "toolkit/button.html" %}
+          {% endwith %}
+        {% endblock %}
+        </form>
+  {% else %}
+      <p>No suppliers applied to this opportunity.</p>
+  {% endif %}
   </div>
 {% endblock %}
