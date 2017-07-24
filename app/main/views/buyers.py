@@ -364,12 +364,11 @@ def award_brief(framework_slug, lot_slug, brief_id):
         abort(404)
 
     brief_responses = data_api_client.find_brief_responses(brief['id'])['briefResponses']
-    suppliers = [
+    suppliers = list(sorted([
         {'id': b['id'], 'name': b['supplierName']} for b in brief_responses
-    ]
-    sorted_suppliers = list(sorted(suppliers, key=lambda x: x['name']))
+    ], key=lambda x: x['name']))
 
-    if not sorted_suppliers:
+    if not suppliers:
         return render_template(
             "buyers/award.html",
             brief=brief,
@@ -378,7 +377,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
         ), 200
 
     if request.method == "POST":
-        form = AwardedSupplierForm(request.form, suppliers=sorted_suppliers)
+        form = AwardedSupplierForm(request.form, suppliers=suppliers)
         if not form.validate_on_submit():
             form_errors = [{'question': form[key].label.text, 'input_name': key} for key in form.errors]
             return render_template(
@@ -392,7 +391,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
             print('Answered form', form.data)
 
     else:
-        form = AwardedSupplierForm(suppliers=sorted_suppliers)
+        form = AwardedSupplierForm(suppliers=suppliers)
 
     return render_template(
         "buyers/award.html",

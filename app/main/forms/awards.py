@@ -6,7 +6,11 @@ class AwardedSupplierForm(Form):
     """Form for the buyer to tell us which supplier was award a contract
     """
     # supplier choices expected to be set at runtime
-    supplier = RadioField("Winning Supplier", validators=None, coerce=int)
+    supplier = RadioField(
+        "Winning Supplier",
+        validators=[validators.DataRequired(message="This question requires an answer")],
+        coerce=int
+    )
 
     def __init__(self, *args, **kwargs):
         """

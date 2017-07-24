@@ -3164,7 +3164,6 @@ class TestAwardBrief(BaseApplicationTest):
     def test_award_brief_get_returns_404_if_brief_not_closed(self):
         brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='live')
         self.data_api_client.get_brief.return_value = brief_stub
-
         self.login_as_buyer()
         res = self.client.get(self.url.format(brief_id=1234))
         assert res.status_code == 404
@@ -3187,10 +3186,22 @@ class TestAwardBrief(BaseApplicationTest):
         assert "No suppliers applied to this opportunity." in page
 
     def test_award_brief_post_raises_400_if_required_fields_not_filled(self):
-        pass
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=1234), data={})
+        document = html.fromstring(res.get_data(as_text=True))
+
+        assert res.status_code == 400
+        error_span = document.xpath('//span[@id="error-supplier"]')[0]
+        assert self._strip_whitespace(error_span.text_content()) == "Thisquestionrequiresananswer"
 
     def test_award_brief_post_raises_400_if_form_not_valid(self):
-        pass
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=1234), data={'supplier': 999})  # Not a valid supplier choice
+        document = html.fromstring(res.get_data(as_text=True))
+
+        assert res.status_code == 400
+        error_span = document.xpath('//span[@id="error-supplier"]')[0]
+        assert self._strip_whitespace(error_span.text_content()) == "Notavalidchoice"
 
     def test_award_brief_post_valid_form_calls_api_and_redirects_to_next_question(self):
         pass
