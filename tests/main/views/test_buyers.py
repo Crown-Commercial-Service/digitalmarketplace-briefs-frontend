@@ -3103,10 +3103,10 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
 class TestAwardBrief(BaseApplicationTest):
     brief_responses = {
         "briefResponses": [
-            {"id": 1, "supplierId": 1, "supplierName": "Aobbins"},
-            {"id": 2, "supplierId": 2, "supplierName": "Bobbins"},
-            {"id": 3, "supplierId": 3, "supplierName": "Cobbins"},
-            {"id": 4, "supplierId": 4, "supplierName": "Dobbins"},
+            {"id": 23, "supplierName": "Dobbins"},
+            {"id": 4444, "supplierName": "Cobbins"},
+            {"id": 2, "supplierName": "Aobbins"},
+            {"id": 90, "supplierName": "Bobbins"},
         ]
     }
     url = "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/{brief_id}/award"
@@ -3134,17 +3134,23 @@ class TestAwardBrief(BaseApplicationTest):
         self.data_api_client_patch.stop()
         super(TestAwardBrief, self).teardown_method(method)
 
-    def test_award_brief_get_returns_200_with_content(self):
+    def test_award_brief_get_lists_suppliers_who_applied_for_this_brief_alphabetically(self):
         self.login_as_buyer()
         res = self.client.get(self.url.format(brief_id=1234))
         page = res.get_data(as_text=True)
+        document = html.fromstring(page)
 
+        assert self.data_api_client.find_brief_responses.call_args == mock.call(1234)
         assert res.status_code == 200
-        assert "Who won the" in page
-        assert "Save and continue" in page
+        assert "Who won the &#39;I need a thing to do a thing&#39; contract" in page
+        submit_button = document.xpath('//input[@class="button-save" and @value="Save and continue"]')
+        assert len(submit_button) == 1
 
-    def test_award_brief_get_lists_suppliers_who_applied_for_this_brief_alphabetically(self):
-        pass
+        for i, brief_response in enumerate([(2, 'Aobbins'), (90, 'Bobbins'), (4444, 'Cobbins'), (23, 'Dobbins')]):
+            input_id = document.xpath('//input[@id="input-supplier-{}"]/@value'.format(i + 1))[0]
+            assert int(input_id) == brief_response[0]
+            label = document.xpath('//label[@for="input-supplier-{}"]'.format(i+1))[0]
+            assert self._strip_whitespace(label.text_content()) == brief_response[1]
 
     def test_award_brief_get_populates_form_with_existing_data_if_present(self):
         pass
