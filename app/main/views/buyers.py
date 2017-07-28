@@ -400,6 +400,35 @@ def award_brief(framework_slug, lot_slug, brief_id):
     ), 200
 
 
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award/details', methods=['GET', 'POST'])
+def award_brief_details(framework_slug, lot_slug, brief_id):
+    get_framework_and_lot(
+        framework_slug,
+        lot_slug,
+        data_api_client,
+        allowed_statuses=['live', 'expired'],
+        must_allow_brief=True,
+    )
+    brief = data_api_client.get_brief(brief_id)["briefs"]
+
+    # Check brief is awardable
+
+    # Check that brief.awarded_brief_response is not null
+
+    # get questions
+    content = content_loader.get_manifest(brief['frameworkSlug'], 'award_brief')
+    section_id = content.get_next_editable_section_id()
+    section = content.get_section(section_id)
+
+    # handle POST data if present and redirect to buyer profile
+
+    return render_template(
+        "buyers/award_details.html",
+        brief=brief,
+        section=section,
+    ), 200
+
+
 class DownloadBriefResponsesView(View):
     def __init__(self, **kwargs):
         self.data_api_client = kwargs.pop('data_api_client', data_api_client)

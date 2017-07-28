@@ -1,0 +1,69 @@
+{% extends "_base_page.html" %}
+
+{% import "macros/brief_links.html" as brief_links %}
+{% import "macros/toolkit_forms.html" as forms %}
+
+{% block page_title %}{{ brief.title or brief.lotName }} – Digital Marketplace{% endblock %}
+
+{% block breadcrumb %}
+  {%
+    with items = [
+      {
+        "link": "/",
+        "label": "Digital Marketplace"
+      },
+      {
+        "link": url_for(".buyer_dashboard"),
+        "label": "Your account"
+      },
+      {
+        "link": url_for(".view_brief_overview", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+        "label": brief.title
+      }
+    ]
+  %}
+    {% include "toolkit/breadcrumb.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block main_content %}
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      {% with
+        heading = "Tell us about your contract with bananas",
+        smaller = True
+      %}
+        {% include 'toolkit/page-heading.html' %}
+      {% endwith %}
+
+      <form >
+          {% for question in section.questions %}
+              {{ forms[question.type](
+                  question,
+                  brief,
+                  errors if errors and (errors[question.id] or question.type == 'multiquestion') else {},
+                 )
+              }}
+          {% endfor %}
+
+          {% block save_button %}
+            {%
+              with
+              label="Submit",
+              name="submit",
+              type="save"
+            %}
+              {% include "toolkit/button.html" %}
+            {% endwith %}
+          {% endblock %}
+      </form>
+      {%
+          with
+          url=url_for(".award_brief", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+          text="Return to previous page"
+      %}
+          {% include "toolkit/secondary-action-link.html" %}
+      {% endwith %}
+    </div>
+  </div>
+{% endblock %}

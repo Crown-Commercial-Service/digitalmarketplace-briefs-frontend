@@ -14,6 +14,10 @@
       {
         "link": url_for(".buyer_dashboard"),
         "label": "Your account"
+      },
+      {
+        "link": url_for(".view_brief_overview", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+        "label": brief.title
       }
     ]
   %}
@@ -25,7 +29,7 @@
   <div class="single-question-page">
   {% if form %}
       {% with
-            heading = "Who won the '{}' contract?".format(brief.title),
+            heading = "Who won the {} contract?".format(brief.title),
             smaller = true
           %}
             {% include 'toolkit/page-heading.html' %}

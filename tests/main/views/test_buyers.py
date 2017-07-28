@@ -583,29 +583,19 @@ class TestEveryDamnPage(BaseApplicationTest):
 class TestEditBriefSubmission(BaseApplicationTest):
 
     def _test_breadcrumbs_on_question_page(self, response, has_summary_page=False, section_name=None):
-        breadcrumbs = html.fromstring(response.get_data(as_text=True)).xpath(
-            '//*[@id="global-breadcrumb"]/nav/ol/li'
-        )
-
-        breadcrumbs_we_expect = [
-            ('Digital Marketplace', '/'),
-            ('Your account', '/buyers'),
+        extra_breadcrumbs = [
             ('I need a thing to do a thing',
              '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234')
         ]
         if has_summary_page and section_name:
-            breadcrumbs_we_expect.append((
+            extra_breadcrumbs.append((
                 section_name,
                 '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/{}'.format(
                     section_name.lower().replace(' ', '-')
                 )
             ))
 
-        assert len(breadcrumbs) == len(breadcrumbs_we_expect)
-
-        for index, link in enumerate(breadcrumbs_we_expect):
-            assert breadcrumbs[index].find('a').text_content().strip() == link[0]
-            assert breadcrumbs[index].find('a').get('href').strip() == link[1]
+        self.assert_breadcrumbs(response, extra_breadcrumbs)
 
     def test_edit_brief_submission(self, data_api_client):
         self.login_as_buyer()
@@ -3109,7 +3099,7 @@ class TestAwardBrief(BaseApplicationTest):
             {"id": 90, "supplierName": "Bobbins"},
         ]
     }
-    url = "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/{brief_id}/award"
+    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award"
 
     def setup_method(self, method):
         super(TestAwardBrief, self).setup_method(method)
@@ -3118,14 +3108,16 @@ class TestAwardBrief(BaseApplicationTest):
         self.data_api_client = self.data_api_client_patch.start()
 
         self.data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-2',
             status='live',
             lots=[
                 api_stubs.lot(slug='digital-outcomes', allows_brief=True),
             ]
         )
 
-        brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='closed')
+        brief_stub = api_stubs.brief(
+            framework_slug="digital-outcomes-and-specialists-2", lot_slug="digital-outcomes", status='closed'
+        )
         self.data_api_client.get_brief.return_value = brief_stub
 
         self.data_api_client.find_brief_responses.return_value = self.brief_responses
@@ -3134,18 +3126,34 @@ class TestAwardBrief(BaseApplicationTest):
         self.data_api_client_patch.stop()
         super(TestAwardBrief, self).teardown_method(method)
 
-    def test_award_brief_get_lists_suppliers_who_applied_for_this_brief_alphabetically(self):
+    def test_award_brief_200s_with_correct_default_content(self):
         self.login_as_buyer()
-        res = self.client.get(self.url.format(brief_id=1234))
-        page = res.get_data(as_text=True)
-        document = html.fromstring(page)
 
-        assert self.data_api_client.find_brief_responses.call_args == mock.call(1234)
+        res = self.client.get(self.url.format(brief_id=1234))
+
         assert res.status_code == 200
-        assert "Who won the &#39;I need a thing to do a thing&#39; contract" in page
+        document = html.fromstring(res.get_data(as_text=True))
+        self.assert_breadcrumbs(res, extra_breadcrumbs=[
+            (
+                'I need a thing to do a thing',
+                '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+            )
+        ])
+
+        page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
+        assert page_title == "WhowontheIneedathingtodoathingcontract?"
+
         submit_button = document.xpath('//input[@class="button-save" and @value="Save and continue"]')
         assert len(submit_button) == 1
 
+    def test_award_brief_get_lists_suppliers_who_applied_for_this_brief_alphabetically(self):
+        self.login_as_buyer()
+
+        res = self.client.get(self.url.format(brief_id=1234))
+
+        assert self.data_api_client.find_brief_responses.call_args == mock.call(1234)
+
+        document = html.fromstring(res.get_data(as_text=True))
         for i, brief_response in enumerate([(2, 'Aobbins'), (90, 'Bobbins'), (4444, 'Cobbins'), (23, 'Dobbins')]):
             input_id = document.xpath('//input[@id="input-supplier-{}"]/@value'.format(i + 1))[0]
             assert int(input_id) == brief_response[0]
@@ -3205,3 +3213,56 @@ class TestAwardBrief(BaseApplicationTest):
 
     def test_award_brief_post_valid_form_calls_api_and_redirects_to_next_question(self):
         pass
+
+
+class TestAwardBriefDetails(BaseApplicationTest):
+    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award/details"
+
+    def setup_method(self, method):
+        super(TestAwardBriefDetails, self).setup_method(method)
+
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists-2',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-outcomes', allows_brief=True),
+            ]
+        )
+
+        brief_stub = api_stubs.brief(
+            framework_slug='digital-outcomes-and-specialists-2', lot_slug="digital-outcomes", status='closed'
+        )
+        self.data_api_client.get_brief.return_value = brief_stub
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super(TestAwardBriefDetails, self).teardown_method(method)
+
+    def test_award_brief_details_200s_with_correct_default_content(self):
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234))
+
+        assert res.status_code == 200
+        document = html.fromstring(res.get_data(as_text=True))
+        self.assert_breadcrumbs(res, extra_breadcrumbs=[
+            (
+                'I need a thing to do a thing',
+                '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+            )
+        ])
+
+        page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
+        assert page_title == "Tellusaboutyourcontractwithbananas"
+
+        submit_button = document.xpath('//input[@class="button-save" and @value="Submit"]')
+        assert len(submit_button) == 1
+
+        secondary_link_text = document.xpath('//div[@class="secondary-action-link"]//a[1]')[0]
+        assert secondary_link_text.text_content() == "Return to previous page"
+
+        secondary_link = document.xpath('//div[@class="secondary-action-link"]//a[1]/@href')[0]
+        assert secondary_link == \
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award'

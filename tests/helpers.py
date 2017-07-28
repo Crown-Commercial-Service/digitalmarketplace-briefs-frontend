@@ -8,6 +8,7 @@ import mock
 
 from app import create_app, data_api_client
 from datetime import datetime, timedelta
+from lxml import html
 from mock import patch
 from werkzeug.http import parse_cookie
 
@@ -247,3 +248,21 @@ class BaseApplicationTest(object):
                 raise AssertionError('nothing flashed')
             assert expected_message in message
             assert expected_category == category
+
+    def assert_breadcrumbs(self, response, extra_breadcrumbs=None):
+        breadcrumbs = html.fromstring(response.get_data(as_text=True)).xpath(
+            '//*[@id="global-breadcrumb"]/nav/ol/li'
+        )
+
+        breadcrumbs_we_expect = [
+            ('Digital Marketplace', '/'),
+            ('Your account', '/buyers'),
+        ]
+        if extra_breadcrumbs:
+            breadcrumbs_we_expect.extend(extra_breadcrumbs)
+
+        assert len(breadcrumbs) == len(breadcrumbs_we_expect)
+
+        for index, link in enumerate(breadcrumbs_we_expect):
+            assert breadcrumbs[index].find('a').text_content().strip() == link[0]
+            assert breadcrumbs[index].find('a').get('href').strip() == link[1]

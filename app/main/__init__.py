@@ -15,6 +15,7 @@ content_loader.load_manifest('digital-outcomes-and-specialists', 'clarification_
 content_loader.load_manifest('digital-outcomes-and-specialists-2', 'briefs', 'edit_brief')
 content_loader.load_manifest('digital-outcomes-and-specialists-2', 'brief-responses', 'output_brief_response')
 content_loader.load_manifest('digital-outcomes-and-specialists-2', 'clarification_question', 'clarification_question')
+content_loader.load_manifest('digital-outcomes-and-specialists-2', 'briefs', 'award_brief')
 
 
 @main.before_request
