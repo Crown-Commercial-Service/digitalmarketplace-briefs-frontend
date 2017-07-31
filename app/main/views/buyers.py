@@ -427,9 +427,12 @@ def award_brief_details(framework_slug, lot_slug, brief_id):
     )
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
-    # Check brief is awardable
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
+        abort(404)
 
-    # Check that brief.awarded_brief_response is not null
+    # Only closed briefs should have an awarded_brief_response
+    if not brief.get("pendingAwardBriefResponseId"):
+        abort(404)
 
     # get questions
     content = content_loader.get_manifest(brief['frameworkSlug'], 'award_brief')

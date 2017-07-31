@@ -3265,6 +3265,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         brief_stub = api_stubs.brief(
             framework_slug='digital-outcomes-and-specialists-2', lot_slug="digital-outcomes", status='closed'
         )
+        brief_stub['briefs']['pendingAwardBriefResponseId'] = 1
         self.data_api_client.get_brief.return_value = brief_stub
 
     def teardown_method(self, method):
@@ -3313,13 +3314,13 @@ class TestAwardBriefDetails(BaseApplicationTest):
                     "awardedContractStartDate-day": "31",
                     "awardedContractStartDate-month": "12",
                     "awardedContractStartDate-year": "2020",
-                    "contractValue": "88.84"
+                    "awardedContractValue": "88.84"
                 }
             )
 
             assert self.data_api_client.update_brief_award_details.call_args == mock.call(
                 '1234',
-                {'awardedContractStartDate': "2020-12-31", "contractValue": "88.84"},
+                {'awardedContractStartDate': "2020-12-31", "awardedContractValue": "88.84"},
                 updated_by="buyer@email.com"
             )
             assert res.status_code == 302
@@ -3328,26 +3329,44 @@ class TestAwardBriefDetails(BaseApplicationTest):
     def _setup_api_error_response(self, error_json):
         self.data_api_client.update_brief_award_details.side_effect = HTTPError(mock.Mock(status_code=400), error_json)
 
-    def test_award_brief_details_post_raises_400_if_required_fields_not_filled(self):
-        self._setup_api_error_response({"contractValue": "answer_required"})
+    @mock.patch('app.main.views.buyers.is_brief_correct')
+    def test_award_brief_details_raises_400_if_brief_not_correct(self, is_brief_correct):
+        is_brief_correct.return_value = False
         self.login_as_buyer()
-        res = self.client.post(self.url.format(brief_id=1234), data={})
-        document = html.fromstring(res.get_data(as_text=True))
+        res = self.client.get(self.url.format(brief_id=1234))
+        assert res.status_code == 404
 
-        assert res.status_code == 400
+    def test_award_brief_details_raises_400_if_awarded_brief_response_not_present(self):
+        stub = self.data_api_client.get_brief.return_value
+        stub['briefs'].pop('pendingAwardBriefResponseId')
+        self.data_api_client.get_brief.return_value = stub
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234))
+        assert res.status_code == 404
+
+    def test_award_brief_details_post_raises_400_if_required_fields_not_filled(self):
+        with self.app.app_context():
+            self._setup_api_error_response({"awardedContractValue": "answer_required"})
+            self.login_as_buyer()
+            res = self.client.post(self.url.format(brief_id=1234), data={})
+            document = html.fromstring(res.get_data(as_text=True))
+
+            assert res.status_code == 400
 
     def test_award_brief_details_post_raises_400_if_invalid_date_format(self):
-        self._setup_api_error_response({"awardedContractStartDate": "invalid_format"})
-        self.login_as_buyer()
-        res = self.client.post(self.url.format(brief_id=1234), data={'contractStartDate': "bad date"})
-        document = html.fromstring(res.get_data(as_text=True))
+        with self.app.app_context():
+            self._setup_api_error_response({"awardedContractStartDate": "invalid_format"})
+            self.login_as_buyer()
+            res = self.client.post(self.url.format(brief_id=1234), data={'contractStartDate': "bad date"})
+            document = html.fromstring(res.get_data(as_text=True))
 
-        assert res.status_code == 400
+            assert res.status_code == 400
 
     def test_award_brief_details_post_raises_400_if_invalid_contract_value_format(self):
-        self._setup_api_error_response({"contractValue": "not_money_format"})
-        self.login_as_buyer()
-        res = self.client.post(self.url.format(brief_id=1234), data={'contractValue': "not a number"})
-        document = html.fromstring(res.get_data(as_text=True))
+        with self.app.app_context():
+            self._setup_api_error_response({"awardedContractValue": "not_money_format"})
+            self.login_as_buyer()
+            res = self.client.post(self.url.format(brief_id=1234), data={'contractValue': "not a number"})
+            document = html.fromstring(res.get_data(as_text=True))
 
-        assert res.status_code == 400
+            assert res.status_code == 400
