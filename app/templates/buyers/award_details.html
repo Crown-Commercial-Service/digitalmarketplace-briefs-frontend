@@ -36,7 +36,8 @@
         {% include 'toolkit/page-heading.html' %}
       {% endwith %}
 
-      <form >
+      <form method="POST" action="{{ url_for('.award_brief_details', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           {% for question in section.questions %}
               {{ forms[question.type](
                   question,

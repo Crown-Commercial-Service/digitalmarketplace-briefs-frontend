@@ -3212,11 +3212,41 @@ class TestAwardBrief(BaseApplicationTest):
         assert self._strip_whitespace(error_span.text_content()) == "Notavalidchoice"
 
     def test_award_brief_post_valid_form_calls_api_and_redirects_to_next_question(self):
-        pass
+        self.data_api_client.update_brief_award_brief_response.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists-2',
+            status='closed',
+            lots=[
+                api_stubs.lot(slug='digital-outcomes', allows_brief=True)
+            ]
+        )
+        with self.app.app_context():
+            self.login_as_buyer()
+            res = self.client.post(self.url.format(brief_id=1234), data={'supplier': 2})
+
+            assert self.data_api_client.update_brief_award_brief_response.call_args == mock.call(
+                u'1234', 2, updated_by="buyer@email.com"
+            )
+            assert res.status_code == 302
+            assert "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award/contract-details" in res.location  # noqa
+
+    def test_award_brief_post_raises_500_on_api_error_and_displays_generic_error_message(self):
+        self.data_api_client.update_brief_award_brief_response.side_effect = HTTPError(
+            mock.Mock(status_code=500),
+            {"title": "BriefResponse cannot be awarded for this Brief"}
+        )
+
+        with self.app.app_context():
+            self.login_as_buyer()
+            res = self.client.post(self.url.format(brief_id=1234), data={'supplier': 2})
+            document = html.fromstring(res.get_data(as_text=True))
+
+            assert res.status_code == 500
+            error_span = document.xpath('//h1')[0]
+            assert self._strip_whitespace(error_span.text_content()) == "Sorry,we'reexperiencingtechnicaldifficulties"
 
 
 class TestAwardBriefDetails(BaseApplicationTest):
-    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award/details"
+    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award/contract-details"
 
     def setup_method(self, method):
         super(TestAwardBriefDetails, self).setup_method(method)
@@ -3266,3 +3296,58 @@ class TestAwardBriefDetails(BaseApplicationTest):
         secondary_link = document.xpath('//div[@class="secondary-action-link"]//a[1]/@href')[0]
         assert secondary_link == \
             '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award'
+
+    def test_award_brief_details_post_valid_form_calls_api_and_redirects(self):
+        self.data_api_client.update_brief_award_details.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists-2',
+            status='awarded',
+            lots=[
+                api_stubs.lot(slug='digital-outcomes', allows_brief=True)
+            ]
+        )
+        with self.app.app_context():
+            self.login_as_buyer()
+            res = self.client.post(
+                self.url.format(brief_id=1234),
+                data={
+                    "awardedContractStartDate-day": "31",
+                    "awardedContractStartDate-month": "12",
+                    "awardedContractStartDate-year": "2020",
+                    "contractValue": "88.84"
+                }
+            )
+
+            assert self.data_api_client.update_brief_award_details.call_args == mock.call(
+                '1234',
+                {'awardedContractStartDate': "2020-12-31", "contractValue": "88.84"},
+                updated_by="buyer@email.com"
+            )
+            assert res.status_code == 302
+            assert res.location == "http://localhost/buyers"
+
+    def _setup_api_error_response(self, error_json):
+        self.data_api_client.update_brief_award_details.side_effect = HTTPError(mock.Mock(status_code=400), error_json)
+
+    def test_award_brief_details_post_raises_400_if_required_fields_not_filled(self):
+        self._setup_api_error_response({"contractValue": "answer_required"})
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=1234), data={})
+        document = html.fromstring(res.get_data(as_text=True))
+
+        assert res.status_code == 400
+
+    def test_award_brief_details_post_raises_400_if_invalid_date_format(self):
+        self._setup_api_error_response({"awardedContractStartDate": "invalid_format"})
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=1234), data={'contractStartDate': "bad date"})
+        document = html.fromstring(res.get_data(as_text=True))
+
+        assert res.status_code == 400
+
+    def test_award_brief_details_post_raises_400_if_invalid_contract_value_format(self):
+        self._setup_api_error_response({"contractValue": "not_money_format"})
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=1234), data={'contractValue': "not a number"})
+        document = html.fromstring(res.get_data(as_text=True))
+
+        assert res.status_code == 400

@@ -386,9 +386,25 @@ def award_brief(framework_slug, lot_slug, brief_id):
                 form=form,
                 form_errors=form_errors,
             ), 400
+
         if form.data:
-            # TODO: They clicked something! Check the POST data and do something.
-            print('Answered form', form.data)
+            try:
+                data_api_client.update_brief_award_brief_response(
+                    brief_id,
+                    form.data['supplier'],
+                    updated_by=current_user.email_address
+                )
+            except HTTPError as e:
+                abort(500, "Unexpected API error when awarding brief response")
+
+            return redirect(
+                url_for(
+                    ".award_brief_details",
+                    framework_slug=brief['frameworkSlug'],
+                    lot_slug=brief['lotSlug'],
+                    brief_id=brief['id']
+                )
+            )
 
     else:
         form = AwardedSupplierForm(suppliers=suppliers)
@@ -400,7 +416,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
     ), 200
 
 
-@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award/details', methods=['GET', 'POST'])
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award/contract-details', methods=['GET', 'POST'])
 def award_brief_details(framework_slug, lot_slug, brief_id):
     get_framework_and_lot(
         framework_slug,
@@ -420,7 +436,29 @@ def award_brief_details(framework_slug, lot_slug, brief_id):
     section_id = content.get_next_editable_section_id()
     section = content.get_section(section_id)
 
-    # handle POST data if present and redirect to buyer profile
+    if request.method == "POST":
+        award_data = section.get_data(request.form)
+        # API client validation
+        try:
+            data_api_client.update_brief_award_details(
+                brief_id,
+                award_data,
+                updated_by=current_user.email_address
+            )
+        except HTTPError as e:
+            award_data = section.unformat_data(award_data)
+            errors = section.get_error_messages(e.message)
+
+            return render_template(
+                "buyers/edit_brief_question.html",
+                brief=brief,
+                data=award_data,
+                section=section,
+                question=section.questions[0],
+                errors=errors
+            ), 400
+
+        return redirect(url_for(".buyer_dashboard"))
 
     return render_template(
         "buyers/award_details.html",
