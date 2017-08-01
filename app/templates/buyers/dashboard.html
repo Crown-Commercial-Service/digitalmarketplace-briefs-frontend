@@ -30,6 +30,8 @@
                             <p class="banner-message">
                     {% if 'requirements_deleted' in message %}
                             Your requirements &lsquo;{{ message.get('requirements_deleted') }}&rsquo; were deleted
+                    {% elif 'updated-brief' in message %}
+                            You've updated '{{ message.get('updated-brief') }}'
                     {% else %}
                         {{ message }}
                     {% endif %}

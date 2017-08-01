@@ -133,6 +133,19 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert withdrawn_row[1] == "Withdrawn"
         assert "View responses" not in withdrawn_row[2]
 
+    def test_flash_message_shown_if_brief_has_just_been_updated(self, data_api_client, find_briefs_mock):
+        data_api_client.find_briefs.return_value = find_briefs_mock
+
+        with self.client.session_transaction() as session:
+            session['_flashes'] = [
+                ('message', {'updated-brief': "My Amazing Brief"})
+            ]
+
+        res = self.client.get("/buyers")
+
+        flash_div = html.fromstring(res.get_data(as_text=True)).xpath('//div[@class="banner-success-without-action"]')
+        assert flash_div[0].text_content().strip() == "You've updated 'My Amazing Brief'"
+
 
 class TestBuyerRoleRequired(BaseApplicationTest):
     def test_login_required_for_buyer_pages(self):
@@ -3327,6 +3340,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
             )
             assert res.status_code == 302
             assert res.location == "http://localhost/buyers"
+            self.assert_flashes("updated-brief")
 
     def _setup_api_error_response(self, error_json):
         self.data_api_client.update_brief_award_details.side_effect = HTTPError(mock.Mock(status_code=400), error_json)

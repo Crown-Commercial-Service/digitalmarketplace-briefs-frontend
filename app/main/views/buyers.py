@@ -457,6 +457,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id):
                 section=section
             ), 400
 
+        flash({"updated-brief": brief.get("title")})
         return redirect(url_for(".buyer_dashboard"))
 
     return render_template(
