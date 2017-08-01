@@ -3197,7 +3197,7 @@ class TestAwardBrief(BaseApplicationTest):
 
         assert res.status_code == 400
         error_span = document.xpath('//span[@id="error-supplier"]')[0]
-        assert self._strip_whitespace(error_span.text_content()) == "Thisquestionrequiresananswer"
+        assert self._strip_whitespace(error_span.text_content()) == "Youneedtoanswerthisquestion."
 
     def test_award_brief_post_raises_400_if_form_not_valid(self):
         self.login_as_buyer()
@@ -3264,6 +3264,11 @@ class TestAwardBriefDetails(BaseApplicationTest):
         )
         brief_stub['briefs']['pendingAwardBriefResponseId'] = 1
         self.data_api_client.get_brief.return_value = brief_stub
+        self.data_api_client.get_brief_response.return_value = {
+            "briefResponses": {
+                "id": 1, "supplierName": "BananaCorp"
+            }
+        }
 
     def teardown_method(self, method):
         self.data_api_client_patch.stop()
@@ -3283,7 +3288,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         ])
 
         page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
-        assert page_title == "Tellusaboutyourcontractwithbananas"
+        assert page_title == "TellusaboutyourcontractwithBananaCorp"
 
         submit_button = document.xpath('//input[@class="button-save" and @value="Submit"]')
         assert len(submit_button) == 1

@@ -8,7 +8,7 @@ class AwardedSupplierForm(Form):
     # supplier choices expected to be set at runtime
     supplier = RadioField(
         "Winning Supplier",
-        validators=[validators.DataRequired(message="This question requires an answer")],
+        validators=[validators.DataRequired(message="You need to answer this question.")],
         coerce=int
     )
 

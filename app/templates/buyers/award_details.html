@@ -29,7 +29,7 @@
   <div class="grid-row">
     <div class="column-two-thirds">
       {% with
-        heading = "Tell us about your contract with bananas",
+        heading = "Tell us about your contract with {}".format(pending_brief_response.supplierName),
         smaller = True
       %}
         {% include 'toolkit/page-heading.html' %}

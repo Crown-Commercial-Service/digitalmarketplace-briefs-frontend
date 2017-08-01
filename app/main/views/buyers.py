@@ -429,6 +429,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id):
     # Only closed briefs should have an awarded_brief_response
     if not brief.get("pendingAwardBriefResponseId"):
         abort(404)
+    pending_brief_response = data_api_client.get_brief_response(brief["pendingAwardBriefResponseId"])["briefResponses"]
 
     # get questions
     content = content_loader.get_manifest(brief['frameworkSlug'], 'award_brief')
@@ -451,8 +452,9 @@ def award_brief_details(framework_slug, lot_slug, brief_id):
                 "buyers/award_details.html",
                 brief=brief,
                 data=award_data,
-                section=section,
-                errors=errors
+                errors=errors,
+                pending_brief_response=pending_brief_response,
+                section=section
             ), 400
 
         return redirect(url_for(".buyer_dashboard"))
@@ -461,6 +463,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id):
         "buyers/award_details.html",
         brief=brief,
         data={},
+        pending_brief_response=pending_brief_response,
         section=section,
     ), 200
 
