@@ -3343,34 +3343,50 @@ class TestAwardBriefDetails(BaseApplicationTest):
 
     def test_award_brief_details_post_raises_400_if_required_fields_not_filled(self):
         with self.app.app_context():
-            self._setup_api_error_response({"awardedContractValue": "answer_required"})
+            self._setup_api_error_response({
+                "awardedContractValue": "answer_required",
+                "awardedContractStartDate": "answer_required"
+            })
             self.login_as_buyer()
             res = self.client.post(self.url.format(brief_id=1234), data={})
             document = html.fromstring(res.get_data(as_text=True))
 
             assert res.status_code == 400
-            error_span = document.xpath('//span[@class="validation-message"]')[0]
-            assert self._strip_whitespace(error_span.text_content()) == "Youneedtoanswerthisquestion."
+            error_spans = document.xpath('//span[@class="validation-message"]')
+            assert self._strip_whitespace(error_spans[0].text_content()) == "Youneedtoanswerthisquestion."
+            assert self._strip_whitespace(error_spans[1].text_content()) == "Youneedtoanswerthisquestion."
 
-    def test_award_brief_details_post_raises_400_if_invalid_date_format(self):
+    def test_award_brief_details_post_raises_400_and_displays_error_messages_and_prefills_fields_if_invalid_data(self):
         with self.app.app_context():
-            self._setup_api_error_response({"awardedContractStartDate": "invalid_format"})
+            self._setup_api_error_response({
+                "awardedContractStartDate": "invalid_format",
+                "awardedContractValue": "not_money_format"
+            })
             self.login_as_buyer()
-            res = self.client.post(self.url.format(brief_id=1234), data={'contractStartDate': "bad date"})
-            document = html.fromstring(res.get_data(as_text=True))
+
+            res = self.client.post(
+                self.url.format(brief_id=1234),
+                data={
+                    "awardedContractValue": "incorrect",
+                    "awardedContractStartDate-day": "x",
+                    "awardedContractStartDate-month": "y",
+                    "awardedContractStartDate-year": "z"
+                }
+            )
 
             assert res.status_code == 400
-            error_span = document.xpath('//span[@class="validation-message"]')[0]
-            assert self._strip_whitespace(error_span.text_content()) == "Youranswermustbeavaliddate."
-
-    def test_award_brief_details_post_raises_400_if_invalid_contract_value_format(self):
-        with self.app.app_context():
-            self._setup_api_error_response({"awardedContractValue": "not_money_format"})
-            self.login_as_buyer()
-            res = self.client.post(self.url.format(brief_id=1234), data={'contractValue': "not a number"})
             document = html.fromstring(res.get_data(as_text=True))
 
-            assert res.status_code == 400
-            error_span = document.xpath('//span[@class="validation-message"]')[0]
-            assert self._strip_whitespace(error_span.text_content()) == \
+            # Masthead errors
+
+            # Individual error messages
+            error_spans = document.xpath('//span[@class="validation-message"]')
+            assert self._strip_whitespace(error_spans[0].text_content()) == "Youranswermustbeavaliddate."
+            assert self._strip_whitespace(error_spans[1].text_content()) == \
                 "Valuemustbeinnumbersanddecimalpointsonly,forexample99.95."
+
+            # Prefilled form input
+            assert document.xpath('//input[@id="input-awardedContractValue"]/@value')[0] == "incorrect"
+            assert document.xpath('//input[@id="input-awardedContractStartDate-day"]/@value')[0] == "x"
+            assert document.xpath('//input[@id="input-awardedContractStartDate-month"]/@value')[0] == "y"
+            assert document.xpath('//input[@id="input-awardedContractStartDate-year"]/@value')[0] == "z"

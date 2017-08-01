@@ -460,6 +460,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id):
     return render_template(
         "buyers/award_details.html",
         brief=brief,
+        data={},
         section=section,
     ), 200
 

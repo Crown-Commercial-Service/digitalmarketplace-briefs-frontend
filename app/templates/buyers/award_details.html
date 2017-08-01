@@ -41,7 +41,7 @@
           {% for question in section.questions %}
               {{ forms[question.type](
                   question,
-                  brief,
+                  data,
                   errors if errors and (errors[question.id] or question.type == 'multiquestion') else {},
                  )
               }}
