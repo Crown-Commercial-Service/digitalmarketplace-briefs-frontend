@@ -3184,14 +3184,11 @@ class TestAwardBrief(BaseApplicationTest):
         res = self.client.get(self.url.format(brief_id=1234))
         assert res.status_code == 404
 
-    def test_award_brief_no_suppliers_applied_for_brief_displays_error_message(self):
+    def test_award_brief_returns_404_if_no_suppliers_applied(self):
         self.data_api_client.find_brief_responses.return_value = {"briefResponses": []}
         self.login_as_buyer()
         res = self.client.get(self.url.format(brief_id=1234))
-        page = res.get_data(as_text=True)
-
-        assert res.status_code == 200
-        assert "No suppliers applied to this opportunity." in page
+        assert res.status_code == 404
 
     def test_award_brief_post_raises_400_if_required_fields_not_filled(self):
         self.login_as_buyer()
