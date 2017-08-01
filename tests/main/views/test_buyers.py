@@ -3246,7 +3246,7 @@ class TestAwardBrief(BaseApplicationTest):
 
 
 class TestAwardBriefDetails(BaseApplicationTest):
-    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award/contract-details"
+    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award/contract-details"  # noqa
 
     def setup_method(self, method):
         super(TestAwardBriefDetails, self).setup_method(method)
@@ -3352,6 +3352,8 @@ class TestAwardBriefDetails(BaseApplicationTest):
             document = html.fromstring(res.get_data(as_text=True))
 
             assert res.status_code == 400
+            error_span = document.xpath('//span[@class="validation-message"]')[0]
+            assert self._strip_whitespace(error_span.text_content()) == "Youneedtoanswerthisquestion."
 
     def test_award_brief_details_post_raises_400_if_invalid_date_format(self):
         with self.app.app_context():
@@ -3361,6 +3363,8 @@ class TestAwardBriefDetails(BaseApplicationTest):
             document = html.fromstring(res.get_data(as_text=True))
 
             assert res.status_code == 400
+            error_span = document.xpath('//span[@class="validation-message"]')[0]
+            assert self._strip_whitespace(error_span.text_content()) == "Youranswermustbeavaliddate."
 
     def test_award_brief_details_post_raises_400_if_invalid_contract_value_format(self):
         with self.app.app_context():
@@ -3370,3 +3374,6 @@ class TestAwardBriefDetails(BaseApplicationTest):
             document = html.fromstring(res.get_data(as_text=True))
 
             assert res.status_code == 400
+            error_span = document.xpath('//span[@class="validation-message"]')[0]
+            assert self._strip_whitespace(error_span.text_content()) == \
+                "Valuemustbeinnumbersanddecimalpointsonly,forexample99.95."

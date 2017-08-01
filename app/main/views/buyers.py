@@ -416,7 +416,9 @@ def award_brief(framework_slug, lot_slug, brief_id):
     ), 200
 
 
-@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award/contract-details', methods=['GET', 'POST'])
+@main.route(
+    '/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award/contract-details', methods=['GET', 'POST']
+)
 def award_brief_details(framework_slug, lot_slug, brief_id):
     get_framework_and_lot(
         framework_slug,
@@ -441,7 +443,6 @@ def award_brief_details(framework_slug, lot_slug, brief_id):
 
     if request.method == "POST":
         award_data = section.get_data(request.form)
-        # API client validation
         try:
             data_api_client.update_brief_award_details(
                 brief_id,
@@ -453,11 +454,10 @@ def award_brief_details(framework_slug, lot_slug, brief_id):
             errors = section.get_error_messages(e.message)
 
             return render_template(
-                "buyers/edit_brief_question.html",
+                "buyers/award_details.html",
                 brief=brief,
                 data=award_data,
                 section=section,
-                question=section.questions[0],
                 errors=errors
             ), 400
 
