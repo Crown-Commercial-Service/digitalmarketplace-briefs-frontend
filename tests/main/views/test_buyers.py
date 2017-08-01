@@ -3346,6 +3346,11 @@ class TestAwardBriefDetails(BaseApplicationTest):
         res = self.client.get(self.url.format(brief_id=1234))
         assert res.status_code == 404
 
+    def _assert_masthead(self, document):
+        masthead_error_links = document.xpath('//a[@class="validation-masthead-link"]')
+        assert masthead_error_links[0].text_content() == "Awarded contract start date"
+        assert masthead_error_links[1].text_content() == "Awarded contract value"
+
     def test_award_brief_details_post_raises_400_if_required_fields_not_filled(self):
         with self.app.app_context():
             self._setup_api_error_response({
@@ -3357,6 +3362,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
             document = html.fromstring(res.get_data(as_text=True))
 
             assert res.status_code == 400
+            self._assert_masthead(document)
             error_spans = document.xpath('//span[@class="validation-message"]')
             assert self._strip_whitespace(error_spans[0].text_content()) == "Youneedtoanswerthisquestion."
             assert self._strip_whitespace(error_spans[1].text_content()) == "Youneedtoanswerthisquestion."
@@ -3382,7 +3388,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
             assert res.status_code == 400
             document = html.fromstring(res.get_data(as_text=True))
 
-            # Masthead errors
+            self._assert_masthead(document)
 
             # Individual error messages
             error_spans = document.xpath('//span[@class="validation-message"]')
