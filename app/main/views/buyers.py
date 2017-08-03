@@ -40,7 +40,7 @@ def buyer_dashboard():
         content_loader
     )
     live_briefs = [brief for brief in user_briefs if brief['status'] == 'live']
-    closed_briefs = [brief for brief in user_briefs if brief['status'] in ['closed', 'withdrawn']]
+    closed_briefs = [brief for brief in user_briefs if brief['status'] in ['closed', 'withdrawn', 'awarded']]
 
     return render_template(
         'buyers/dashboard.html',

@@ -37,23 +37,34 @@ def find_briefs_mock():
                 "id": 20,
                 "status": "draft",
                 "title": "A draft brief",
-            }, {
+            },
+            {
                 "id": 21,
                 "status": "live",
                 "title": "A live brief",
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
-            }, {
+            },
+            {
                 "id": 22,
                 "status": "closed",
                 "title": "A closed brief",
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
                 "applicationsClosedAt": "2016-02-18T12:00:00.000000Z",
-            }, {
+            },
+            {
                 "id": 23,
                 "status": "withdrawn",
                 "title": "A withdrawn brief",
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
                 "withdrawnAt": "2016-02-05T12:00:00.000000Z",
+            },
+            {
+                "id": 24,
+                "status": "awarded",
+                "title": "An awarded brief",
+                "publishedAt": "2016-02-03T12:00:00.000000Z",
+                "applicationsClosedAt": "2016-02-19T12:00:00.000000Z",
+
             }
         ]
     }
@@ -105,40 +116,58 @@ class TestBuyerDashboard(BaseApplicationTest):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
         res = self.client.get("/buyers")
-        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
 
         assert res.status_code == 200
-        table_row = tables[2].xpath('.//tbody/tr')[0].xpath('.//td')
+        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
+        closed_row_cells = tables[2].xpath('.//tbody/tr')[0].xpath('.//td')
 
-        assert table_row[0].xpath('.//a')[0].text_content() == "A closed brief"
-        assert table_row[0].xpath('.//a/@href')[0] == \
+        assert closed_row_cells[0].xpath('.//a')[0].text_content() == "A closed brief"
+        assert closed_row_cells[0].xpath('.//a/@href')[0] == \
             '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22'
 
         assert tables[2].xpath('.//tbody/tr/td')[1].text_content().strip() == "Thursday 18 February 2016"
 
-        assert table_row[2].xpath('.//a')[0].text_content() == "View responses"
-        assert table_row[2].xpath('.//a/@href')[0] == \
+        assert closed_row_cells[2].xpath('.//a')[0].text_content() == "View responses"
+        assert closed_row_cells[2].xpath('.//a/@href')[0] == \
             '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/responses'
 
-        assert table_row[2].xpath('.//a')[1].text_content() == "Tell us who won this contract"
-        assert table_row[2].xpath('.//a/@href')[1] == \
+        assert closed_row_cells[2].xpath('.//a')[1].text_content() == "Tell us who won this contract"
+        assert closed_row_cells[2].xpath('.//a/@href')[1] == \
             '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/award'
 
     def test_closed_briefs_section_with_withdrawn_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
         res = self.client.get("/buyers")
-        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
 
         assert res.status_code == 200
-
-        withdrawn_row = [cell.text_content().strip() for cell in tables[2].xpath('.//tbody/tr')[1].xpath('.//td')]
+        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
+        withdrawn_row = tables[2].xpath('.//tbody/tr')[1]
+        withdrawn_row_cells = [cell.text_content().strip() for cell in withdrawn_row.xpath('.//td')]
         expected_link = '/digital-outcomes-and-specialists/opportunities/23'
 
-        assert withdrawn_row[0] == "A withdrawn brief"
-        assert tables[2].xpath('.//tbody/tr')[1].xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
-        assert withdrawn_row[1] == "Withdrawn"
-        assert "View responses" not in withdrawn_row[2]
+        assert withdrawn_row_cells[0] == "A withdrawn brief"
+        assert withdrawn_row.xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
+        assert withdrawn_row_cells[1] == "Withdrawn"
+        assert "View responses" not in withdrawn_row_cells[2]
+        assert "Tell us who won this contract" not in withdrawn_row_cells[2]
+
+    def test_closed_briefs_section_with_awarded_brief(self, data_api_client, find_briefs_mock):
+        data_api_client.find_briefs.return_value = find_briefs_mock
+
+        res = self.client.get("/buyers")
+
+        assert res.status_code == 200
+        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
+        awarded_row = tables[2].xpath('.//tbody/tr')[2]
+        awarded_row_cells = [cell.text_content().strip() for cell in awarded_row.xpath('.//td')]
+        expected_link = '/digital-outcomes-and-specialists/opportunities/24'
+
+        assert awarded_row_cells[0] == "An awarded brief"
+        assert awarded_row.xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
+        assert awarded_row_cells[1] == "Friday 19 February 2016"
+        assert "View responses" not in awarded_row_cells[2]
+        assert "Tell us who won this contract" not in awarded_row_cells[2]
 
     def test_flash_message_shown_if_brief_has_just_been_updated(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
