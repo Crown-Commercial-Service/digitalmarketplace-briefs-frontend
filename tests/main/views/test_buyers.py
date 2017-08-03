@@ -37,19 +37,22 @@ def find_briefs_mock():
                 "id": 20,
                 "status": "draft",
                 "title": "A draft brief",
+                "briefResponsesSubmittedCount": 0
             },
             {
                 "id": 21,
                 "status": "live",
                 "title": "A live brief",
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
+                "briefResponsesSubmittedCount": 0
             },
             {
                 "id": 22,
                 "status": "closed",
-                "title": "A closed brief",
+                "title": "A closed brief with brief responses",
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
                 "applicationsClosedAt": "2016-02-18T12:00:00.000000Z",
+                "briefResponsesSubmittedCount": 2
             },
             {
                 "id": 23,
@@ -57,6 +60,7 @@ def find_briefs_mock():
                 "title": "A withdrawn brief",
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
                 "withdrawnAt": "2016-02-05T12:00:00.000000Z",
+                "briefResponsesSubmittedCount": 0
             },
             {
                 "id": 24,
@@ -64,8 +68,17 @@ def find_briefs_mock():
                 "title": "An awarded brief",
                 "publishedAt": "2016-02-03T12:00:00.000000Z",
                 "applicationsClosedAt": "2016-02-19T12:00:00.000000Z",
+                "briefResponsesSubmittedCount": 2
 
-            }
+            },
+            {
+                "id": 25,
+                "status": "closed",
+                "title": "A closed brief with no brief responses",
+                "publishedAt": "2016-02-04T12:00:00.000000Z",
+                "applicationsClosedAt": "2016-02-18T12:00:00.000000Z",
+                "briefResponsesSubmittedCount": 0
+            },
         ]
     }
 
@@ -121,7 +134,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
         closed_row_cells = tables[2].xpath('.//tbody/tr')[0].xpath('.//td')
 
-        assert closed_row_cells[0].xpath('.//a')[0].text_content() == "A closed brief"
+        assert closed_row_cells[0].xpath('.//a')[0].text_content() == "A closed brief with brief responses"
         assert closed_row_cells[0].xpath('.//a/@href')[0] == \
             '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22'
 
@@ -134,6 +147,17 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert closed_row_cells[2].xpath('.//a')[1].text_content() == "Tell us who won this contract"
         assert closed_row_cells[2].xpath('.//a/@href')[1] == \
             '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/award'
+
+    def test_closed_brief_with_no_brief_responses_does_not_show_award_link(self, data_api_client, find_briefs_mock):
+        data_api_client.find_briefs.return_value = find_briefs_mock
+
+        res = self.client.get("/buyers")
+
+        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
+        closed_row_cells = tables[2].xpath('.//tbody/tr')[3].xpath('.//td')
+        assert closed_row_cells[0].xpath('.//a')[0].text_content() == "A closed brief with no brief responses"
+        assert len(closed_row_cells[2].xpath('.//a')) == 1
+        assert closed_row_cells[2].xpath('.//a')[0].text_content() == "View responses"
 
     def test_closed_briefs_section_with_withdrawn_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
