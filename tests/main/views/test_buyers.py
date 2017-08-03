@@ -101,23 +101,30 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert tables[1].xpath('.//tbody/tr')[0].xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
         assert live_row[1] == "Thursday 4 February 2016"
 
-    def test_closed_briefs_section(self, data_api_client, find_briefs_mock):
+    def test_closed_briefs_section_with_closed_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
         res = self.client.get("/buyers")
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
 
         assert res.status_code == 200
+        table_row = tables[2].xpath('.//tbody/tr')[0].xpath('.//td')
 
-        closed_row = [cell.text_content().strip() for cell in tables[2].xpath('.//tbody/tr/td')]
-        expected_link = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22'
+        assert table_row[0].xpath('.//a')[0].text_content() == "A closed brief"
+        assert table_row[0].xpath('.//a/@href')[0] == \
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22'
 
-        assert closed_row[0] == "A closed brief"
-        assert tables[2].xpath('.//tbody/tr')[0].xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
-        assert closed_row[1] == "Thursday 18 February 2016"
-        assert closed_row[2] == "View responses"
+        assert tables[2].xpath('.//tbody/tr/td')[1].text_content().strip() == "Thursday 18 February 2016"
 
-    def test_withdrawn_briefs_section(self, data_api_client, find_briefs_mock):
+        assert table_row[2].xpath('.//a')[0].text_content() == "View responses"
+        assert table_row[2].xpath('.//a/@href')[0] == \
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/responses'
+
+        assert table_row[2].xpath('.//a')[1].text_content() == "Tell us who won this contract"
+        assert table_row[2].xpath('.//a/@href')[1] == \
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/award'
+
+    def test_closed_briefs_section_with_withdrawn_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
         res = self.client.get("/buyers")
