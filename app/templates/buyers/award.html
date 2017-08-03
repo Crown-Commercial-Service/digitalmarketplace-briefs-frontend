@@ -46,6 +46,7 @@
                       question = "Which supplier won the contract?",
                       type = "radio",
                       options = form.supplier.toolkit_macro_options,
+                      value = form.supplier.data,
                       error = form.supplier.errors[0]
                     %}
                       {% include "toolkit/forms/selection-buttons.html" %}

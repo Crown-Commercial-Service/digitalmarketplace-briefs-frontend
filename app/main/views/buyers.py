@@ -402,6 +402,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
 
     else:
         form = AwardedSupplierForm(suppliers=suppliers)
+        form['supplier'].data = brief.get('pendingAwardBriefResponseId')
 
     return render_template(
         "buyers/award.html",

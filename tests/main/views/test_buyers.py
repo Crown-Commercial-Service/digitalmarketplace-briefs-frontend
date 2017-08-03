@@ -3159,6 +3159,11 @@ class TestAwardBrief(BaseApplicationTest):
         submit_button = document.xpath('//input[@class="button-save" and @value="Save and continue"]')
         assert len(submit_button) == 1
 
+        # No options should be selected
+        labels = document.xpath('//label[@class="selection-button selection-button-radio"]/@class')
+        for label_class in labels:
+            assert "selected" not in label_class
+
     def test_award_brief_get_lists_suppliers_who_applied_for_this_brief_alphabetically(self):
         self.login_as_buyer()
 
@@ -3173,8 +3178,20 @@ class TestAwardBrief(BaseApplicationTest):
             label = document.xpath('//label[@for="input-supplier-{}"]'.format(i+1))[0]
             assert self._strip_whitespace(label.text_content()) == brief_response[1]
 
-    def test_award_brief_get_populates_form_with_existing_data_if_present(self):
-        pass
+    def test_award_brief_get_populates_form_with_a_previously_chosen_brief_response(self):
+        brief_stub = api_stubs.brief(
+            framework_slug='digital-outcomes-and-specialists-2', lot_slug="digital-outcomes", status='closed'
+        )
+        brief_stub['briefs']['pendingAwardBriefResponseId'] = 90
+        self.data_api_client.get_brief.return_value = brief_stub
+
+        self.login_as_buyer()
+
+        res = self.client.get(self.url.format(brief_id=1234))
+        assert res.status_code == 200
+        document = html.fromstring(res.get_data(as_text=True))
+        selected_label_class = document.xpath('//label[@for="input-supplier-2"]/@class')[0]
+        assert "selected" in selected_label_class
 
     def test_award_brief_get_redirects_to_login_if_not_authenticated(self):
         target_url = self.url.format(brief_id=1234)
