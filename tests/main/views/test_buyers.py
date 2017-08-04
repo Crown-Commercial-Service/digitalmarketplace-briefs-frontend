@@ -146,7 +146,7 @@ class TestBuyerDashboard(BaseApplicationTest):
 
         assert closed_row_cells[2].xpath('.//a')[1].text_content() == "Tell us who won this contract"
         assert closed_row_cells[2].xpath('.//a/@href')[1] == \
-            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/award'
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/award-contract'
 
     def test_closed_brief_with_no_brief_responses_does_not_show_award_link(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
@@ -3172,7 +3172,7 @@ class TestAwardBrief(BaseApplicationTest):
             {"id": 90, "supplierName": "Bobbins"},
         ]
     }
-    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award"
+    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award-contract"
 
     def setup_method(self, method):
         super(TestAwardBrief, self).setup_method(method)
@@ -3388,7 +3388,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
 
         secondary_link = document.xpath('//div[@class="secondary-action-link"]//a[1]/@href')[0]
         assert secondary_link == \
-            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award'
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award-contract'
 
     def test_award_brief_details_post_valid_form_calls_api_and_redirects(self):
         self.data_api_client.update_brief_award_details.return_value = api_stubs.framework(

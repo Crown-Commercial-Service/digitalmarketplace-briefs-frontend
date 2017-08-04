@@ -346,7 +346,7 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
     ), 200
 
 
-@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award', methods=['GET', 'POST'])
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award-contract', methods=['GET', 'POST'])
 def award_brief(framework_slug, lot_slug, brief_id):
     get_framework_and_lot(
         framework_slug,
