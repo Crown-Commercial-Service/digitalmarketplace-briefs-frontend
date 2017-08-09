@@ -396,13 +396,15 @@ def award_brief(framework_slug, lot_slug, brief_id):
                     ".award_brief_details",
                     framework_slug=brief['frameworkSlug'],
                     lot_slug=brief['lotSlug'],
-                    brief_id=brief['id']
+                    brief_id=brief['id'],
+                    brief_response_id=form.data['supplier']
                 )
             )
 
     else:
         form = AwardedSupplierForm(suppliers=suppliers)
-        form['supplier'].data = brief.get('pendingAwardBriefResponseId')
+        pending_brief_responses = list(filter(lambda x: x.get('awardDetails', {}).get('pending'), brief_responses))
+        form['supplier'].data = pending_brief_responses[0]["id"] if pending_brief_responses else None
 
     return render_template(
         "buyers/award.html",
@@ -412,9 +414,10 @@ def award_brief(framework_slug, lot_slug, brief_id):
 
 
 @main.route(
-    '/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award/contract-details', methods=['GET', 'POST']
+    '/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award/<brief_response_id>/contract-details',
+    methods=['GET', 'POST']
 )
-def award_brief_details(framework_slug, lot_slug, brief_id):
+def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
     get_framework_and_lot(
         framework_slug,
         lot_slug,
@@ -423,14 +426,9 @@ def award_brief_details(framework_slug, lot_slug, brief_id):
         must_allow_brief=True,
     )
     brief = data_api_client.get_brief(brief_id)["briefs"]
-
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
         abort(404)
-
-    # Only closed briefs should have an awarded_brief_response
-    if not brief.get("pendingAwardBriefResponseId"):
-        abort(404)
-    pending_brief_response = data_api_client.get_brief_response(brief["pendingAwardBriefResponseId"])["briefResponses"]
+    pending_brief_response = data_api_client.get_brief_response(brief_response_id)["briefResponses"]
 
     # get questions
     content = content_loader.get_manifest(brief['frameworkSlug'], 'award_brief')
@@ -442,6 +440,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id):
         try:
             data_api_client.update_brief_award_details(
                 brief_id,
+                brief_response_id,
                 award_data,
                 updated_by=current_user.email_address
             )

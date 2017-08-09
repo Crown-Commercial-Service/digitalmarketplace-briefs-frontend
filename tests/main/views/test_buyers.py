@@ -3239,11 +3239,14 @@ class TestAwardBrief(BaseApplicationTest):
             assert self._strip_whitespace(label.text_content()) == brief_response[1]
 
     def test_award_brief_get_populates_form_with_a_previously_chosen_brief_response(self):
-        brief_stub = api_stubs.brief(
-            framework_slug='digital-outcomes-and-specialists-2', lot_slug="digital-outcomes", status='closed'
-        )
-        brief_stub['briefs']['pendingAwardBriefResponseId'] = 90
-        self.data_api_client.get_brief.return_value = brief_stub
+        self.data_api_client.find_brief_responses.return_value = {
+            "briefResponses": [
+                {"id": 23, "supplierName": "Dobbins"},
+                {"id": 4444, "supplierName": "Cobbins"},
+                {"id": 2, "supplierName": "Aobbins"},
+                {"id": 90, "supplierName": "Bobbins", "awardDetails": {"pending": True}},
+            ]
+        }
 
         self.login_as_buyer()
 
@@ -3314,7 +3317,7 @@ class TestAwardBrief(BaseApplicationTest):
                 u'1234', 2, updated_by="buyer@email.com"
             )
             assert res.status_code == 302
-            assert "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award/contract-details" in res.location  # noqa
+            assert "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award/2/contract-details" in res.location  # noqa
 
     def test_award_brief_post_raises_500_on_api_error_and_displays_generic_error_message(self):
         self.data_api_client.update_brief_award_brief_response.side_effect = HTTPError(
@@ -3333,7 +3336,7 @@ class TestAwardBrief(BaseApplicationTest):
 
 
 class TestAwardBriefDetails(BaseApplicationTest):
-    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award/contract-details"  # noqa
+    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award/{brief_response_id}/contract-details"  # noqa
 
     def setup_method(self, method):
         super(TestAwardBriefDetails, self).setup_method(method)
@@ -3349,14 +3352,13 @@ class TestAwardBriefDetails(BaseApplicationTest):
             ]
         )
 
-        brief_stub = api_stubs.brief(
+        self.data_api_client.get_brief.return_value = api_stubs.brief(
             framework_slug='digital-outcomes-and-specialists-2', lot_slug="digital-outcomes", status='closed'
         )
-        brief_stub['briefs']['pendingAwardBriefResponseId'] = 1
-        self.data_api_client.get_brief.return_value = brief_stub
         self.data_api_client.get_brief_response.return_value = {
             "briefResponses": {
-                "id": 1, "supplierName": "BananaCorp"
+                "id": 5678, "supplierName": "BananaCorp",
+                "awardDetails": {"pending": True}
             }
         }
 
@@ -3366,7 +3368,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
 
     def test_award_brief_details_200s_with_correct_default_content(self):
         self.login_as_buyer()
-        res = self.client.get(self.url.format(brief_id=1234))
+        res = self.client.get(self.url.format(brief_id=1234, brief_response_id=5678))
 
         assert res.status_code == 200
         document = html.fromstring(res.get_data(as_text=True))
@@ -3401,7 +3403,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         with self.app.app_context():
             self.login_as_buyer()
             res = self.client.post(
-                self.url.format(brief_id=1234),
+                self.url.format(brief_id=1234, brief_response_id=5678),
                 data={
                     "awardedContractStartDate-day": "31",
                     "awardedContractStartDate-month": "12",
@@ -3411,7 +3413,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
             )
 
             assert self.data_api_client.update_brief_award_details.call_args == mock.call(
-                '1234',
+                '1234', '5678',
                 {'awardedContractStartDate': "2020-12-31", "awardedContractValue": "88.84"},
                 updated_by="buyer@email.com"
             )
@@ -3426,15 +3428,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
     def test_award_brief_details_raises_400_if_brief_not_correct(self, is_brief_correct):
         is_brief_correct.return_value = False
         self.login_as_buyer()
-        res = self.client.get(self.url.format(brief_id=1234))
-        assert res.status_code == 404
-
-    def test_award_brief_details_raises_400_if_awarded_brief_response_not_present(self):
-        stub = self.data_api_client.get_brief.return_value
-        stub['briefs'].pop('pendingAwardBriefResponseId')
-        self.data_api_client.get_brief.return_value = stub
-        self.login_as_buyer()
-        res = self.client.get(self.url.format(brief_id=1234))
+        res = self.client.get(self.url.format(brief_id=1234, brief_response_id=5678))
         assert res.status_code == 404
 
     def _assert_masthead(self, document):
@@ -3449,7 +3443,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
                 "awardedContractStartDate": "answer_required"
             })
             self.login_as_buyer()
-            res = self.client.post(self.url.format(brief_id=1234), data={})
+            res = self.client.post(self.url.format(brief_id=1234, brief_response_id=5678), data={})
             document = html.fromstring(res.get_data(as_text=True))
 
             assert res.status_code == 400
@@ -3467,7 +3461,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
             self.login_as_buyer()
 
             res = self.client.post(
-                self.url.format(brief_id=1234),
+                self.url.format(brief_id=1234, brief_response_id=5678),
                 data={
                     "awardedContractValue": "incorrect",
                     "awardedContractStartDate-day": "x",
