@@ -125,7 +125,7 @@
           {{ summary.text(item.applicationsClosedAt|dateformat) }}
           {% call summary.field(action=True) %}
             <p><a href="{{ url_for('.view_brief_responses', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">View responses</a></p>
-            {% if item.briefResponsesSubmittedCount > 0 %}
+            {% if item.status == "closed" %}
                 <p><a href="{{ url_for('.award_brief', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">Tell us who won this contract</a></p>
             {% endif %}
             <form method="post" action="{{ url_for('.copy_brief', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
