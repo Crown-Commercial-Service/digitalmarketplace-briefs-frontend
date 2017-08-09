@@ -3369,7 +3369,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         assert len(submit_button) == 1
 
         secondary_link_text = document.xpath('//div[@class="secondary-action-link"]//a[1]')[0]
-        assert secondary_link_text.text_content() == "Return to previous page"
+        assert secondary_link_text.text_content() == "Back to previous page"
 
         secondary_link = document.xpath('//div[@class="secondary-action-link"]//a[1]/@href')[0]
         assert secondary_link == \
@@ -3416,8 +3416,8 @@ class TestAwardBriefDetails(BaseApplicationTest):
 
     def _assert_masthead(self, document):
         masthead_error_links = document.xpath('//a[@class="validation-masthead-link"]')
-        assert masthead_error_links[0].text_content() == "Awarded contract start date"
-        assert masthead_error_links[1].text_content() == "Awarded contract value"
+        assert masthead_error_links[0].text_content() == "What's the start date?"
+        assert masthead_error_links[1].text_content() == "What's the value?"
 
     def test_award_brief_details_post_raises_400_if_required_fields_not_filled(self):
         with self.app.app_context():
