@@ -3155,7 +3155,7 @@ class TestAwardBrief(BaseApplicationTest):
             {"id": 90, "supplierName": "Bobbins"},
         ]
     }
-    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award-contract"
+    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award-contract"  # noqa
 
     def setup_method(self, method):
         super(TestAwardBrief, self).setup_method(method)
@@ -3297,7 +3297,7 @@ class TestAwardBrief(BaseApplicationTest):
             res = self.client.post(self.url.format(brief_id=1234), data={'supplier': 2})
 
             assert self.data_api_client.update_brief_award_brief_response.call_args == mock.call(
-                u'1234', 2, updated_by="buyer@email.com"
+                u'1234', 2, "buyer@email.com"
             )
             assert res.status_code == 302
             assert "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award/2/contract-details" in res.location  # noqa
@@ -3348,6 +3348,9 @@ class TestAwardBriefDetails(BaseApplicationTest):
     def teardown_method(self, method):
         self.data_api_client_patch.stop()
         super(TestAwardBriefDetails, self).teardown_method(method)
+
+    def _setup_api_error_response(self, error_json):
+        self.data_api_client.update_brief_award_details.side_effect = HTTPError(mock.Mock(status_code=400), error_json)
 
     def test_award_brief_details_200s_with_correct_default_content(self):
         self.login_as_buyer()
@@ -3403,9 +3406,6 @@ class TestAwardBriefDetails(BaseApplicationTest):
             assert res.status_code == 302
             assert res.location == "http://localhost/buyers"
             self.assert_flashes("updated-brief")
-
-    def _setup_api_error_response(self, error_json):
-        self.data_api_client.update_brief_award_details.side_effect = HTTPError(mock.Mock(status_code=400), error_json)
 
     @mock.patch('app.main.views.buyers.is_brief_correct')
     def test_award_brief_details_raises_400_if_brief_not_correct(self, is_brief_correct):

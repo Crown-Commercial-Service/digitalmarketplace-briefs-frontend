@@ -386,7 +386,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
                 data_api_client.update_brief_award_brief_response(
                     brief_id,
                     form.data['supplier'],
-                    updated_by=current_user.email_address
+                    current_user.email_address
                 )
             except HTTPError as e:
                 abort(500, "Unexpected API error when awarding brief response")
@@ -401,10 +401,9 @@ def award_brief(framework_slug, lot_slug, brief_id):
                 )
             )
 
-    else:
-        form = AwardedSupplierForm(suppliers=suppliers)
-        pending_brief_responses = list(filter(lambda x: x.get('awardDetails', {}).get('pending'), brief_responses))
-        form['supplier'].data = pending_brief_responses[0]["id"] if pending_brief_responses else None
+    form = AwardedSupplierForm(suppliers=suppliers)
+    pending_brief_responses = list(filter(lambda x: x.get('awardDetails', {}).get('pending'), brief_responses))
+    form['supplier'].data = pending_brief_responses[0]["id"] if pending_brief_responses else None
 
     return render_template(
         "buyers/award.html",
