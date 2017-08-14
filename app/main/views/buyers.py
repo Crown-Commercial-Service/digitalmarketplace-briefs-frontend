@@ -16,11 +16,10 @@ from ..helpers.buyers_helpers import (
 )
 
 from ..helpers.ods import SpreadSheet
-from ..forms.awards import AwardedSupplierForm
+from ..forms.awards import AwardedBriefResponseForm
 
 from dmapiclient import HTTPError
 from dmutils.dates import get_publishing_dates
-from dmutils.formats import DATETIME_FORMAT
 from dmutils import csv_generator
 from datetime import datetime
 
@@ -368,12 +367,9 @@ def award_brief(framework_slug, lot_slug, brief_id):
     )['briefResponses']
     if not brief_responses:
         abort(404)
-    suppliers = list(sorted([
-        {'id': b['id'], 'name': b['supplierName']} for b in brief_responses
-    ], key=lambda x: x['name']))
 
     if request.method == "POST":
-        form = AwardedSupplierForm(request.form, suppliers=suppliers)
+        form = AwardedBriefResponseForm(request.form, brief_responses=brief_responses)
         if not form.validate_on_submit():
             form_errors = [{'question': form[key].label.text, 'input_name': key} for key in form.errors]
             return render_template(
@@ -387,7 +383,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
             try:
                 data_api_client.update_brief_award_brief_response(
                     brief_id,
-                    form.data['supplier'],
+                    form.data['brief_response'],
                     current_user.email_address
                 )
             except HTTPError as e:
@@ -399,13 +395,13 @@ def award_brief(framework_slug, lot_slug, brief_id):
                     framework_slug=brief['frameworkSlug'],
                     lot_slug=brief['lotSlug'],
                     brief_id=brief['id'],
-                    brief_response_id=form.data['supplier']
+                    brief_response_id=form.data['brief_response']
                 )
             )
 
-    form = AwardedSupplierForm(suppliers=suppliers)
+    form = AwardedBriefResponseForm(brief_responses=brief_responses)
     pending_brief_responses = list(filter(lambda x: x.get('awardDetails', {}).get('pending'), brief_responses))
-    form['supplier'].data = pending_brief_responses[0]["id"] if pending_brief_responses else None
+    form['brief_response'].data = pending_brief_responses[0]["id"] if pending_brief_responses else None
 
     return render_template(
         "buyers/award.html",

@@ -3218,9 +3218,9 @@ class TestAwardBrief(BaseApplicationTest):
 
         document = html.fromstring(res.get_data(as_text=True))
         for i, brief_response in enumerate([(2, 'Aobbins'), (90, 'Bobbins'), (4444, 'Cobbins'), (23, 'Dobbins')]):
-            input_id = document.xpath('//input[@id="input-supplier-{}"]/@value'.format(i + 1))[0]
+            input_id = document.xpath('//input[@id="input-brief_response-{}"]/@value'.format(i + 1))[0]
             assert int(input_id) == brief_response[0]
-            label = document.xpath('//label[@for="input-supplier-{}"]'.format(i+1))[0]
+            label = document.xpath('//label[@for="input-brief_response-{}"]'.format(i+1))[0]
             assert self._strip_whitespace(label.text_content()) == brief_response[1]
 
     def test_award_brief_get_populates_form_with_a_previously_chosen_brief_response(self):
@@ -3238,7 +3238,7 @@ class TestAwardBrief(BaseApplicationTest):
         res = self.client.get(self.url.format(brief_id=1234))
         assert res.status_code == 200
         document = html.fromstring(res.get_data(as_text=True))
-        selected_label_class = document.xpath('//label[@for="input-supplier-2"]/@class')[0]
+        selected_label_class = document.xpath('//label[@for="input-brief_response-2"]/@class')[0]
         assert "selected" in selected_label_class
 
         assert self.data_api_client.find_brief_responses.call_args == mock.call(
@@ -3278,16 +3278,17 @@ class TestAwardBrief(BaseApplicationTest):
         document = html.fromstring(res.get_data(as_text=True))
 
         assert res.status_code == 400
-        error_span = document.xpath('//span[@id="error-supplier"]')[0]
+        error_span = document.xpath('//span[@id="error-brief_response"]')[0]
         assert self._strip_whitespace(error_span.text_content()) == "Youneedtoanswerthisquestion."
 
     def test_award_brief_post_raises_400_if_form_not_valid(self):
         self.login_as_buyer()
-        res = self.client.post(self.url.format(brief_id=1234), data={'supplier': 999})  # Not a valid supplier choice
+        # Not a valid choice on the AwardedBriefResponseForm list
+        res = self.client.post(self.url.format(brief_id=1234), data={'brief_response': 999})
         document = html.fromstring(res.get_data(as_text=True))
 
         assert res.status_code == 400
-        error_span = document.xpath('//span[@id="error-supplier"]')[0]
+        error_span = document.xpath('//span[@id="error-brief_response"]')[0]
         assert self._strip_whitespace(error_span.text_content()) == "Notavalidchoice"
 
     def test_award_brief_post_valid_form_calls_api_and_redirects_to_next_question(self):
@@ -3300,7 +3301,7 @@ class TestAwardBrief(BaseApplicationTest):
         )
         with self.app.app_context():
             self.login_as_buyer()
-            res = self.client.post(self.url.format(brief_id=1234), data={'supplier': 2})
+            res = self.client.post(self.url.format(brief_id=1234), data={'brief_response': 2})
 
             assert self.data_api_client.update_brief_award_brief_response.call_args == mock.call(
                 u'1234', 2, "buyer@email.com"
@@ -3316,7 +3317,7 @@ class TestAwardBrief(BaseApplicationTest):
 
         with self.app.app_context():
             self.login_as_buyer()
-            res = self.client.post(self.url.format(brief_id=1234), data={'supplier': 2})
+            res = self.client.post(self.url.format(brief_id=1234), data={'brief_response': 2})
             document = html.fromstring(res.get_data(as_text=True))
 
             assert res.status_code == 500

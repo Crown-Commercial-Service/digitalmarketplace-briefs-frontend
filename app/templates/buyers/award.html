@@ -42,12 +42,12 @@
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     {%
                       with
-                      name = "supplier",
+                      name = "brief_response",
                       question = "Which supplier won the contract?",
                       type = "radio",
-                      options = form.supplier.toolkit_macro_options,
-                      value = form.supplier.data,
-                      error = form.supplier.errors[0]
+                      options = form.brief_response.toolkit_macro_options,
+                      value = form.brief_response.data,
+                      error = form.brief_response.errors[0]
                     %}
                       {% include "toolkit/forms/selection-buttons.html" %}
                     {% endwith %}
