@@ -3212,7 +3212,9 @@ class TestAwardBrief(BaseApplicationTest):
 
         res = self.client.get(self.url.format(brief_id=1234))
 
-        assert self.data_api_client.find_brief_responses.call_args == mock.call(1234)
+        assert self.data_api_client.find_brief_responses.call_args == mock.call(
+            1234, status="submitted,pending-awarded"
+        )
 
         document = html.fromstring(res.get_data(as_text=True))
         for i, brief_response in enumerate([(2, 'Aobbins'), (90, 'Bobbins'), (4444, 'Cobbins'), (23, 'Dobbins')]):
@@ -3238,6 +3240,10 @@ class TestAwardBrief(BaseApplicationTest):
         document = html.fromstring(res.get_data(as_text=True))
         selected_label_class = document.xpath('//label[@for="input-supplier-2"]/@class')[0]
         assert "selected" in selected_label_class
+
+        assert self.data_api_client.find_brief_responses.call_args == mock.call(
+            1234, status="submitted,pending-awarded"
+        )
 
     def test_award_brief_get_redirects_to_login_if_not_authenticated(self):
         target_url = self.url.format(brief_id=1234)

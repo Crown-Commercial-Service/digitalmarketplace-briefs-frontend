@@ -363,7 +363,9 @@ def award_brief(framework_slug, lot_slug, brief_id):
     if brief['status'] != "closed":
         abort(404)
 
-    brief_responses = data_api_client.find_brief_responses(brief['id'])['briefResponses']
+    brief_responses = data_api_client.find_brief_responses(
+        brief['id'], status="submitted,pending-awarded"
+    )['briefResponses']
     if not brief_responses:
         abort(404)
     suppliers = list(sorted([
