@@ -10,7 +10,7 @@ content_loader.load_manifest('digital-outcomes-and-specialists', 'briefs', 'edit
 content_loader.load_manifest('digital-outcomes-and-specialists', 'brief-responses', 'output_brief_response')
 content_loader.load_manifest('digital-outcomes-and-specialists', 'brief-responses', 'legacy_output_brief_response')
 content_loader.load_manifest('digital-outcomes-and-specialists', 'clarification_question', 'clarification_question')
-
+content_loader.load_manifest('digital-outcomes-and-specialists', 'briefs', 'award_brief')
 
 content_loader.load_manifest('digital-outcomes-and-specialists-2', 'briefs', 'edit_brief')
 content_loader.load_manifest('digital-outcomes-and-specialists-2', 'brief-responses', 'output_brief_response')
