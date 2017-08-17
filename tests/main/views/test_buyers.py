@@ -168,7 +168,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
         awarded_row = tables[2].xpath('.//tbody/tr')[2]
         awarded_row_cells = [cell.text_content().strip() for cell in awarded_row.xpath('.//td')]
-        expected_link = '/digital-outcomes-and-specialists/opportunities/24'
+        expected_link = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/24'
 
         assert awarded_row_cells[0] == "An awarded brief"
         assert awarded_row.xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
