@@ -63,6 +63,7 @@
                 'draft': 'Before you can publish your requirements, you must complete:',
                 'live': 'Done',
                 'closed': 'Done',
+                'awarded': 'Done',
               },
             },
             {
@@ -71,6 +72,7 @@
                 'draft': 'Before you can publish your requirements, you must complete:',
                 'live': 'Done',
                 'closed': 'Done',
+                'awarded': 'Done',
               },
             },
             {
@@ -79,6 +81,7 @@
                 'draft': '',
                 'live': 'Your requirements are open for applications until {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
                 'closed': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
+                'awarded': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
               },
               'links': [
                 {
@@ -94,7 +97,7 @@
                 {
                   'href': url_for("external.get_brief_by_id", framework_framework=brief.frameworkFramework, brief_id=brief.id),
                   'text': 'View your published requirements',
-                  'allowed_statuses': ['live', 'closed']
+                  'allowed_statuses': ['live', 'closed', 'awarded']
                 }
               ]
             },
@@ -104,6 +107,7 @@
                 'draft': 'When you’ve published your requirements, you must answer all supplier questions.',
                 'live': 'You must answer all questions by {}. Suppliers will send you questions by email.'.format(brief.clarificationQuestionsPublishedBy | dateformat),
                 'closed': 'Done',
+                'awarded': 'Done',
               },
               'links': [
                 {
@@ -124,12 +128,13 @@
                 'draft': 'After the application deadline, shortlist the suppliers who applied.',
                 'live': 'After the application deadline, shortlist the suppliers who applied.',
                 'closed': 'You can view and shortlist suppliers who best meet your needs.',
+                'awarded': 'You can view and shortlist suppliers who best meet your needs.',
               },
               'links': [
                 {
                   'href': url_for(".view_brief_responses", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
                   'text': 'View and shortlist suppliers',
-                  'allowed_statuses': ['closed']
+                  'allowed_statuses': ['closed', 'awarded']
                 },
                 {
                   'href': 'https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers',
@@ -143,6 +148,7 @@
                 'draft': 'Evaluate your shortlist using the criteria and methods you published with your requirements.',
                 'live': 'Evaluate your shortlist using the criteria and methods you published with your requirements.',
                 'closed': 'Evaluate your shortlist using the criteria and methods you published with your requirements.',
+                'awarded': 'Evaluate your shortlist using the criteria and methods you published with your requirements.',
               },
               'links': [
                 {
@@ -157,6 +163,7 @@
                 'draft': 'You must give your chosen supplier a contract before they start work.',
                 'live': 'You must give your chosen supplier a contract before they start work.',
                 'closed': 'You must give your chosen supplier a contract before they start work.',
+                'awarded': 'You must give your chosen supplier a contract before they start work.',
               },
               'links': [
                 {

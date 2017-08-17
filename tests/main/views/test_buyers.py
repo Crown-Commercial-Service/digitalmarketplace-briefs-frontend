@@ -1728,6 +1728,45 @@ class TestBriefSummaryPage(BaseApplicationTest):
 
                 assert not document.xpath('//a[contains(text(), "Delete")]')
 
+    def test_show_awarded_brief_summary_page_for_live_and_expired_framework(self, data_api_client):
+        framework_statuses = ['live', 'expired']
+        with self.app.app_context():
+            self.login_as_buyer()
+            for framework_status in framework_statuses:
+                data_api_client.get_framework.return_value = api_stubs.framework(
+                    slug='digital-outcomes-and-specialists',
+                    status=framework_status,
+                    lots=[
+                        api_stubs.lot(slug='digital-specialists', allows_brief=True),
+                    ]
+                )
+                brief_json = api_stubs.brief(status="awarded")
+                brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
+                brief_json['briefs']['specialistRole'] = 'communicationsManager'
+                brief_json['briefs']["clarificationQuestionsAreClosed"] = True
+                brief_json['briefs']['awardedBriefResponseId'] = 999
+                data_api_client.get_brief.return_value = brief_json
+
+                res = self.client.get(
+                    "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
+                )
+
+                assert res.status_code == 200
+                page_html = res.get_data(as_text=True)
+                document = html.fromstring(page_html)
+
+                assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
+                assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+                    'View your published requirements',
+                    'View and shortlist suppliers',
+                    'How to shortlist suppliers',
+                    'How to evaluate suppliers',
+                    'How to award a contract',
+                    'View the Digital Outcomes and Specialists contract',
+                ]
+
+                assert not document.xpath('//a[contains(text(), "Delete")]')
+
     def test_show_clarification_questions_page_for_live_brief_with_no_questions(self, data_api_client):
         framework_statuses = ['live', 'expired']
         with self.app.app_context():
