@@ -124,10 +124,12 @@
           {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
           {{ summary.text(item.applicationsClosedAt|dateformat) }}
           {% call summary.field(action=True) %}
-            <p><a href="{{ url_for('.view_brief_responses', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">View responses</a></p>
-            {% if item.status == "closed" %}
-                <p><a class="award-contract-link" href="{{ url_for('.award_brief', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">Tell us who won this contract</a></p>
-            {% endif %}
+            <div class="padding-bottom-small">
+                <p><a href="{{ url_for('.view_brief_responses', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">View responses</a></p>
+                {% if item.status == "closed" %}
+                    <p><a class="award-contract-link" href="{{ url_for('.award_brief', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">Tell us who won this contract</a></p>
+                {% endif %}
+            </div>
             <form method="post" action="{{ url_for('.copy_brief', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
                 <button type="submit" class="button-secondary">Make a copy</button>
