@@ -29,6 +29,9 @@ from io import BytesIO
 
 from collections import Counter
 
+CLOSED_BRIEF_STATUSES = ['closed', 'withdrawn', 'awarded']
+CLOSED_PUBLISHED_BRIEF_STATUSES = ['closed', 'awarded']
+
 
 @main.route('')
 def buyer_dashboard():
@@ -39,7 +42,7 @@ def buyer_dashboard():
         content_loader
     )
     live_briefs = [brief for brief in user_briefs if brief['status'] == 'live']
-    closed_briefs = [brief for brief in user_briefs if brief['status'] in ['closed', 'withdrawn', 'awarded']]
+    closed_briefs = [brief for brief in user_briefs if brief['status'] in CLOSED_BRIEF_STATUSES]
 
     return render_template(
         'buyers/dashboard.html',
@@ -322,7 +325,7 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
         abort(404)
 
-    if brief['status'] != "closed":
+    if brief['status'] not in CLOSED_PUBLISHED_BRIEF_STATUSES:
         abort(404)
 
     brief_responses = data_api_client.find_brief_responses(brief_id)['briefResponses']
@@ -491,7 +494,7 @@ class DownloadBriefResponsesView(View):
                                 kwargs['lot_slug'], current_user.id):
             abort(404)
 
-        if brief['status'] != "closed":
+        if brief['status'] not in CLOSED_PUBLISHED_BRIEF_STATUSES:
             abort(404)
 
         text_type = str if sys.version_info[0] == 3 else unicode

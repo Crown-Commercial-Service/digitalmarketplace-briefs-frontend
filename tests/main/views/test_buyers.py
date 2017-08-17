@@ -2303,6 +2303,22 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
             "have already been told they were unsuccessful."
         ) in page
 
+    def test_page_visible_for_awarded_briefs(self):
+        brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='closed')
+        brief_stub['briefs'].update(
+            {
+                'publishedAt': self.brief_publishing_date,
+                'status': 'awarded',
+                'awardedBriefResponseId': 999
+            }
+        )
+        self.data_api_client.get_brief.return_value = brief_stub
+        self.login_as_buyer()
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1234/responses"
+        )
+        assert res.status_code == 200
+
     def test_page_does_not_pluralise_for_single_response(self):
         self.data_api_client.find_brief_responses.return_value = {
             "briefResponses": [self.brief_responses["briefResponses"][0]]
@@ -2327,7 +2343,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
         assert res.status_code == 404
 
-    def test_404_if_brief_is_not_closed(self):
+    def test_404_if_brief_is_not_closed_or_awarded(self):
         self.data_api_client.get_brief.return_value = api_stubs.brief(lot_slug="digital-outcomes", status='live')
 
         self.login_as_buyer()
@@ -2531,7 +2547,11 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
 
         super(TestDownloadBriefResponsesView, self).teardown_method(method)
 
-    def test_end_to_end(self):
+    @pytest.mark.parametrize('brief_status', buyers.CLOSED_PUBLISHED_BRIEF_STATUSES)
+    def test_end_to_end_for_closed_and_awarded_briefs(self, brief_status):
+        self.brief['status'] = brief_status
+        if brief_status == 'awarded':
+            self.brief['awardedBriefResponseId'] = 999
         for framework_status in ['live', 'expired']:
             self.data_api_client.find_brief_responses.return_value = {
                 'briefResponses': self.responses
@@ -2969,7 +2989,11 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
             ]
         }
 
-    def test_csv_includes_all_eligible_responses_and_no_ineligible_responses(self, data_api_client):
+    @pytest.mark.parametrize('brief_status', buyers.CLOSED_PUBLISHED_BRIEF_STATUSES)
+    def test_csv_includes_all_eligible_responses_and_no_ineligible_responses(self, data_api_client, brief_status):
+        self.brief['status'] = brief_status
+        if brief_status == 'awarded':
+            self.brief['awardedBriefResponseId'] = 999
         for framework_status in ['live', 'expired']:
             data_api_client.find_brief_responses.return_value = self.brief_responses
             data_api_client.get_framework.return_value = api_stubs.framework(
@@ -3053,7 +3077,7 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
         res = self.client.get(self.url)
         assert res.status_code == 404
 
-    def test_404_if_brief_is_not_closed(self, data_api_client):
+    def test_404_if_brief_is_not_closed_or_awarded(self, data_api_client):
         data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
