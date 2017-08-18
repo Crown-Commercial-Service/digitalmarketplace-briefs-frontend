@@ -2296,6 +2296,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
         page = res.get_data(as_text=True)
 
         assert res.status_code == 200
+        assert "Shortlist suppliers" in page
         assert "2 suppliers" in page
         assert "responded to your requirements and meet all your essential skills and experience." in page
         assert (
@@ -2395,6 +2396,7 @@ class TestViewBriefResponsesPageForLegacyBrief(AbstractViewBriefResponsesPage):
         page = res.get_data(as_text=True)
 
         assert res.status_code == 200
+        assert "There were no applications" in page
         assert "No suppliers met your essential skills and experience requirements." in page
         assert "All the suppliers who applied have already been told they were unsuccessful." in page
 
@@ -2437,6 +2439,7 @@ class TestViewBriefResponsesPageForNewFlowBrief(AbstractViewBriefResponsesPage):
         page = res.get_data(as_text=True)
 
         assert res.status_code == 200
+        assert "There were no applications" in page
         assert "No suppliers met your essential skills and experience requirements." in page
         assert "All the suppliers who applied have already been told they were unsuccessful." not in page
 
@@ -3329,11 +3332,12 @@ class TestAwardBrief(BaseApplicationTest):
         res = self.client.get(self.url.format(brief_id=1234))
         assert res.status_code == 404
 
-    def test_award_brief_returns_404_if_no_suppliers_applied(self):
+    def test_award_brief_redirects_to_brief_responses_page_if_no_suppliers_applied(self):
         self.data_api_client.find_brief_responses.return_value = {"briefResponses": []}
         self.login_as_buyer()
         res = self.client.get(self.url.format(brief_id=1234))
-        assert res.status_code == 404
+        assert res.status_code == 302
+        assert "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/responses" in res.location  # noqa
 
     def test_award_brief_post_raises_400_if_required_fields_not_filled(self):
         self.login_as_buyer()

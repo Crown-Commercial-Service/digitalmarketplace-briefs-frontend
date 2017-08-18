@@ -369,7 +369,14 @@ def award_brief(framework_slug, lot_slug, brief_id):
         brief['id'], status="submitted,pending-awarded"
     )['briefResponses']
     if not brief_responses:
-        abort(404)
+        return redirect(
+            url_for(
+                ".view_brief_responses",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']
+            )
+        )
 
     if request.method == "POST":
         form = AwardedBriefResponseForm(request.form, brief_responses=brief_responses)
