@@ -16,10 +16,10 @@ from ..helpers.buyers_helpers import (
 )
 
 from ..helpers.ods import SpreadSheet
+from ..forms.awards import AwardedBriefResponseForm
 
 from dmapiclient import HTTPError
 from dmutils.dates import get_publishing_dates
-from dmutils.formats import DATETIME_FORMAT
 from dmutils import csv_generator
 from datetime import datetime
 
@@ -28,6 +28,9 @@ from odf.style import TextProperties, TableRowProperties, TableColumnProperties,
 from io import BytesIO
 
 from collections import Counter
+
+CLOSED_BRIEF_STATUSES = ['closed', 'withdrawn', 'awarded']
+CLOSED_PUBLISHED_BRIEF_STATUSES = ['closed', 'awarded']
 
 
 @main.route('')
@@ -39,7 +42,7 @@ def buyer_dashboard():
         content_loader
     )
     live_briefs = [brief for brief in user_briefs if brief['status'] == 'live']
-    closed_briefs = [brief for brief in user_briefs if brief['status'] in ['closed', 'withdrawn']]
+    closed_briefs = [brief for brief in user_briefs if brief['status'] in CLOSED_BRIEF_STATUSES]
 
     return render_template(
         'buyers/dashboard.html',
@@ -322,7 +325,7 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
         abort(404)
 
-    if brief['status'] != "closed":
+    if brief['status'] not in CLOSED_PUBLISHED_BRIEF_STATUSES:
         abort(404)
 
     brief_responses = data_api_client.find_brief_responses(brief_id)['briefResponses']
@@ -342,6 +345,134 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
         response_counts={"failed": counter[False], "eligible": counter[True]},
         brief_responses_require_evidence=brief_responses_require_evidence,
         brief=brief
+    ), 200
+
+
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award-contract', methods=['GET', 'POST'])
+def award_brief(framework_slug, lot_slug, brief_id):
+    get_framework_and_lot(
+        framework_slug,
+        lot_slug,
+        data_api_client,
+        allowed_statuses=['live', 'expired'],
+        must_allow_brief=True,
+    )
+    brief = data_api_client.get_brief(brief_id)["briefs"]
+
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
+        abort(404)
+
+    if brief['status'] != "closed":
+        abort(404)
+
+    brief_responses = data_api_client.find_brief_responses(
+        brief['id'], status="submitted,pending-awarded"
+    )['briefResponses']
+    if not brief_responses:
+        return redirect(
+            url_for(
+                ".view_brief_responses",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']
+            )
+        )
+
+    if request.method == "POST":
+        form = AwardedBriefResponseForm(request.form, brief_responses=brief_responses)
+        if not form.validate_on_submit():
+            form_errors = [{'question': form[key].label.text, 'input_name': key} for key in form.errors]
+            return render_template(
+                "buyers/award.html",
+                brief=brief,
+                form=form,
+                form_errors=form_errors,
+            ), 400
+
+        if form.data:
+            try:
+                data_api_client.update_brief_award_brief_response(
+                    brief_id,
+                    form.data['brief_response'],
+                    current_user.email_address
+                )
+            except HTTPError as e:
+                abort(500, "Unexpected API error when awarding brief response")
+
+            return redirect(
+                url_for(
+                    ".award_brief_details",
+                    framework_slug=brief['frameworkSlug'],
+                    lot_slug=brief['lotSlug'],
+                    brief_id=brief['id'],
+                    brief_response_id=form.data['brief_response']
+                )
+            )
+
+    form = AwardedBriefResponseForm(brief_responses=brief_responses)
+    pending_brief_responses = list(filter(lambda x: x.get('awardDetails', {}).get('pending'), brief_responses))
+    form['brief_response'].data = pending_brief_responses[0]["id"] if pending_brief_responses else None
+
+    return render_template(
+        "buyers/award.html",
+        brief=brief,
+        form=form
+    ), 200
+
+
+@main.route(
+    '/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award/<brief_response_id>/contract-details',
+    methods=['GET', 'POST']
+)
+def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
+    get_framework_and_lot(
+        framework_slug,
+        lot_slug,
+        data_api_client,
+        allowed_statuses=['live', 'expired'],
+        must_allow_brief=True,
+    )
+    brief = data_api_client.get_brief(brief_id)["briefs"]
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
+        abort(404)
+    pending_brief_response = data_api_client.get_brief_response(brief_response_id)["briefResponses"]
+
+    # get questions
+    content = content_loader.get_manifest(brief['frameworkSlug'], 'award_brief')
+    section_id = content.get_next_editable_section_id()
+    section = content.get_section(section_id)
+
+    if request.method == "POST":
+        award_data = section.get_data(request.form)
+        try:
+            data_api_client.update_brief_award_details(
+                brief_id,
+                brief_response_id,
+                award_data,
+                updated_by=current_user.email_address
+            )
+        except HTTPError as e:
+            award_data = section.unformat_data(award_data)
+            errors = section.get_error_messages(e.message)
+
+            return render_template(
+                "buyers/award_details.html",
+                brief=brief,
+                data=award_data,
+                errors=errors,
+                pending_brief_response=pending_brief_response,
+                section=section
+            ), 400
+
+        flash({"updated-brief": brief.get("title")})
+        return redirect(url_for(".buyer_dashboard"))
+
+    return render_template(
+        "buyers/award_details.html",
+        brief=brief,
+        data={},
+        pending_brief_response=pending_brief_response,
+        section=section,
     ), 200
 
 
@@ -370,7 +501,7 @@ class DownloadBriefResponsesView(View):
                                 kwargs['lot_slug'], current_user.id):
             abort(404)
 
-        if brief['status'] != "closed":
+        if brief['status'] not in CLOSED_PUBLISHED_BRIEF_STATUSES:
             abort(404)
 
         text_type = str if sys.version_info[0] == 3 else unicode

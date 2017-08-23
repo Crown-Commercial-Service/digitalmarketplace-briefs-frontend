@@ -30,6 +30,8 @@
                             <p class="banner-message">
                     {% if 'requirements_deleted' in message %}
                             Your requirements &lsquo;{{ message.get('requirements_deleted') }}&rsquo; were deleted
+                    {% elif 'updated-brief' in message %}
+                            You've updated '{{ message.get('updated-brief') }}'
                     {% else %}
                         {{ message }}
                     {% endif %}
@@ -112,7 +114,6 @@
     field_headings=[
         "Name",
         "Closed",
-        "Responses",
         summary.hidden_field_heading("Make a copy")
     ],
     field_headings_visible=True
@@ -122,13 +123,27 @@
         {% if item.status == "closed" %}
           {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
           {{ summary.text(item.applicationsClosedAt|dateformat) }}
-          {{ summary.link("View responses", url_for(".view_brief_responses", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
+          {% call summary.field(action=True) %}
+            <div class="padding-bottom-small">
+                <p><a href="{{ url_for('.view_brief_responses', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">View responses</a></p>
+                {% if item.status == "closed" %}
+                    <p><a class="award-contract-link" href="{{ url_for('.award_brief', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">Tell us who won this contract</a></p>
+                {% endif %}
+            </div>
+            <form method="post" action="{{ url_for('.copy_brief', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
+                <button type="submit" class="button-secondary">Make a copy</button>
+            </form>
+          {% endcall %}
         {% elif item.status == "withdrawn" %}
           {{ summary.service_link(item.title, url_for("external.get_brief_by_id", framework_framework=item.frameworkFramework, brief_id=item.id)) }}
           {{ summary.text("Withdrawn") }}
-          {{ summary.text() }}
+          {{ summary.button(text="Make a copy", action=url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
+        {% elif item.status == "awarded" %}
+          {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
+          {{ summary.text(item.applicationsClosedAt|dateformat) }}
+          {{ summary.button(text="Make a copy", action=url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
         {% endif %}
-        {{ summary.button(text="Make a copy", action=url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
-    {% endcall %}
+     {% endcall %}
 {% endcall %}
 {% endblock %}

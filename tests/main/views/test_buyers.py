@@ -36,25 +36,43 @@ def find_briefs_mock():
             {
                 "id": 20,
                 "status": "draft",
-                "title": "A draft brief",
-            }, {
+                "title": "A draft brief"
+            },
+            {
                 "id": 21,
                 "status": "live",
                 "title": "A live brief",
-                "publishedAt": "2016-02-04T12:00:00.000000Z",
-            }, {
+                "publishedAt": "2016-02-04T12:00:00.000000Z"
+            },
+            {
                 "id": 22,
                 "status": "closed",
-                "title": "A closed brief",
+                "title": "A closed brief with brief responses",
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
-                "applicationsClosedAt": "2016-02-18T12:00:00.000000Z",
-            }, {
+                "applicationsClosedAt": "2016-02-18T12:00:00.000000Z"
+            },
+            {
                 "id": 23,
                 "status": "withdrawn",
                 "title": "A withdrawn brief",
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
-                "withdrawnAt": "2016-02-05T12:00:00.000000Z",
-            }
+                "withdrawnAt": "2016-02-05T12:00:00.000000Z"
+            },
+            {
+                "id": 24,
+                "status": "awarded",
+                "title": "An awarded brief",
+                "publishedAt": "2016-02-03T12:00:00.000000Z",
+                "applicationsClosedAt": "2016-02-19T12:00:00.000000Z"
+
+            },
+            {
+                "id": 25,
+                "status": "closed",
+                "title": "A closed brief with no brief responses",
+                "publishedAt": "2016-02-04T12:00:00.000000Z",
+                "applicationsClosedAt": "2016-02-18T12:00:00.000000Z"
+            },
         ]
     }
 
@@ -101,37 +119,75 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert tables[1].xpath('.//tbody/tr')[0].xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
         assert live_row[1] == "Thursday 4 February 2016"
 
-    def test_closed_briefs_section(self, data_api_client, find_briefs_mock):
+    def test_closed_briefs_section_with_closed_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
         res = self.client.get("/buyers")
-        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
 
         assert res.status_code == 200
+        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
+        closed_row_cells = tables[2].xpath('.//tbody/tr')[0].xpath('.//td')
 
-        closed_row = [cell.text_content().strip() for cell in tables[2].xpath('.//tbody/tr/td')]
-        expected_link = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22'
+        assert closed_row_cells[0].xpath('.//a')[0].text_content() == "A closed brief with brief responses"
+        assert closed_row_cells[0].xpath('.//a/@href')[0] == \
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22'
 
-        assert closed_row[0] == "A closed brief"
-        assert tables[2].xpath('.//tbody/tr')[0].xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
-        assert closed_row[1] == "Thursday 18 February 2016"
-        assert closed_row[2] == "View responses"
+        assert tables[2].xpath('.//tbody/tr/td')[1].text_content().strip() == "Thursday 18 February 2016"
 
-    def test_withdrawn_briefs_section(self, data_api_client, find_briefs_mock):
+        assert closed_row_cells[2].xpath('.//a')[0].text_content() == "View responses"
+        assert closed_row_cells[2].xpath('.//a/@href')[0] == \
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/responses'
+
+        assert closed_row_cells[2].xpath('.//a')[1].text_content() == "Tell us who won this contract"
+        assert closed_row_cells[2].xpath('.//a/@href')[1] == \
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/award-contract'
+
+    def test_closed_briefs_section_with_withdrawn_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
         res = self.client.get("/buyers")
-        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
 
         assert res.status_code == 200
-
-        withdrawn_row = [cell.text_content().strip() for cell in tables[2].xpath('.//tbody/tr')[1].xpath('.//td')]
+        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
+        withdrawn_row = tables[2].xpath('.//tbody/tr')[1]
+        withdrawn_row_cells = [cell.text_content().strip() for cell in withdrawn_row.xpath('.//td')]
         expected_link = '/digital-outcomes-and-specialists/opportunities/23'
 
-        assert withdrawn_row[0] == "A withdrawn brief"
-        assert tables[2].xpath('.//tbody/tr')[1].xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
-        assert withdrawn_row[1] == "Withdrawn"
-        assert "View responses" not in withdrawn_row[2]
+        assert withdrawn_row_cells[0] == "A withdrawn brief"
+        assert withdrawn_row.xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
+        assert withdrawn_row_cells[1] == "Withdrawn"
+        assert "View responses" not in withdrawn_row_cells[2]
+        assert "Tell us who won this contract" not in withdrawn_row_cells[2]
+
+    def test_closed_briefs_section_with_awarded_brief(self, data_api_client, find_briefs_mock):
+        data_api_client.find_briefs.return_value = find_briefs_mock
+
+        res = self.client.get("/buyers")
+
+        assert res.status_code == 200
+        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
+        awarded_row = tables[2].xpath('.//tbody/tr')[2]
+        awarded_row_cells = [cell.text_content().strip() for cell in awarded_row.xpath('.//td')]
+        expected_link = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/24'
+
+        assert awarded_row_cells[0] == "An awarded brief"
+        assert awarded_row.xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
+        assert awarded_row_cells[1] == "Friday 19 February 2016"
+        assert "View responses" not in awarded_row_cells[2]
+        assert "Tell us who won this contract" not in awarded_row_cells[2]
+
+    def test_flash_message_shown_if_brief_has_just_been_updated(self, data_api_client, find_briefs_mock):
+        data_api_client.find_briefs.return_value = find_briefs_mock
+
+        with self.client.session_transaction() as session:
+            session['_flashes'] = [
+                ('message', {'updated-brief': "My Amazing Brief"})
+            ]
+
+        res = self.client.get("/buyers")
+
+        flash_div = html.fromstring(res.get_data(as_text=True)).xpath('//div[@class="banner-success-without-action"]')
+        assert flash_div[0].text_content().strip() == "You've updated 'My Amazing Brief'"
 
 
 class TestBuyerRoleRequired(BaseApplicationTest):
@@ -583,29 +639,19 @@ class TestEveryDamnPage(BaseApplicationTest):
 class TestEditBriefSubmission(BaseApplicationTest):
 
     def _test_breadcrumbs_on_question_page(self, response, has_summary_page=False, section_name=None):
-        breadcrumbs = html.fromstring(response.get_data(as_text=True)).xpath(
-            '//*[@id="global-breadcrumb"]/nav/ol/li'
-        )
-
-        breadcrumbs_we_expect = [
-            ('Digital Marketplace', '/'),
-            ('Your account', '/buyers'),
+        extra_breadcrumbs = [
             ('I need a thing to do a thing',
              '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234')
         ]
         if has_summary_page and section_name:
-            breadcrumbs_we_expect.append((
+            extra_breadcrumbs.append((
                 section_name,
                 '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/{}'.format(
                     section_name.lower().replace(' ', '-')
                 )
             ))
 
-        assert len(breadcrumbs) == len(breadcrumbs_we_expect)
-
-        for index, link in enumerate(breadcrumbs_we_expect):
-            assert breadcrumbs[index].find('a').text_content().strip() == link[0]
-            assert breadcrumbs[index].find('a').get('href').strip() == link[1]
+        self.assert_breadcrumbs(response, extra_breadcrumbs)
 
     def test_edit_brief_submission(self, data_api_client):
         self.login_as_buyer()
@@ -1682,6 +1728,45 @@ class TestBriefSummaryPage(BaseApplicationTest):
 
                 assert not document.xpath('//a[contains(text(), "Delete")]')
 
+    def test_show_awarded_brief_summary_page_for_live_and_expired_framework(self, data_api_client):
+        framework_statuses = ['live', 'expired']
+        with self.app.app_context():
+            self.login_as_buyer()
+            for framework_status in framework_statuses:
+                data_api_client.get_framework.return_value = api_stubs.framework(
+                    slug='digital-outcomes-and-specialists',
+                    status=framework_status,
+                    lots=[
+                        api_stubs.lot(slug='digital-specialists', allows_brief=True),
+                    ]
+                )
+                brief_json = api_stubs.brief(status="awarded")
+                brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
+                brief_json['briefs']['specialistRole'] = 'communicationsManager'
+                brief_json['briefs']["clarificationQuestionsAreClosed"] = True
+                brief_json['briefs']['awardedBriefResponseId'] = 999
+                data_api_client.get_brief.return_value = brief_json
+
+                res = self.client.get(
+                    "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
+                )
+
+                assert res.status_code == 200
+                page_html = res.get_data(as_text=True)
+                document = html.fromstring(page_html)
+
+                assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
+                assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+                    'View your published requirements',
+                    'View and shortlist suppliers',
+                    'How to shortlist suppliers',
+                    'How to evaluate suppliers',
+                    'How to award a contract',
+                    'View the Digital Outcomes and Specialists contract',
+                ]
+
+                assert not document.xpath('//a[contains(text(), "Delete")]')
+
     def test_show_clarification_questions_page_for_live_brief_with_no_questions(self, data_api_client):
         framework_statuses = ['live', 'expired']
         with self.app.app_context():
@@ -2211,12 +2296,29 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
         page = res.get_data(as_text=True)
 
         assert res.status_code == 200
+        assert "Shortlist suppliers" in page
         assert "2 suppliers" in page
         assert "responded to your requirements and meet all your essential skills and experience." in page
         assert (
             "Any suppliers that did not meet all your essential requirements "
             "have already been told they were unsuccessful."
         ) in page
+
+    def test_page_visible_for_awarded_briefs(self):
+        brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='closed')
+        brief_stub['briefs'].update(
+            {
+                'publishedAt': self.brief_publishing_date,
+                'status': 'awarded',
+                'awardedBriefResponseId': 999
+            }
+        )
+        self.data_api_client.get_brief.return_value = brief_stub
+        self.login_as_buyer()
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1234/responses"
+        )
+        assert res.status_code == 200
 
     def test_page_does_not_pluralise_for_single_response(self):
         self.data_api_client.find_brief_responses.return_value = {
@@ -2242,7 +2344,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
         assert res.status_code == 404
 
-    def test_404_if_brief_is_not_closed(self):
+    def test_404_if_brief_is_not_closed_or_awarded(self):
         self.data_api_client.get_brief.return_value = api_stubs.brief(lot_slug="digital-outcomes", status='live')
 
         self.login_as_buyer()
@@ -2294,6 +2396,7 @@ class TestViewBriefResponsesPageForLegacyBrief(AbstractViewBriefResponsesPage):
         page = res.get_data(as_text=True)
 
         assert res.status_code == 200
+        assert "There were no applications" in page
         assert "No suppliers met your essential skills and experience requirements." in page
         assert "All the suppliers who applied have already been told they were unsuccessful." in page
 
@@ -2336,6 +2439,7 @@ class TestViewBriefResponsesPageForNewFlowBrief(AbstractViewBriefResponsesPage):
         page = res.get_data(as_text=True)
 
         assert res.status_code == 200
+        assert "There were no applications" in page
         assert "No suppliers met your essential skills and experience requirements." in page
         assert "All the suppliers who applied have already been told they were unsuccessful." not in page
 
@@ -2446,7 +2550,11 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
 
         super(TestDownloadBriefResponsesView, self).teardown_method(method)
 
-    def test_end_to_end(self):
+    @pytest.mark.parametrize('brief_status', buyers.CLOSED_PUBLISHED_BRIEF_STATUSES)
+    def test_end_to_end_for_closed_and_awarded_briefs(self, brief_status):
+        self.brief['status'] = brief_status
+        if brief_status == 'awarded':
+            self.brief['awardedBriefResponseId'] = 999
         for framework_status in ['live', 'expired']:
             self.data_api_client.find_brief_responses.return_value = {
                 'briefResponses': self.responses
@@ -2884,7 +2992,11 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
             ]
         }
 
-    def test_csv_includes_all_eligible_responses_and_no_ineligible_responses(self, data_api_client):
+    @pytest.mark.parametrize('brief_status', buyers.CLOSED_PUBLISHED_BRIEF_STATUSES)
+    def test_csv_includes_all_eligible_responses_and_no_ineligible_responses(self, data_api_client, brief_status):
+        self.brief['status'] = brief_status
+        if brief_status == 'awarded':
+            self.brief['awardedBriefResponseId'] = 999
         for framework_status in ['live', 'expired']:
             data_api_client.find_brief_responses.return_value = self.brief_responses
             data_api_client.get_framework.return_value = api_stubs.framework(
@@ -2968,7 +3080,7 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
         res = self.client.get(self.url)
         assert res.status_code == 404
 
-    def test_404_if_brief_is_not_closed(self, data_api_client):
+    def test_404_if_brief_is_not_closed_or_awarded(self, data_api_client):
         data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
@@ -3098,3 +3210,336 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
             )
 
             assert res.status_code == 404
+
+
+class TestAwardBrief(BaseApplicationTest):
+    brief_responses = {
+        "briefResponses": [
+            {"id": 23, "supplierName": "Dobbins"},
+            {"id": 4444, "supplierName": "Cobbins"},
+            {"id": 2, "supplierName": "Aobbins"},
+            {"id": 90, "supplierName": "Bobbins"},
+        ]
+    }
+    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award-contract"  # noqa
+
+    def setup_method(self, method):
+        super(TestAwardBrief, self).setup_method(method)
+
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists-2',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-outcomes', allows_brief=True),
+            ]
+        )
+
+        brief_stub = api_stubs.brief(
+            framework_slug="digital-outcomes-and-specialists-2", lot_slug="digital-outcomes", status='closed'
+        )
+        self.data_api_client.get_brief.return_value = brief_stub
+
+        self.data_api_client.find_brief_responses.return_value = self.brief_responses
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super(TestAwardBrief, self).teardown_method(method)
+
+    def test_award_brief_200s_with_correct_default_content(self):
+        self.login_as_buyer()
+
+        res = self.client.get(self.url.format(brief_id=1234))
+
+        assert res.status_code == 200
+        document = html.fromstring(res.get_data(as_text=True))
+        self.assert_breadcrumbs(res, extra_breadcrumbs=[
+            (
+                'I need a thing to do a thing',
+                '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+            )
+        ])
+
+        page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
+        assert page_title == "WhowontheIneedathingtodoathingcontract?"
+
+        submit_button = document.xpath('//input[@class="button-save" and @value="Save and continue"]')
+        assert len(submit_button) == 1
+
+        # No options should be selected
+        labels = document.xpath('//label[@class="selection-button selection-button-radio"]/@class')
+        for label_class in labels:
+            assert "selected" not in label_class
+
+    def test_award_brief_get_lists_suppliers_who_applied_for_this_brief_alphabetically(self):
+        self.login_as_buyer()
+
+        res = self.client.get(self.url.format(brief_id=1234))
+
+        assert self.data_api_client.find_brief_responses.call_args == mock.call(
+            1234, status="submitted,pending-awarded"
+        )
+
+        document = html.fromstring(res.get_data(as_text=True))
+        for i, brief_response in enumerate([(2, 'Aobbins'), (90, 'Bobbins'), (4444, 'Cobbins'), (23, 'Dobbins')]):
+            input_id = document.xpath('//input[@id="input-brief_response-{}"]/@value'.format(i + 1))[0]
+            assert int(input_id) == brief_response[0]
+            label = document.xpath('//label[@for="input-brief_response-{}"]'.format(i+1))[0]
+            assert self._strip_whitespace(label.text_content()) == brief_response[1]
+
+    def test_award_brief_get_populates_form_with_a_previously_chosen_brief_response(self):
+        self.data_api_client.find_brief_responses.return_value = {
+            "briefResponses": [
+                {"id": 23, "supplierName": "Dobbins"},
+                {"id": 4444, "supplierName": "Cobbins"},
+                {"id": 2, "supplierName": "Aobbins"},
+                {"id": 90, "supplierName": "Bobbins", "awardDetails": {"pending": True}},
+            ]
+        }
+
+        self.login_as_buyer()
+
+        res = self.client.get(self.url.format(brief_id=1234))
+        assert res.status_code == 200
+        document = html.fromstring(res.get_data(as_text=True))
+        selected_label_class = document.xpath('//label[@for="input-brief_response-2"]/@class')[0]
+        assert "selected" in selected_label_class
+
+        assert self.data_api_client.find_brief_responses.call_args == mock.call(
+            1234, status="submitted,pending-awarded"
+        )
+
+    def test_award_brief_get_redirects_to_login_if_not_authenticated(self):
+        target_url = self.url.format(brief_id=1234)
+        res = self.client.get(target_url)
+        assert res.status_code == 302
+        assert res.location == 'http://localhost/login?next={}'.format(target_url.replace('/', '%2F'))
+
+    def test_award_brief_get_returns_404_if_brief_not_closed(self):
+        brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='live')
+        self.data_api_client.get_brief.return_value = brief_stub
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234))
+        assert res.status_code == 404
+
+    @mock.patch('app.main.views.buyers.is_brief_correct')
+    def test_award_brief_get_returns_404_if_brief_not_correct(self, is_brief_correct):
+        is_brief_correct.return_value = False
+
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234))
+        assert res.status_code == 404
+
+    def test_award_brief_redirects_to_brief_responses_page_if_no_suppliers_applied(self):
+        self.data_api_client.find_brief_responses.return_value = {"briefResponses": []}
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234))
+        assert res.status_code == 302
+        assert "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/responses" in res.location  # noqa
+
+    def test_award_brief_post_raises_400_if_required_fields_not_filled(self):
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=1234), data={})
+        document = html.fromstring(res.get_data(as_text=True))
+
+        assert res.status_code == 400
+        error_span = document.xpath('//span[@id="error-brief_response"]')[0]
+        assert self._strip_whitespace(error_span.text_content()) == "Youneedtoanswerthisquestion."
+
+    def test_award_brief_post_raises_400_if_form_not_valid(self):
+        self.login_as_buyer()
+        # Not a valid choice on the AwardedBriefResponseForm list
+        res = self.client.post(self.url.format(brief_id=1234), data={'brief_response': 999})
+        document = html.fromstring(res.get_data(as_text=True))
+
+        assert res.status_code == 400
+        error_span = document.xpath('//span[@id="error-brief_response"]')[0]
+        assert self._strip_whitespace(error_span.text_content()) == "Notavalidchoice"
+
+    def test_award_brief_post_valid_form_calls_api_and_redirects_to_next_question(self):
+        self.data_api_client.update_brief_award_brief_response.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists-2',
+            status='closed',
+            lots=[
+                api_stubs.lot(slug='digital-outcomes', allows_brief=True)
+            ]
+        )
+        with self.app.app_context():
+            self.login_as_buyer()
+            res = self.client.post(self.url.format(brief_id=1234), data={'brief_response': 2})
+
+            assert self.data_api_client.update_brief_award_brief_response.call_args == mock.call(
+                u'1234', 2, "buyer@email.com"
+            )
+            assert res.status_code == 302
+            assert "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award/2/contract-details" in res.location  # noqa
+
+    def test_award_brief_post_raises_500_on_api_error_and_displays_generic_error_message(self):
+        self.data_api_client.update_brief_award_brief_response.side_effect = HTTPError(
+            mock.Mock(status_code=500),
+            {"title": "BriefResponse cannot be awarded for this Brief"}
+        )
+
+        with self.app.app_context():
+            self.login_as_buyer()
+            res = self.client.post(self.url.format(brief_id=1234), data={'brief_response': 2})
+            document = html.fromstring(res.get_data(as_text=True))
+
+            assert res.status_code == 500
+            error_span = document.xpath('//h1')[0]
+            assert self._strip_whitespace(error_span.text_content()) == "Sorry,we'reexperiencingtechnicaldifficulties"
+
+
+class TestAwardBriefDetails(BaseApplicationTest):
+    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award/{brief_response_id}/contract-details"  # noqa
+
+    def setup_method(self, method):
+        super(TestAwardBriefDetails, self).setup_method(method)
+
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists-2',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-outcomes', allows_brief=True),
+            ]
+        )
+
+        self.data_api_client.get_brief.return_value = api_stubs.brief(
+            framework_slug='digital-outcomes-and-specialists-2', lot_slug="digital-outcomes", status='closed'
+        )
+        self.data_api_client.get_brief_response.return_value = {
+            "briefResponses": {
+                "id": 5678, "supplierName": "BananaCorp",
+                "awardDetails": {"pending": True}
+            }
+        }
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super(TestAwardBriefDetails, self).teardown_method(method)
+
+    def _setup_api_error_response(self, error_json):
+        self.data_api_client.update_brief_award_details.side_effect = HTTPError(mock.Mock(status_code=400), error_json)
+
+    def test_award_brief_details_200s_with_correct_default_content(self):
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234, brief_response_id=5678))
+
+        assert res.status_code == 200
+        document = html.fromstring(res.get_data(as_text=True))
+        self.assert_breadcrumbs(res, extra_breadcrumbs=[
+            (
+                'I need a thing to do a thing',
+                '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+            )
+        ])
+
+        page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
+        assert page_title == "TellusaboutyourcontractwithBananaCorp"
+
+        submit_button = document.xpath('//input[@class="button-save" and @value="Submit"]')
+        assert len(submit_button) == 1
+
+        secondary_link_text = document.xpath('//div[@class="secondary-action-link"]//a[1]')[0]
+        assert secondary_link_text.text_content() == "Back to previous page"
+
+        secondary_link = document.xpath('//div[@class="secondary-action-link"]//a[1]/@href')[0]
+        assert secondary_link == \
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award-contract'
+
+    def test_award_brief_details_post_valid_form_calls_api_and_redirects(self):
+        self.data_api_client.update_brief_award_details.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists-2',
+            status='awarded',
+            lots=[
+                api_stubs.lot(slug='digital-outcomes', allows_brief=True)
+            ]
+        )
+        with self.app.app_context():
+            self.login_as_buyer()
+            res = self.client.post(
+                self.url.format(brief_id=1234, brief_response_id=5678),
+                data={
+                    "awardedContractStartDate-day": "31",
+                    "awardedContractStartDate-month": "12",
+                    "awardedContractStartDate-year": "2020",
+                    "awardedContractValue": "88.84"
+                }
+            )
+
+            assert self.data_api_client.update_brief_award_details.call_args == mock.call(
+                '1234', '5678',
+                {'awardedContractStartDate': "2020-12-31", "awardedContractValue": "88.84"},
+                updated_by="buyer@email.com"
+            )
+            assert res.status_code == 302
+            assert res.location == "http://localhost/buyers"
+            self.assert_flashes("updated-brief")
+
+    @mock.patch('app.main.views.buyers.is_brief_correct')
+    def test_award_brief_details_raises_400_if_brief_not_correct(self, is_brief_correct):
+        is_brief_correct.return_value = False
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234, brief_response_id=5678))
+        assert res.status_code == 404
+
+    def _assert_masthead(self, document):
+        masthead_error_links = document.xpath('//a[@class="validation-masthead-link"]')
+        assert masthead_error_links[0].text_content() == "What's the start date?"
+        assert masthead_error_links[1].text_content() == "What's the value?"
+
+    def test_award_brief_details_post_raises_400_if_required_fields_not_filled(self):
+        with self.app.app_context():
+            self._setup_api_error_response({
+                "awardedContractValue": "answer_required",
+                "awardedContractStartDate": "answer_required"
+            })
+            self.login_as_buyer()
+            res = self.client.post(self.url.format(brief_id=1234, brief_response_id=5678), data={})
+            document = html.fromstring(res.get_data(as_text=True))
+
+            assert res.status_code == 400
+            self._assert_masthead(document)
+            error_spans = document.xpath('//span[@class="validation-message"]')
+            assert self._strip_whitespace(error_spans[0].text_content()) == "Youneedtoanswerthisquestion."
+            assert self._strip_whitespace(error_spans[1].text_content()) == "Youneedtoanswerthisquestion."
+
+    def test_award_brief_details_post_raises_400_and_displays_error_messages_and_prefills_fields_if_invalid_data(self):
+        with self.app.app_context():
+            self._setup_api_error_response({
+                "awardedContractStartDate": "invalid_format",
+                "awardedContractValue": "not_money_format"
+            })
+            self.login_as_buyer()
+
+            res = self.client.post(
+                self.url.format(brief_id=1234, brief_response_id=5678),
+                data={
+                    "awardedContractValue": "incorrect",
+                    "awardedContractStartDate-day": "x",
+                    "awardedContractStartDate-month": "y",
+                    "awardedContractStartDate-year": "z"
+                }
+            )
+
+            assert res.status_code == 400
+            document = html.fromstring(res.get_data(as_text=True))
+
+            self._assert_masthead(document)
+
+            # Individual error messages
+            error_spans = document.xpath('//span[@class="validation-message"]')
+            assert self._strip_whitespace(error_spans[0].text_content()) == "Youranswermustbeavaliddate."
+            assert self._strip_whitespace(error_spans[1].text_content()) == \
+                "Valuemustbeinnumbersanddecimalpointsonly,forexample99.95."
+
+            # Prefilled form input
+            assert document.xpath('//input[@id="input-awardedContractValue"]/@value')[0] == "incorrect"
+            assert document.xpath('//input[@id="input-awardedContractStartDate-day"]/@value')[0] == "x"
+            assert document.xpath('//input[@id="input-awardedContractStartDate-month"]/@value')[0] == "y"
+            assert document.xpath('//input[@id="input-awardedContractStartDate-year"]/@value')[0] == "z"
