@@ -70,10 +70,18 @@ def submit_create_buyer_account():
                 audit_type=AuditTypes.invite_user,
                 data={'invitedEmail': email_address})
 
-            return redirect(url_for('external.create_your_account_complete'), 302)
+            return redirect(url_for('.create_your_account_complete'), 302)
     else:
         return render_template(
             "create_buyer/create_buyer_account.html",
             form=form,
             email_address=form.email_address.data
         ), 400
+
+
+@create_buyer.route('/create-your-account-complete', methods=['GET'])
+def create_your_account_complete():
+    email_address = session.setdefault("email_sent_to", "the email address you supplied")
+    return render_template(
+        "create_buyer/create_your_account_complete.html",
+        email_address=email_address), 200
