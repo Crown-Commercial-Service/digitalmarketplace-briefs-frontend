@@ -3414,7 +3414,9 @@ class TestAwardBriefDetails(BaseApplicationTest):
         )
         self.data_api_client.get_brief_response.return_value = {
             "briefResponses": {
-                "id": 5678, "supplierName": "BananaCorp",
+                "id": 5678,
+                "status": "pending-awarded",
+                "supplierName": "BananaCorp",
                 "awardDetails": {"pending": True}
             }
         }
@@ -3484,6 +3486,14 @@ class TestAwardBriefDetails(BaseApplicationTest):
     @mock.patch('app.main.views.buyers.is_brief_correct')
     def test_award_brief_details_raises_400_if_brief_not_correct(self, is_brief_correct):
         is_brief_correct.return_value = False
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234, brief_response_id=5678))
+        assert res.status_code == 404
+
+    @pytest.mark.parametrize('status', ['awarded', 'submitted', 'draft'])
+    def test_award_brief_details_raises_404_if_brief_response_not_pending(self, status):
+        self.data_api_client.get_brief_response.return_value["briefResponses"]["status"] = status
+
         self.login_as_buyer()
         res = self.client.get(self.url.format(brief_id=1234, brief_response_id=5678))
         assert res.status_code == 404

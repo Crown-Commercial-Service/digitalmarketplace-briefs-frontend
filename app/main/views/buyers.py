@@ -435,8 +435,9 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
         abort(404)
-    pending_brief_response = data_api_client.get_brief_response(brief_response_id)["briefResponses"]
-
+    brief_response = data_api_client.get_brief_response(brief_response_id)["briefResponses"]
+    if not brief_response.get('status') == 'pending-awarded':
+        abort(404)
     # get questions
     content = content_loader.get_manifest(brief['frameworkSlug'], 'award_brief')
     section_id = content.get_next_editable_section_id()
@@ -460,7 +461,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
                 brief=brief,
                 data=award_data,
                 errors=errors,
-                pending_brief_response=pending_brief_response,
+                pending_brief_response=brief_response,
                 section=section
             ), 400
 
@@ -471,7 +472,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
         "buyers/award_details.html",
         brief=brief,
         data={},
-        pending_brief_response=pending_brief_response,
+        pending_brief_response=brief_response,
         section=section,
     ), 200
 
