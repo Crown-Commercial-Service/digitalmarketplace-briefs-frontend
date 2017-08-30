@@ -22,7 +22,14 @@ class TestBuyersCreation(BaseApplicationTest):
             follow_redirects=False
         )
         assert res.status_code == 302
-        assert res.location == 'http://localhost/create-your-account-complete'
+        assert res.location == 'http://localhost/buyers/create-your-account-complete'
+
+    def test_create_your_account_complete_page(self):
+        res = self.client.get(
+            '/buyers/create-your-account-complete',
+            follow_redirects=False
+        )
+        assert res.status_code == 200
 
     @mock.patch('app.create_buyer.views.create_buyer.send_email')
     @mock.patch('app.create_buyer.views.create_buyer.data_api_client')

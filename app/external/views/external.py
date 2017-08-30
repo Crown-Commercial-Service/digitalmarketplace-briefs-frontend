@@ -13,11 +13,6 @@ def create_user(encoded_token):
     raise NotImplementedError()
 
 
-@external.route('/create-your-account-complete')
-def create_your_account_complete():
-    raise NotImplementedError()
-
-
 @external.route('/login')
 def render_login():
     raise NotImplementedError()
