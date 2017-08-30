@@ -53,7 +53,7 @@ def create_app(config_name):
     application.register_blueprint(main_blueprint, url_prefix='/buyers')
     application.register_blueprint(status_blueprint, url_prefix='/buyers')
 
-    login_manager.login_view = '/login'
+    login_manager.login_view = 'external.render_login'
     login_manager.login_message_category = "must_login"
     csrf.init_app(application)
 
