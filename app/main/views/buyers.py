@@ -436,7 +436,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
         abort(404)
     brief_response = data_api_client.get_brief_response(brief_response_id)["briefResponses"]
-    if not brief_response.get('status') == 'pending-awarded':
+    if not brief_response.get('status') == 'pending-awarded' or not brief_response.get('briefId') == brief.get('id'):
         abort(404)
     # get questions
     content = content_loader.get_manifest(brief['frameworkSlug'], 'award_brief')
