@@ -29,8 +29,8 @@ from io import BytesIO
 
 from collections import Counter
 
-CLOSED_BRIEF_STATUSES = ['closed', 'withdrawn', 'awarded']
-CLOSED_PUBLISHED_BRIEF_STATUSES = ['closed', 'awarded']
+CLOSED_BRIEF_STATUSES = ['closed', 'withdrawn', 'awarded', 'cancelled', 'unsuccessful']
+CLOSED_PUBLISHED_BRIEF_STATUSES = ['closed', 'awarded', 'cancelled', 'unsuccessful']
 
 
 @main.route('')
