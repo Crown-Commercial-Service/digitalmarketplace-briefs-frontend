@@ -1566,7 +1566,6 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
             res = self.client.post(
                 "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/delete",
             )
-            print(framework_status)
             assert res.status_code == 404
             assert not data_api_client.delete_brief.called
 
@@ -3415,6 +3414,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         self.data_api_client.get_brief_response.return_value = {
             "briefResponses": {
                 "id": 5678,
+                "briefId": 1234,
                 "status": "pending-awarded",
                 "supplierName": "BananaCorp",
                 "awardDetails": {"pending": True}
@@ -3496,6 +3496,22 @@ class TestAwardBriefDetails(BaseApplicationTest):
 
         self.login_as_buyer()
         res = self.client.get(self.url.format(brief_id=1234, brief_response_id=5678))
+        assert res.status_code == 404
+
+    def test_award_brief_details_raises_404_if_brief_response_not_related_to_brief(self):
+        """Fake brief_response, as if the user has changed the brief_response.id in the url."""
+        self.data_api_client.get_brief_response.return_value['briefResponses']['briefId'] = 9
+
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234, brief_response_id=99))
+        assert res.status_code == 404
+
+    def test_award_brief_details_raises_404_if_brief_not_related_to_brief_response(self):
+        """Fake brief, as if the user has changed the brief_id in the url."""
+        self.data_api_client.get_brief.return_value['briefs']['id'] = 9
+
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=9, brief_response_id=5678))
         assert res.status_code == 404
 
     def _assert_masthead(self, document):
