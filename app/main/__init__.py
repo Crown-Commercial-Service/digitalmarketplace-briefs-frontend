@@ -1,6 +1,7 @@
 from flask import Blueprint, current_app, flash
 from flask_login import current_user, login_required
 from dmcontent.content_loader import ContentLoader
+import flask_featureflags
 
 main = Blueprint('buyers', __name__)
 dos = Blueprint('dos', __name__)
@@ -19,6 +20,7 @@ content_loader.load_manifest('digital-outcomes-and-specialists-2', 'briefs', 'aw
 
 
 @main.before_request
+@flask_featureflags.is_active_feature('DIRECT_AWARD_PROJECTS')
 @login_required
 def require_login():
     if current_user.is_authenticated() and current_user.role != 'buyer':
@@ -30,6 +32,7 @@ def require_login():
 def add_cache_control(response):
     response.cache_control.no_cache = True
     return response
+
 
 from ..main import errors
 from .views import buyers as buyers_views
