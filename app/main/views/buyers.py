@@ -176,6 +176,11 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
         abort(404)
 
+    awarded_brief_response_supplier_name = ""
+    if brief.get('awardedBriefResponseId'):
+        awarded_brief_response_supplier_name = data_api_client.get_brief_response(
+            brief['awardedBriefResponseId'])["briefResponses"]["supplierName"]
+
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
     sections = content.summary(brief)
     delete_requested = True if request.args.get('delete_requested') else False
@@ -208,6 +213,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         delete_requested=delete_requested,
         call_off_contract_url=call_off_contract_url,
         framework_agreement_url=framework_agreement_url,
+        awarded_brief_response_supplier_name=awarded_brief_response_supplier_name
     ), 200
 
 

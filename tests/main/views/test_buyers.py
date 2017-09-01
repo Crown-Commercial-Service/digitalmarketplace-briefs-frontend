@@ -1697,6 +1697,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
                 'Download the Digital Outcomes and Specialists contract',
             ]
 
+            assert "Awarded to " not in page_html
             assert document.xpath('//a[contains(text(), "Delete")]')
 
     def test_show_live_brief_summary_page_for_live_and_expired_framework(self, data_api_client):
@@ -1737,6 +1738,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
                     'Download the Digital Outcomes and Specialists contract',
                 ]
 
+                assert "Awarded to " not in page_html
                 assert not document.xpath('//a[contains(text(), "Delete")]')
 
     def test_show_closed_brief_summary_page_for_live_and_expired_framework(self, data_api_client):
@@ -1776,6 +1778,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
                     'Let suppliers know the outcome'
                 ]
 
+                assert "Awarded to " not in page_html
                 assert not document.xpath('//a[contains(text(), "Delete")]')
 
     @pytest.mark.parametrize('status', ['cancelled', 'unsuccessful'])
@@ -1816,46 +1819,60 @@ class TestBriefSummaryPage(BaseApplicationTest):
                     'Download the Digital Outcomes and Specialists contract',
                 ]
 
+                assert "Awarded to " not in page_html
                 assert not document.xpath('//a[contains(text(), "Delete")]')
 
-    def test_show_awarded_brief_summary_page_for_live_and_expired_framework(self, data_api_client):
-        framework_statuses = ['live', 'expired']
+    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
+    def test_show_awarded_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
+
         with self.app.app_context():
             self.login_as_buyer()
-            for framework_status in framework_statuses:
-                data_api_client.get_framework.return_value = api_stubs.framework(
-                    slug='digital-outcomes-and-specialists',
-                    status=framework_status,
-                    lots=[
-                        api_stubs.lot(slug='digital-specialists', allows_brief=True),
-                    ]
-                )
-                brief_json = api_stubs.brief(status="awarded")
-                brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
-                brief_json['briefs']['specialistRole'] = 'communicationsManager'
-                brief_json['briefs']["clarificationQuestionsAreClosed"] = True
-                brief_json['briefs']['awardedBriefResponseId'] = 999
-                data_api_client.get_brief.return_value = brief_json
-
-                res = self.client.get(
-                    "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
-                )
-
-                assert res.status_code == 200
-                page_html = res.get_data(as_text=True)
-                document = html.fromstring(page_html)
-
-                assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-                assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
-                    'View your published requirements',
-                    'View and shortlist suppliers',
-                    'How to shortlist suppliers',
-                    'How to evaluate suppliers',
-                    'How to award a contract',
-                    'Download the Digital Outcomes and Specialists contract',
+            data_api_client.get_framework.return_value = api_stubs.framework(
+                slug='digital-outcomes-and-specialists',
+                status=framework_status,
+                lots=[
+                    api_stubs.lot(slug='digital-specialists', allows_brief=True),
                 ]
+            )
+            brief_json = api_stubs.brief(status="awarded")
+            brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
+            brief_json['briefs']['specialistRole'] = 'communicationsManager'
+            brief_json['briefs']["clarificationQuestionsAreClosed"] = True
+            brief_json['briefs']['awardedBriefResponseId'] = 999
+            data_api_client.get_brief.return_value = brief_json
 
-                assert not document.xpath('//a[contains(text(), "Delete")]')
+            data_api_client.get_brief_response.return_value = {
+                "briefResponses": {
+                    "awardDetails": {
+                        "awardedContractStartDate": "2016-4-4",
+                        "awardedContractValue": "100"
+                    },
+                    "id": 213,
+                    "status": "awarded",
+                    "supplierName": "100 Percent IT Ltd",
+                }
+            }
+
+            res = self.client.get(
+                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
+            )
+
+            assert res.status_code == 200
+
+            assert data_api_client.get_brief_response.call_args_list == [
+                mock.call(999)
+            ]
+
+            page_html = res.get_data(as_text=True)
+            document = html.fromstring(page_html)
+
+            assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
+            assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+                'View your published requirements',
+                'View suppliers who applied',
+            ]
+            assert "Awarded to 100 Percent IT Ltd" in page_html
+            assert not document.xpath('//a[contains(text(), "Delete")]')
 
     def test_show_clarification_questions_page_for_live_brief_with_no_questions(self, data_api_client):
         framework_statuses = ['live', 'expired']
