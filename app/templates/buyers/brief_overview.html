@@ -84,10 +84,10 @@
               'description': {
                 'draft': '',
                 'live': 'Your requirements are open for applications until {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
-                'closed': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
-                'awarded': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
-                'cancelled': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
-                'unsuccessful': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
+                'closed': 'Done',
+                'awarded': 'Done',
+                'cancelled': 'Done',
+                'unsuccessful': 'Done',
               },
               'links': [
                 {
@@ -135,10 +135,10 @@
               'description': {
                 'draft': 'After the application deadline, shortlist the suppliers who applied.',
                 'live': 'After the application deadline, shortlist the suppliers who applied.',
-                'closed': 'You can view and shortlist suppliers who best meet your needs.',
-                'awarded': 'You can view and shortlist suppliers who best meet your needs.',
-                'cancelled': 'You can view and shortlist suppliers who best meet your needs.',
-                'unsuccessful': 'You can view and shortlist suppliers who best meet your needs.',
+                'closed': '',
+                'awarded': '',
+                'cancelled': '',
+                'unsuccessful': '',
               },
               'links': [
                 {
@@ -182,8 +182,13 @@
                 },
                 {
                   'href': call_off_contract_url,
-                  'text': "View the " + brief.frameworkName + " contract",
+                  'text': "Download the " + brief.frameworkName + " contract",
                 },
+                {
+                  'href': url_for(".award_brief", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+                  'text': "Let suppliers know the outcome",
+                  'allowed_statuses': ['closed']
+                }
               ]
             }
           ]

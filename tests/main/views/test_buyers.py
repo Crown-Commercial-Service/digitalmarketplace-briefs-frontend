@@ -1694,7 +1694,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
                 'How to shortlist suppliers',
                 'How to evaluate suppliers',
                 'How to award a contract',
-                'View the Digital Outcomes and Specialists contract',
+                'Download the Digital Outcomes and Specialists contract',
             ]
 
             assert document.xpath('//a[contains(text(), "Delete")]')
@@ -1734,13 +1734,52 @@ class TestBriefSummaryPage(BaseApplicationTest):
                     'How to shortlist suppliers',
                     'How to evaluate suppliers',
                     'How to award a contract',
-                    'View the Digital Outcomes and Specialists contract',
+                    'Download the Digital Outcomes and Specialists contract',
                 ]
 
                 assert not document.xpath('//a[contains(text(), "Delete")]')
 
-    @pytest.mark.parametrize('status', ['closed', 'cancelled', 'unsuccessful'])
-    def test_show_closed_canclled_unsuccessful_brief_summary_page_for_live_and_expired_framework(
+    def test_show_closed_brief_summary_page_for_live_and_expired_framework(self, data_api_client):
+        framework_statuses = ['live', 'expired']
+        with self.app.app_context():
+            self.login_as_buyer()
+            for framework_status in framework_statuses:
+                data_api_client.get_framework.return_value = api_stubs.framework(
+                    slug='digital-outcomes-and-specialists',
+                    status=framework_status,
+                    lots=[
+                        api_stubs.lot(slug='digital-specialists', allows_brief=True),
+                    ]
+                )
+                brief_json = api_stubs.brief(status="closed")
+                brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
+                brief_json['briefs']['specialistRole'] = 'communicationsManager'
+                brief_json['briefs']["clarificationQuestionsAreClosed"] = True
+                data_api_client.get_brief.return_value = brief_json
+
+                res = self.client.get(
+                    "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
+                )
+
+                assert res.status_code == 200
+                page_html = res.get_data(as_text=True)
+                document = html.fromstring(page_html)
+
+                assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
+                assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+                    'View your published requirements',
+                    'View and shortlist suppliers',
+                    'How to shortlist suppliers',
+                    'How to evaluate suppliers',
+                    'How to award a contract',
+                    'Download the Digital Outcomes and Specialists contract',
+                    'Let suppliers know the outcome'
+                ]
+
+                assert not document.xpath('//a[contains(text(), "Delete")]')
+
+    @pytest.mark.parametrize('status', ['cancelled', 'unsuccessful'])
+    def test_show_cancelled_and_unsuccessful_brief_summary_page_for_live_and_expired_framework(
             self, data_api_client, status):
         framework_statuses = ['live', 'expired']
         with self.app.app_context():
@@ -1774,7 +1813,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
                     'How to shortlist suppliers',
                     'How to evaluate suppliers',
                     'How to award a contract',
-                    'View the Digital Outcomes and Specialists contract',
+                    'Download the Digital Outcomes and Specialists contract',
                 ]
 
                 assert not document.xpath('//a[contains(text(), "Delete")]')
@@ -1813,7 +1852,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
                     'How to shortlist suppliers',
                     'How to evaluate suppliers',
                     'How to award a contract',
-                    'View the Digital Outcomes and Specialists contract',
+                    'Download the Digital Outcomes and Specialists contract',
                 ]
 
                 assert not document.xpath('//a[contains(text(), "Delete")]')
@@ -2109,7 +2148,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
 
                     assert call_off_contract_link_destination == call_off_contract_url
                     assert framework_agreement_link_destination == framework_agreement_url
-                    assert contract_link_text == "View the {} contract".format(framework_name)
+                    assert contract_link_text == "Download the {} contract".format(framework_name)
 
 
 @mock.patch("app.main.views.buyers.data_api_client", autospec=True)
