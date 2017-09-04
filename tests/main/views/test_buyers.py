@@ -195,14 +195,14 @@ class TestBuyerRoleRequired(BaseApplicationTest):
         with self.app.app_context():
             res = self.client.get('/buyers')
             assert res.status_code == 302
-            assert res.location == 'http://localhost/login?next=%2Fbuyers'
+            assert res.location == 'http://localhost/user/login?next=%2Fbuyers'
 
     def test_supplier_cannot_access_buyer_pages(self):
         with self.app.app_context():
             self.login_as_supplier()
             res = self.client.get('/buyers')
             assert res.status_code == 302
-            assert res.location == 'http://localhost/login?next=%2Fbuyers'
+            assert res.location == 'http://localhost/user/login?next=%2Fbuyers'
             self.assert_flashes('buyer-role-required', expected_category='error')
 
     @mock.patch('app.main.views.buyers.data_api_client')
@@ -3314,7 +3314,7 @@ class TestAwardBrief(BaseApplicationTest):
         target_url = self.url.format(brief_id=1234)
         res = self.client.get(target_url)
         assert res.status_code == 302
-        assert res.location == 'http://localhost/login?next={}'.format(target_url.replace('/', '%2F'))
+        assert res.location == 'http://localhost/user/login?next={}'.format(target_url.replace('/', '%2F'))
 
     def test_award_brief_get_returns_404_if_brief_not_closed(self):
         brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='live')

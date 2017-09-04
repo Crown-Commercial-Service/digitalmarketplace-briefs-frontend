@@ -38,6 +38,7 @@ def submit_create_buyer_account():
         else:
             token = generate_token(
                 {
+                    "role": "buyer",
                     "email_address":  email_address
                 },
                 current_app.config['SHARED_EMAIL_KEY'],
