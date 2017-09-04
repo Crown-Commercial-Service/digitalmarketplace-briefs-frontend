@@ -137,24 +137,24 @@
                 'live': 'After the application deadline, shortlist the suppliers who applied.',
                 'closed': '',
                 'awarded': 'Done',
-                'cancelled': '',
-                'unsuccessful': '',
+                'cancelled': 'Done',
+                'unsuccessful': 'Done',
               },
               'links': [
                 {
                   'href': url_for(".view_brief_responses", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
                   'text': 'View and shortlist suppliers',
-                  'allowed_statuses': ['closed', 'cancelled', 'unsuccessful']
+                  'allowed_statuses': ['closed']
                 },
                 {
                   'href': url_for(".view_brief_responses", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
                   'text': 'View suppliers who applied',
-                  'allowed_statuses': ['awarded']
+                  'allowed_statuses': ['cancelled', 'unsuccessful', 'awarded']
                 },
                 {
                   'href': 'https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers',
                   'text': 'How to shortlist suppliers',
-                  'allowed_statuses': ['draft', 'live', 'closed', 'cancelled', 'unsuccessful']
+                  'allowed_statuses': ['draft', 'live', 'closed']
                 }
               ]
             },
@@ -165,12 +165,14 @@
                 'live': 'Evaluate your shortlist using the criteria and methods you published with your requirements.',
                 'closed': 'Evaluate your shortlist using the criteria and methods you published with your requirements.',
                 'awarded': 'Done',
+                'cancelled': 'Done',
+                'unsuccessful': 'Done',
               },
               'links': [
                 {
                   'href': 'https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers',
                   'text': 'How to evaluate suppliers',
-                  'allowed_statuses': ['draft', 'live', 'closed', 'cancelled', 'unsuccessful']
+                  'allowed_statuses': ['draft', 'live', 'closed']
                 }
               ]
             },
@@ -181,6 +183,8 @@
                 'live': 'You must give your chosen supplier a contract before they start work.',
                 'closed': 'You must give your chosen supplier a contract before they start work.',
                 'awarded': 'Done',
+                'cancelled': 'The contract was not awarded - the requirement was cancelled.',
+                'unsuccessful': 'The contract was not awarded - no suitable suppliers applied.',
               },
               'body': {
                 'text': 'Awarded to ' + awarded_brief_response_supplier_name,
@@ -190,12 +194,12 @@
                 {
                   'href': 'https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services',
                   'text': 'How to award a contract',
-                  'allowed_statuses': ['draft', 'live', 'closed', 'cancelled', 'unsuccessful']
+                  'allowed_statuses': ['draft', 'live', 'closed']
                 },
                 {
                   'href': call_off_contract_url,
                   'text': "Download the " + brief.frameworkName + " contract",
-                  'allowed_statuses': ['draft', 'live', 'closed', 'cancelled', 'unsuccessful']
+                  'allowed_statuses': ['draft', 'live', 'closed']
                 },
                 {
                   'href': url_for(".award_brief", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),

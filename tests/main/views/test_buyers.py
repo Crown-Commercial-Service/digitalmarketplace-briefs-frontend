@@ -1780,9 +1780,12 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert not document.xpath('//a[contains(text(), "Delete")]')
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
-    @pytest.mark.parametrize('status', ['cancelled', 'unsuccessful'])
+    @pytest.mark.parametrize(
+        'status,award_description',
+        [('cancelled', 'the requirement was cancelled'), ('unsuccessful', 'no suitable suppliers applied')]
+    )
     def test_show_cancelled_and_unsuccessful_brief_summary_page_for_live_and_expired_framework(
-            self, data_api_client, status, framework_status):
+            self, data_api_client, status, award_description, framework_status):
         with self.app.app_context():
             self.login_as_buyer()
             data_api_client.get_framework.return_value = api_stubs.framework(
@@ -1809,12 +1812,9 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
             assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
                 'View your published requirements',
-                'View and shortlist suppliers',
-                'How to shortlist suppliers',
-                'How to evaluate suppliers',
-                'How to award a contract',
-                'Download the Digital Outcomes and Specialists contract',
+                'View suppliers who applied',
             ]
+            assert "The contract was not awarded - {}.".format(award_description) in page_html
 
             assert "Awarded to " not in page_html
             assert not document.xpath('//a[contains(text(), "Delete")]')
