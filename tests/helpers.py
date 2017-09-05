@@ -66,9 +66,9 @@ class BaseApplicationTest(object):
         self.client = self.app.test_client()
         self.get_user_patch = None
 
-        self.buyer_dashboard_url = "/buyers"
+        self.briefs_dashboard_url = "/buyers"
         if self.app.config.get('FEATURE_FLAGS_DIRECT_AWARD_PROJECTS'):
-            self.buyer_dashboard_url = "/buyers/requirements/digital-outcomes-and-specialists"
+            self.briefs_dashboard_url = "/buyers/requirements/digital-outcomes-and-specialists"
 
     def teardown_method(self, method):
         self.teardown_login()
