@@ -18,7 +18,6 @@ import sys
 
 from werkzeug.exceptions import NotFound
 
-
 po = functools.partial(mock.patch.object, autospec=True)
 
 
@@ -105,8 +104,7 @@ class TestBuyerDashboard(BaseApplicationTest):
 
     def test_draft_briefs_section(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
-
-        res = self.client.get("/buyers/requirements/digital-outcomes-and-specialists")
+        res = self.client.get(self.buyer_dashboard_url)
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
 
         assert res.status_code == 200
@@ -121,7 +119,7 @@ class TestBuyerDashboard(BaseApplicationTest):
     def test_live_briefs_section(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
-        res = self.client.get("/buyers/requirements/digital-outcomes-and-specialists")
+        res = self.client.get(self.buyer_dashboard_url)
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
 
         assert res.status_code == 200
@@ -136,7 +134,7 @@ class TestBuyerDashboard(BaseApplicationTest):
     def test_closed_briefs_section_with_closed_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
-        res = self.client.get("/buyers/requirements/digital-outcomes-and-specialists")
+        res = self.client.get(self.buyer_dashboard_url)
 
         assert res.status_code == 200
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
@@ -159,7 +157,7 @@ class TestBuyerDashboard(BaseApplicationTest):
     def test_closed_briefs_section_with_withdrawn_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
-        res = self.client.get("/buyers/requirements/digital-outcomes-and-specialists")
+        res = self.client.get(self.buyer_dashboard_url)
 
         assert res.status_code == 200
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
@@ -176,7 +174,7 @@ class TestBuyerDashboard(BaseApplicationTest):
     def test_closed_briefs_section_with_awarded_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
-        res = self.client.get("/buyers/requirements/digital-outcomes-and-specialists")
+        res = self.client.get(self.buyer_dashboard_url)
 
         assert res.status_code == 200
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
@@ -193,7 +191,7 @@ class TestBuyerDashboard(BaseApplicationTest):
     def test_closed_briefs_section_with_cancelled_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
-        res = self.client.get("/buyers")
+        res = self.client.get(self.buyer_dashboard_url)
 
         assert res.status_code == 200
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
@@ -210,7 +208,7 @@ class TestBuyerDashboard(BaseApplicationTest):
     def test_closed_briefs_section_with_unsuccessful_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
 
-        res = self.client.get("/buyers")
+        res = self.client.get(self.buyer_dashboard_url)
 
         assert res.status_code == 200
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
@@ -232,7 +230,7 @@ class TestBuyerDashboard(BaseApplicationTest):
                 ('message', {'updated-brief': "My Amazing Brief"})
             ]
 
-        res = self.client.get("/buyers/requirements/digital-outcomes-and-specialists")
+        res = self.client.get(self.buyer_dashboard_url)
 
         flash_div = html.fromstring(res.get_data(as_text=True)).xpath('//div[@class="banner-success-without-action"]')
         assert flash_div[0].text_content().strip() == "You've updated 'My Amazing Brief'"
@@ -241,23 +239,27 @@ class TestBuyerDashboard(BaseApplicationTest):
 class TestBuyerRoleRequired(BaseApplicationTest):
     def test_login_required_for_buyer_pages(self):
         with self.app.app_context():
-            res = self.client.get('/buyers/requirements/digital-outcomes-and-specialists')
+            res = self.client.get(self.buyer_dashboard_url)
             assert res.status_code == 302
-            assert res.location == 'http://localhost/user/login?next=%2Fbuyers%2Frequirements%2Fdigital-outcomes-and-specialists'
+            assert res.location == 'http://localhost/user/login?next={}'.format(
+                self.buyer_dashboard_url.replace('/', '%2F')
+            )
 
     def test_supplier_cannot_access_buyer_pages(self):
         with self.app.app_context():
             self.login_as_supplier()
-            res = self.client.get('/buyers/requirements/digital-outcomes-and-specialists')
+            res = self.client.get(self.buyer_dashboard_url)
             assert res.status_code == 302
-            assert res.location == 'http://localhost/user/login?next=%2Fbuyers%2Frequirements%2Fdigital-outcomes-and-specialists'
+            assert res.location == 'http://localhost/user/login?next={}'.format(
+                self.buyer_dashboard_url.replace('/', '%2F')
+            )
             self.assert_flashes('buyer-role-required', expected_category='error')
 
     @mock.patch('app.main.views.buyers.data_api_client')
     def test_buyer_pages_ok_if_logged_in_as_buyer(self, data_api_client):
         with self.app.app_context():
             self.login_as_buyer()
-            res = self.client.get('/buyers/requirements/digital-outcomes-and-specialists')
+            res = self.client.get(self.buyer_dashboard_url)
             page_text = res.get_data(as_text=True)
 
             assert res.status_code == 200
