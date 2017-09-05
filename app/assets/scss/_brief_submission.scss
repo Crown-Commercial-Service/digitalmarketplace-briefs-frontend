@@ -77,6 +77,11 @@ ol.steps {
 }
 
 .section-description {
-   @extend %markdown-description;
-   padding-bottom: 30px;
+  @extend %markdown-description;
+  padding-bottom: 30px;
+  h2 {
+    @extend %heading-small;
+    margin-bottom: -5px;
+  }
 }
+
