@@ -64,6 +64,8 @@
                 'live': 'Done',
                 'closed': 'Done',
                 'awarded': 'Done',
+                'cancelled': 'Done',
+                'unsuccessful': 'Done',
               },
             },
             {
@@ -73,6 +75,8 @@
                 'live': 'Done',
                 'closed': 'Done',
                 'awarded': 'Done',
+                'cancelled': 'Done',
+                'unsuccessful': 'Done',
               },
             },
             {
@@ -82,6 +86,8 @@
                 'live': 'Your requirements are open for applications until {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
                 'closed': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
                 'awarded': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
+                'cancelled': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
+                'unsuccessful': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
               },
               'links': [
                 {
@@ -97,7 +103,7 @@
                 {
                   'href': url_for("external.get_brief_by_id", framework_framework=brief.frameworkFramework, brief_id=brief.id),
                   'text': 'View your published requirements',
-                  'allowed_statuses': ['live', 'closed', 'awarded']
+                  'allowed_statuses': ['live', 'closed', 'awarded', 'cancelled', 'unsuccessful']
                 }
               ]
             },
@@ -108,6 +114,8 @@
                 'live': 'You must answer all questions by {}. Suppliers will send you questions by email.'.format(brief.clarificationQuestionsPublishedBy | dateformat),
                 'closed': 'Done',
                 'awarded': 'Done',
+                'cancelled': 'Done',
+                'unsuccessful': 'Done',
               },
               'links': [
                 {
@@ -129,12 +137,14 @@
                 'live': 'After the application deadline, shortlist the suppliers who applied.',
                 'closed': 'You can view and shortlist suppliers who best meet your needs.',
                 'awarded': 'You can view and shortlist suppliers who best meet your needs.',
+                'cancelled': 'You can view and shortlist suppliers who best meet your needs.',
+                'unsuccessful': 'You can view and shortlist suppliers who best meet your needs.',
               },
               'links': [
                 {
                   'href': url_for(".view_brief_responses", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
                   'text': 'View and shortlist suppliers',
-                  'allowed_statuses': ['closed', 'awarded']
+                  'allowed_statuses': ['closed', 'awarded', 'cancelled', 'unsuccessful']
                 },
                 {
                   'href': 'https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers',

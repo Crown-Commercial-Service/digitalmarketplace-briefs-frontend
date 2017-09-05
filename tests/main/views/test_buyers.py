@@ -73,6 +73,20 @@ def find_briefs_mock():
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
                 "applicationsClosedAt": "2016-02-18T12:00:00.000000Z"
             },
+            {
+                "id": 26,
+                "status": "cancelled",
+                "title": "A cancelled brief",
+                "publishedAt": "2016-02-04T12:00:00.000000Z",
+                "applicationsClosedAt": "2016-02-17T12:00:00.000000Z"
+            },
+            {
+                "id": 27,
+                "status": "unsuccessful",
+                "title": "An unsuccessful brief where no suitable suppliers applied",
+                "publishedAt": "2016-02-04T12:00:00.000000Z",
+                "applicationsClosedAt": "2016-02-16T12:00:00.000000Z"
+            },
         ]
     }
 
@@ -175,6 +189,40 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert awarded_row_cells[1] == "Friday 19 February 2016"
         assert "View responses" not in awarded_row_cells[2]
         assert "Tell us who won this contract" not in awarded_row_cells[2]
+
+    def test_closed_briefs_section_with_cancelled_brief(self, data_api_client, find_briefs_mock):
+        data_api_client.find_briefs.return_value = find_briefs_mock
+
+        res = self.client.get("/buyers")
+
+        assert res.status_code == 200
+        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
+        cancelled_row = tables[2].xpath('.//tbody/tr')[4]
+        cancelled_row_cells = [cell.text_content().strip() for cell in cancelled_row.xpath('.//td')]
+        expected_link = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/26'
+
+        assert cancelled_row_cells[0] == "A cancelled brief"
+        assert cancelled_row.xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
+        assert cancelled_row_cells[1] == "Wednesday 17 February 2016"
+        assert "View responses" not in cancelled_row_cells[2]
+        assert "Tell us who won this contract" not in cancelled_row_cells[2]
+
+    def test_closed_briefs_section_with_unsuccessful_brief(self, data_api_client, find_briefs_mock):
+        data_api_client.find_briefs.return_value = find_briefs_mock
+
+        res = self.client.get("/buyers")
+
+        assert res.status_code == 200
+        tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
+        unsuccessful_row = tables[2].xpath('.//tbody/tr')[5]
+        unsuccessful_row_cells = [cell.text_content().strip() for cell in unsuccessful_row.xpath('.//td')]
+        expected_link = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/27'
+
+        assert unsuccessful_row_cells[0] == "An unsuccessful brief where no suitable suppliers applied"
+        assert unsuccessful_row.xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
+        assert unsuccessful_row_cells[1] == "Tuesday 16 February 2016"
+        assert "View responses" not in unsuccessful_row_cells[2]
+        assert "Tell us who won this contract" not in unsuccessful_row_cells[2]
 
     def test_flash_message_shown_if_brief_has_just_been_updated(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
@@ -1689,7 +1737,9 @@ class TestBriefSummaryPage(BaseApplicationTest):
 
                 assert not document.xpath('//a[contains(text(), "Delete")]')
 
-    def test_show_closed_brief_summary_page_for_live_and_expired_framework(self, data_api_client):
+    @pytest.mark.parametrize('status', ['closed', 'cancelled', 'unsuccessful'])
+    def test_show_closed_canclled_unsuccessful_brief_summary_page_for_live_and_expired_framework(
+            self, data_api_client, status):
         framework_statuses = ['live', 'expired']
         with self.app.app_context():
             self.login_as_buyer()
@@ -1701,7 +1751,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
                         api_stubs.lot(slug='digital-specialists', allows_brief=True),
                     ]
                 )
-                brief_json = api_stubs.brief(status="closed")
+                brief_json = api_stubs.brief(status=status)
                 brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
                 brief_json['briefs']['specialistRole'] = 'communicationsManager'
                 brief_json['briefs']["clarificationQuestionsAreClosed"] = True
@@ -2303,15 +2353,18 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
             "have already been told they were unsuccessful."
         ) in page
 
-    def test_page_visible_for_awarded_briefs(self):
+    @pytest.mark.parametrize('status', buyers.CLOSED_PUBLISHED_BRIEF_STATUSES)
+    def test_page_visible_for_awarded_cancelled_unsuccessful_briefs(self, status):
         brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='closed')
         brief_stub['briefs'].update(
             {
                 'publishedAt': self.brief_publishing_date,
-                'status': 'awarded',
-                'awardedBriefResponseId': 999
+                'status': status
             }
         )
+        if status == 'awarded':
+            brief_stub['briefs']['awardedBriefResponseId'] = 999
+
         self.data_api_client.get_brief.return_value = brief_stub
         self.login_as_buyer()
         res = self.client.get(
@@ -2550,7 +2603,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
         super(TestDownloadBriefResponsesView, self).teardown_method(method)
 
     @pytest.mark.parametrize('brief_status', buyers.CLOSED_PUBLISHED_BRIEF_STATUSES)
-    def test_end_to_end_for_closed_and_awarded_briefs(self, brief_status):
+    def test_end_to_end_for_closed_awarded_cancelled_unsuccessful_briefs(self, brief_status):
         self.brief['status'] = brief_status
         if brief_status == 'awarded':
             self.brief['awardedBriefResponseId'] = 999
