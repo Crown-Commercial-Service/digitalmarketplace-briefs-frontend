@@ -8,7 +8,7 @@ def get_brief_by_id(framework_framework, brief_id):
     raise NotImplementedError()
 
 
-@external.route('/create-user/<string:encoded_token>')
+@external.route('/user/create/<string:encoded_token>')
 def create_user(encoded_token):
     raise NotImplementedError()
 
