@@ -19,6 +19,7 @@ from ..helpers.buyers_helpers import (
 
 from ..helpers.ods import SpreadSheet
 from ..forms.awards import AwardedBriefResponseForm
+from ..forms.cancel import CancelBriefForm
 
 from dmapiclient import HTTPError
 from dmutils.dates import get_publishing_dates
@@ -452,6 +453,60 @@ def award_brief(framework_slug, lot_slug, brief_id):
         brief=brief,
         form=form
     ), 200
+
+
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/cancel', methods=['GET', 'POST'])
+def cancel_brief(framework_slug, lot_slug, brief_id):
+    form = None
+    errors = {}
+    get_framework_and_lot(
+        framework_slug,
+        lot_slug,
+        data_api_client,
+        allowed_statuses=['live', 'expired'],
+        must_allow_brief=True,
+    )
+    brief = data_api_client.get_brief(brief_id)["briefs"]
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
+        abort(404)
+    if brief["status"] != "closed":
+        abort(404)
+
+    if request.method == "POST":
+        form = CancelBriefForm(request.form, brief=brief)
+        if not form.validate_on_submit():
+            errors = {
+                key: {'question': form[key].label.text, 'input_name': key, 'message': form[key].errors[0]}
+                for key, value in form.errors.items()
+            }
+        else:
+            new_status = form.data.get('cancel_reason')
+            try:
+                if new_status == 'cancel':
+                    data_api_client.cancel_brief(
+                        brief_id,
+                        user=current_user.email_address
+                    )
+                elif new_status == 'unsuccessful':
+                    data_api_client.update_brief_as_unsuccessful(
+                        brief_id,
+                        user=current_user.email_address
+                    )
+                else:
+                    abort(400, "Unrecognized status '{}'".format(new_status))
+                flash({"updated-brief": brief.get("title")})
+                return redirect(
+                    url_for('.view_brief_overview', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
+                )
+            except HTTPError as e:
+                abort(500, "Unexpected API error when cancelling brief")
+
+    return render_template(
+        "buyers/cancel_brief.html",
+        brief=brief,
+        form=form or CancelBriefForm(brief=brief),
+        errors=errors,
+    ), 200 if not errors else 400
 
 
 @main.route(
