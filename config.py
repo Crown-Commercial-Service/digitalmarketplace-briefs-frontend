@@ -133,6 +133,7 @@ class Preview(Live):
     FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2017-02-06')
     FEATURE_FLAGS_DIRECT_AWARD_PROJECTS = enabled_since('2017-08-15')
 
+
 class Staging(Live):
     FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2017-02-07')
 
