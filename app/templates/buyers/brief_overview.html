@@ -42,10 +42,7 @@
   </div>
   <div class="grid-row">
     <div class="column-two-thirds">
-      {% with
-        heading = brief.get('title', brief['lotName']),
-        context = 'Overview'
-      %}
+      {% with heading = brief.get('title', brief['lotName']) %}
         {% include "toolkit/page-heading.html" %}
       {% endwith %}
     </div>
