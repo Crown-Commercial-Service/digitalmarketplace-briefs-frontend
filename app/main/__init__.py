@@ -1,7 +1,6 @@
 from flask import Blueprint, current_app, flash
 from flask_login import current_user, login_required
 from dmcontent.content_loader import ContentLoader
-import flask_featureflags
 
 main = Blueprint('buyers', __name__)
 dos = Blueprint('dos', __name__)
