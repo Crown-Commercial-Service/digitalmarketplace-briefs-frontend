@@ -31,7 +31,6 @@ def add_cache_control(response):
     response.cache_control.no_cache = True
     return response
 
-
 from ..main import errors
 from .views import buyers as buyers_views
 from .views import digital_outcomes_and_specialists
