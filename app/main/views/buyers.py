@@ -37,9 +37,7 @@ CLOSED_PUBLISHED_BRIEF_STATUSES = ['closed', 'awarded', 'cancelled', 'unsuccessf
 
 @main.route('')
 def buyer_dashboard():
-
     if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
-
         user_briefs_total = len(data_api_client.find_briefs(current_user.id).get('briefs', []))
         user_projects_total = len(data_api_client.find_direct_award_projects(current_user.id).get('projects', []))
 
