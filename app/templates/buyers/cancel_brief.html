@@ -1,0 +1,75 @@
+{% extends "_base_page.html" %}
+
+{% import "toolkit/forms/macros/forms.html" as forms %}
+
+{% block page_title %}{{ brief.title or brief.lotName }} – Digital Marketplace{% endblock %}
+
+{% block breadcrumb %}
+  {%
+    with items = [
+      {
+        "link": "/",
+        "label": "Digital Marketplace"
+      },
+      {
+        "link": url_for(".buyer_dashboard"),
+        "label": "Your account"
+      },
+      {
+        "link": url_for(".view_brief_overview", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+        "label": brief.title
+      }
+    ]
+  %}
+    {% include "toolkit/breadcrumb.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block main_content %}
+  {% if errors %}
+    {% with errors = errors.values() %}
+      {% include 'toolkit/forms/validation.html' %}
+    {% endwith %}
+  {% endif %}
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <div class="single-question-page">
+
+        {% with
+        heading = "Why do you need to cancel {}?".format(brief.get('title', brief['lotName'])),
+        smaller = True
+        %}
+          {% include 'toolkit/page-heading.html' %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('.cancel_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          {%
+            with
+            name = "cancel_reason",
+            question = "Why do you need to cancel {}?".format(brief.get('title', brief['lotName'])),
+            type = "radio",
+            options = form.cancel_reason.toolkit_macro_options,
+            value = form.cancel_reason.data,
+            error = errors.get('cancel_reason', {}).get('message', None)
+          %}
+            {% include "toolkit/forms/selection-buttons.html" %}
+          {% endwith %}
+
+          <p>Your requirement will be updated so suppliers can see it. You’ll still need to contact them to let them know what happened and give them feedback.</p>
+
+          {% block save_button %}
+            {%
+              with
+              label="Update requirement",
+              name="submit",
+              type="save"
+            %}
+            {% include "toolkit/button.html" %}
+          {% endwith %}
+        {% endblock %}
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

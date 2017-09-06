@@ -3671,3 +3671,73 @@ class TestAwardBriefDetails(BaseApplicationTest):
             assert document.xpath('//input[@id="input-awardedContractStartDate-day"]/@value')[0] == "x"
             assert document.xpath('//input[@id="input-awardedContractStartDate-month"]/@value')[0] == "y"
             assert document.xpath('//input[@id="input-awardedContractStartDate-year"]/@value')[0] == "z"
+
+
+class TestCancelBrief(BaseApplicationTest):
+    url = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/cancel'
+
+    def setup_method(self, method):
+        super(TestCancelBrief, self).setup_method(method)
+
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists-2',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-outcomes', allows_brief=True),
+            ]
+        )
+        self.brief = api_stubs.brief(
+            user_id=123, framework_slug='digital-outcomes-and-specialists-2', lot_slug="digital-outcomes", status='closed'
+        )['briefs']
+        self.data_api_client.get_brief.return_value = {"briefs": self.brief}
+        self.login_as_buyer()
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super(TestCancelBrief, self).teardown_method(method)
+
+def test_cancel_brief_200s_with_correct_default_content(self):
+    self.login_as_buyer()
+    res = self.client.get(self.url.format(brief_id=1234))
+
+    assert res.status_code == 200
+    document = html.fromstring(res.get_data(as_text=True))
+    self.assert_breadcrumbs(res, extra_breadcrumbs=[
+        (
+            'I need a thing to do a thing',
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+        )
+    ])
+
+    page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
+    assert "Why do you need to cancel" in page_title
+
+    submit_button = document.xpath('//input[@class="button-save" and @value="Update requirement"]')
+    assert len(submit_button) == 1
+
+    def test_404_if_user_is_not_brief_owner(self):
+        self.data_api_client.get_brief.return_value['briefs']['users'][0]['id'] = 234
+
+        resp = self.client.get(self.url.format(brief_id=self.brief["id"]))
+
+        assert resp.status_code == 404
+
+    @pytest.mark.parametrize('status', ['withdrawn', 'draft', 'live', 'cancelled', 'unsuccessful', 'awarded'])
+    def test_404_if_brief_not_closed(self, status):
+        self.data_api_client.get_brief.return_value['briefs']['status'] = status
+
+        resp = self.client.get(self.url.format(brief_id=self.brief["id"]))
+
+        assert resp.status_code == 404
+
+
+    @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill'])
+    def test_404_if_incorrect_framework_status(self, framework_status):
+        self.data_api_client.get_framework.return_value['frameworks']['status'] = framework_status
+
+        resp = self.client.get(self.url.format(brief_id=123))
+
+        assert resp.status_code == 404
