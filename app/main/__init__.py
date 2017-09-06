@@ -20,7 +20,6 @@ content_loader.load_manifest('digital-outcomes-and-specialists-2', 'briefs', 'aw
 
 
 @main.before_request
-@flask_featureflags.is_active_feature('DIRECT_AWARD_PROJECTS')
 @login_required
 def require_login():
     if current_user.is_authenticated() and current_user.role != 'buyer':
