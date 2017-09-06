@@ -47,7 +47,7 @@
       <p>Buy services through the Digital Outcomes and Specialists framework.</p>
       <p>
         {% if user_briefs_total %}
-          <a href="/buyers/requirements/digital-outcomes-and-specialists">View your requirements</a><br>  
+          <a href="{{ url_for('buyers.buyer_dos_requirements') }}">View your requirements</a><br>  
         {% else %}   
           You don't have any requirements
         {% endif %}
