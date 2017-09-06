@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 import inflection
 import sys
+import flask_featureflags
+
 
 from flask import abort, render_template, request, redirect, url_for, flash, Response, current_app
 from flask.views import View
@@ -35,6 +37,22 @@ CLOSED_PUBLISHED_BRIEF_STATUSES = ['closed', 'awarded', 'cancelled', 'unsuccessf
 
 @main.route('')
 def buyer_dashboard():
+    if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
+        user_briefs_total = len(data_api_client.find_briefs(current_user.id).get('briefs', []))
+        user_projects_total = len(data_api_client.find_direct_award_projects(current_user.id).get('projects', []))
+
+        return render_template(
+            'buyers/index.html',
+            user_briefs_total=user_briefs_total,
+            user_projects_total=user_projects_total
+        )
+
+    else:
+        return buyer_dos_requirements()
+
+
+@main.route('/requirements/digital-outcomes-and-specialists')
+def buyer_dos_requirements():
     user_briefs = data_api_client.find_briefs(current_user.id).get('briefs', [])
 
     draft_briefs = add_unanswered_counts_to_briefs(
