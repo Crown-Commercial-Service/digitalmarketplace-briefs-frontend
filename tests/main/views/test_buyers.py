@@ -1599,7 +1599,7 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
 
             assert res.status_code == 302
             assert data_api_client.delete_brief.called
-            assert res.location == "http://localhost/buyers"
+            assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
 
     def test_404_if_framework_is_not_live_or_expired(self, data_api_client):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
@@ -3535,7 +3535,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
                 updated_by="buyer@email.com"
             )
             assert res.status_code == 302
-            assert res.location == "http://localhost/buyers"
+            assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
             self.assert_flashes("updated-brief")
 
     @mock.patch('app.main.views.buyers.is_brief_correct')

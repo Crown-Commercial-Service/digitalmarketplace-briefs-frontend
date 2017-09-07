@@ -484,6 +484,10 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
             ), 400
 
         flash({"updated-brief": brief.get("title")})
+
+        if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
+            return redirect(url_for(".buyer_dos_requirements"))
+
         return redirect(url_for(".buyer_dashboard"))
 
     return render_template(
@@ -818,6 +822,10 @@ def delete_a_brief(framework_slug, lot_slug, brief_id):
 
     data_api_client.delete_brief(brief_id, current_user.email_address)
     flash({"requirements_deleted": brief.get("title")})
+
+    if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
+        return redirect(url_for(".buyer_dos_requirements"))
+
     return redirect(url_for('.buyer_dashboard'))
 
 
