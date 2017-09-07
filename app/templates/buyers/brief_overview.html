@@ -42,10 +42,7 @@
   </div>
   <div class="grid-row">
     <div class="column-two-thirds">
-      {% with
-        heading = brief.get('title', brief['lotName']),
-        context = 'Overview'
-      %}
+      {% with heading = brief.get('title', brief['lotName']) %}
         {% include "toolkit/page-heading.html" %}
       {% endwith %}
     </div>
@@ -84,10 +81,10 @@
               'description': {
                 'draft': '',
                 'live': 'Your requirements are open for applications until {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
-                'closed': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
-                'awarded': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
-                'cancelled': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
-                'unsuccessful': 'Your requirements closed for applications on {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
+                'closed': 'Done',
+                'awarded': 'Done',
+                'cancelled': 'Done',
+                'unsuccessful': 'Done',
               },
               'links': [
                 {
@@ -135,20 +132,26 @@
               'description': {
                 'draft': 'After the application deadline, shortlist the suppliers who applied.',
                 'live': 'After the application deadline, shortlist the suppliers who applied.',
-                'closed': 'You can view and shortlist suppliers who best meet your needs.',
-                'awarded': 'You can view and shortlist suppliers who best meet your needs.',
-                'cancelled': 'You can view and shortlist suppliers who best meet your needs.',
-                'unsuccessful': 'You can view and shortlist suppliers who best meet your needs.',
+                'closed': '',
+                'awarded': 'Done',
+                'cancelled': 'Done',
+                'unsuccessful': 'Done',
               },
               'links': [
                 {
                   'href': url_for(".view_brief_responses", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
                   'text': 'View and shortlist suppliers',
-                  'allowed_statuses': ['closed', 'awarded', 'cancelled', 'unsuccessful']
+                  'allowed_statuses': ['closed']
+                },
+                {
+                  'href': url_for(".view_brief_responses", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+                  'text': 'View suppliers who applied',
+                  'allowed_statuses': ['cancelled', 'unsuccessful', 'awarded']
                 },
                 {
                   'href': 'https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers',
                   'text': 'How to shortlist suppliers',
+                  'allowed_statuses': ['draft', 'live', 'closed']
                 }
               ]
             },
@@ -158,12 +161,15 @@
                 'draft': 'Evaluate your shortlist using the criteria and methods you published with your requirements.',
                 'live': 'Evaluate your shortlist using the criteria and methods you published with your requirements.',
                 'closed': 'Evaluate your shortlist using the criteria and methods you published with your requirements.',
-                'awarded': 'Evaluate your shortlist using the criteria and methods you published with your requirements.',
+                'awarded': 'Done',
+                'cancelled': 'Done',
+                'unsuccessful': 'Done',
               },
               'links': [
                 {
                   'href': 'https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers',
                   'text': 'How to evaluate suppliers',
+                  'allowed_statuses': ['draft', 'live', 'closed']
                 }
               ]
             },
@@ -173,17 +179,30 @@
                 'draft': 'You must give your chosen supplier a contract before they start work.',
                 'live': 'You must give your chosen supplier a contract before they start work.',
                 'closed': 'You must give your chosen supplier a contract before they start work.',
-                'awarded': 'You must give your chosen supplier a contract before they start work.',
+                'awarded': 'Done',
+                'cancelled': 'The contract was not awarded - the requirement was cancelled.',
+                'unsuccessful': 'The contract was not awarded - no suitable suppliers applied.',
+              },
+              'body': {
+                'text': 'Awarded to ' + awarded_brief_response_supplier_name,
+                'allowed_statuses': ['awarded']
               },
               'links': [
                 {
                   'href': 'https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services',
                   'text': 'How to award a contract',
+                  'allowed_statuses': ['draft', 'live', 'closed']
                 },
                 {
                   'href': call_off_contract_url,
-                  'text': "View the " + brief.frameworkName + " contract",
+                  'text': "Download the " + brief.frameworkName + " contract",
+                  'allowed_statuses': ['draft', 'live', 'closed']
                 },
+                {
+                  'href': url_for(".award_brief", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+                  'text': "Let suppliers know the outcome",
+                  'allowed_statuses': ['closed']
+                }
               ]
             }
           ]
@@ -198,8 +217,12 @@
             {% if step.description %}
               <p class="instruction-list-item-top">{{ step.description[brief.status] }}</p>
             {% endif %}
+            {% if step.body %}
+              {% if not step.body.allowed_statuses or brief.status in step.body.allowed_statuses %}
+                <p class="instruction-list-item-top">{{ step.body.text }}</p>
+              {% endif %}
+            {% endif %}
             {% if step_number in step_sections and brief.status == 'draft' %}
-
                 <ul class="instruction-list-item-top">
                   {% for section in sections %}
                     {% if section.step == step_number %}
