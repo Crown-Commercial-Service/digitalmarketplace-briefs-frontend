@@ -53,6 +53,28 @@
         {% endif %}
       {% endwith %}
     {% endblock %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category == 'error' %}
+                    <div class="banner-destructive-without-action">
+                {% else %}
+                    <div class="banner-success-without-action">
+                {% endif %}
+                        <p class="banner-message">
+                {% if 'updated-brief' in message %}
+                        You've updated '{{ message.get('updated-brief') }}'
+                {% else %}
+                    {{ message }}
+                {% endif %}
+                        </p>
+                    </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+>>>>>>> a5fee71... Update brief summary with link to cancel and banner on update
   </div>
 
   <div class="grid-row">
@@ -271,12 +293,17 @@
     </div>
     <div class="column-one-third">
 <<<<<<< HEAD
+<<<<<<< HEAD
       {% if brief.publishedAt %}
         {% include 'buyers/_requirements_meta.html' %}
 =======
       {% if brief.status == 'closed' %}
         <a href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirement</a>
 >>>>>>> 0a5a78a... temp
+=======
+      {% if brief.status == 'closed' and framework.status in ['live', 'expired'] %}
+        <a href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirement</a>
+>>>>>>> a5fee71... Update brief summary with link to cancel and banner on update
       {% endif %}
     </div>
   </div>

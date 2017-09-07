@@ -1866,6 +1866,59 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert not document.xpath('//a[contains(text(), "Delete")]')
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
+    def test_cancel_link_present_on_closed_brief_summary(self, data_api_client, framework_status):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status=framework_status,
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True),
+            ]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief(status="closed")
+
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
+        )
+
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+
+        expected_link_text = 'Cancel requirement'
+        expected_link_url = '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234'
+
+        assert res.status_code == 200
+        assert document.xpath("//a[text() = '{}'][contains(@href,'{}')]".format(expected_link_text, expected_link_url))
+
+    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
+    @pytest.mark.parametrize('brief_status', ['draft', 'live', 'awarded', 'cancelled', 'unsuccessful'])
+    def test_cancel_link_not_present_on_brief_summary_if_status_not_closed(
+        self,
+        data_api_client,
+        brief_status,
+        framework_status
+    ):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status=framework_status,
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True),
+            ]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief(status=brief_status)
+
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
+        )
+
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+
+        assert res.status_code == 200
+        assert "Cancel requirement" not in document.text_content()
+
+    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_clarification_questions_page_for_live_brief_with_no_questions(
             self, data_api_client, framework_status):
         with self.app.app_context():
@@ -2073,90 +2126,6 @@ class TestBriefSummaryPage(BaseApplicationTest):
             meta_data_container = document.xpath('//*[@id="requirements-meta"]')
 
             assert not meta_data_container
-
-    def test_shows_correct_content_for_draft_open_and_closed_dos_1_and_2_briefs(self, data_api_client):
-        framework_slugs = ["digital-outcomes-and-specialists", "digital-outcomes-and-specialists-2"]
-        framework_names = ["Digital Outcomes and Specialists", "Digital Outcomes and Specialists 2"]
-        sidebar_heading_content = ['Closing', 'Closed']
-        brief_statuses = ['live', 'closed']
-
-        for framework_slug, framework_name in zip(framework_slugs, framework_names):
-            with self.app.app_context():
-                self.login_as_buyer()
-                for heading, brief_status in zip(sidebar_heading_content, brief_statuses):
-                    data_api_client.get_framework.return_value = api_stubs.framework(
-                        slug=framework_slug,
-                        status='live',
-                        lots=[
-                            api_stubs.lot(slug='digital-specialists', allows_brief=True),
-                        ]
-                    )
-                    data_api_client.get_brief.return_value = api_stubs.brief(
-                        status=brief_status,
-                        framework_slug=framework_slug,
-                        framework_name=framework_name,
-                    )
-
-                    res = self.client.get(
-                        "/buyers/frameworks/{}/requirements/digital-specialists/1234".format(framework_slug)
-                    )
-                    assert res.status_code == 200
-
-                    document = html.fromstring(res.get_data(as_text=True))
-
-                    sidebar_headings = document.xpath('//*[@class="sidebar-heading"]/text()')
-                    sidebar_content = document.xpath('//*[@class="sidebar-content"]/text()')
-                    framework_name_content = document.xpath('//*[@class="framework-name"]/a/text()')[0]
-
-                    assert sidebar_headings == ['Published', heading, 'Framework']
-                    assert sidebar_content == ['Tuesday 29 March 2016', 'Thursday 7 April 2016']
-                    assert framework_name_content == framework_name
-
-    def test_links_to_correct_call_off_contract_and_framework_agreement_for_briefs_framework(self, data_api_client):
-        framework_slugs = ["digital-outcomes-and-specialists", "digital-outcomes-and-specialists-2"]
-        framework_names = ["Digital Outcomes and Specialists", "Digital Outcomes and Specialists 2"]
-        call_off_contract_urls = [
-            "https://www.gov.uk/government/publications/digital-outcomes-and-specialists-call-off-contract",
-            "https://www.gov.uk/government/publications/digital-outcomes-and-specialists-2-call-off-contract"
-        ]
-        framework_agreement_urls = [
-            "https://www.gov.uk/government/publications/digital-outcomes-and-specialists-framework-agreement",
-            "https://www.gov.uk/government/publications/digital-outcomes-and-specialists-2-framework-agreement"
-        ]
-
-        for framework_slug, framework_name, call_off_contract_url, framework_agreement_url in \
-                zip(framework_slugs, framework_names, call_off_contract_urls, framework_agreement_urls):
-                with self.app.app_context():
-                    self.login_as_buyer()
-                    data_api_client.get_framework.return_value = api_stubs.framework(
-                        slug=framework_slug,
-                        status='live',
-                        lots=[
-                            api_stubs.lot(slug='digital-specialists', allows_brief=True),
-                        ]
-                    )
-                    data_api_client.get_brief.return_value = api_stubs.brief(
-                        status='live',
-                        framework_slug=framework_slug,
-                        framework_name=framework_name,
-                    )
-
-                    res = self.client.get(
-                        "/buyers/frameworks/{}/requirements/digital-specialists/1234".format(framework_slug)
-                    )
-                    assert res.status_code == 200
-
-                    document = html.fromstring(res.get_data(as_text=True))
-
-                    call_off_contract_link_destination = \
-                        document.xpath('//main[@id="content"]//ul/li/a')[-1].values()[0]
-                    framework_agreement_link_destination = \
-                        document.xpath('//*[@class="framework-name"]/a')[0].values()[0]
-                    contract_link_text = document.xpath('//main[@id="content"]//ul/li/a/text()')[-1]
-
-                    assert call_off_contract_link_destination == call_off_contract_url
-                    assert framework_agreement_link_destination == framework_agreement_url
-                    assert contract_link_text == "Download the {} contract".format(framework_name)
 
 
 @mock.patch("app.main.views.buyers.data_api_client", autospec=True)
@@ -3690,7 +3659,10 @@ class TestCancelBrief(BaseApplicationTest):
             ]
         )
         self.brief = api_stubs.brief(
-            user_id=123, framework_slug='digital-outcomes-and-specialists-2', lot_slug="digital-outcomes", status='closed'
+            user_id=123,
+            framework_slug='digital-outcomes-and-specialists-2',
+            lot_slug="digital-outcomes",
+            status='closed'
         )['briefs']
         self.data_api_client.get_brief.return_value = {"briefs": self.brief}
         self.login_as_buyer()
@@ -3699,45 +3671,105 @@ class TestCancelBrief(BaseApplicationTest):
         self.data_api_client_patch.stop()
         super(TestCancelBrief, self).teardown_method(method)
 
-def test_cancel_brief_200s_with_correct_default_content(self):
-    self.login_as_buyer()
-    res = self.client.get(self.url.format(brief_id=1234))
+    def test_cancel_brief_200s_with_correct_default_content(self):
+        self.login_as_buyer()
+        res = self.client.get(self.url.format(brief_id=1234))
 
-    assert res.status_code == 200
-    document = html.fromstring(res.get_data(as_text=True))
-    self.assert_breadcrumbs(res, extra_breadcrumbs=[
-        (
-            'I need a thing to do a thing',
-            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
-        )
-    ])
+        assert res.status_code == 200
+        document = html.fromstring(res.get_data(as_text=True))
+        self.assert_breadcrumbs(res, extra_breadcrumbs=[
+            (
+                'I need a thing to do a thing',
+                '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+            )
+        ])
 
-    page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
-    assert "Why do you need to cancel" in page_title
+        page_title = document.xpath('//h1')[0].text_content()
+        assert "Why do you need to cancel {}?".format(self.brief.get('title')) in page_title
 
-    submit_button = document.xpath('//input[@class="button-save" and @value="Update requirement"]')
-    assert len(submit_button) == 1
+        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirement"]')
+        assert len(submit_button) == 1
 
     def test_404_if_user_is_not_brief_owner(self):
         self.data_api_client.get_brief.return_value['briefs']['users'][0]['id'] = 234
 
-        resp = self.client.get(self.url.format(brief_id=self.brief["id"]))
+        res = self.client.get(self.url.format(brief_id=self.brief["id"]))
 
-        assert resp.status_code == 404
+        assert res.status_code == 404
 
     @pytest.mark.parametrize('status', ['withdrawn', 'draft', 'live', 'cancelled', 'unsuccessful', 'awarded'])
     def test_404_if_brief_not_closed(self, status):
         self.data_api_client.get_brief.return_value['briefs']['status'] = status
 
-        resp = self.client.get(self.url.format(brief_id=self.brief["id"]))
+        res = self.client.get(self.url.format(brief_id=self.brief["id"]))
 
-        assert resp.status_code == 404
+        assert res.status_code == 404
 
-
-    @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill'])
-    def test_404_if_incorrect_framework_status(self, framework_status):
+    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
+    def test_200_for_acceptable_framework_statuses(self, framework_status):
         self.data_api_client.get_framework.return_value['frameworks']['status'] = framework_status
 
-        resp = self.client.get(self.url.format(brief_id=123))
+        res = self.client.get(self.url.format(brief_id=123))
 
-        assert resp.status_code == 404
+        assert res.status_code == 200
+
+    def test_that_no_option_chosen_triggers_error(self):
+        res = self.client.post(self.url.format(brief_id=123))
+
+        document = html.fromstring(res.get_data(as_text=True))
+        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
+
+        assert res.status_code == 400
+        assert "You need to answer this question." in validation_message
+        assert self.data_api_client.cancel_brief.called is False
+
+    def test_cancel_triggers_cancel_brief(self):
+        res = self.client.post(
+            self.url.format(brief_id=123), data={'cancel_reason': 'cancel'}
+        )
+
+        assert res.status_code == 302
+        self.data_api_client.cancel_brief.assert_called_once_with('123', user='buyer@email.com')
+
+    def test_unsuccessful_triggers_cancel_brief(self):
+        res = self.client.post(
+            self.url.format(brief_id=123), data={'cancel_reason': 'unsuccessful'}
+        )
+
+        assert res.status_code == 302
+        self.data_api_client.update_brief_as_unsuccessful.assert_called_once_with('123', user='buyer@email.com')
+
+    @pytest.mark.parametrize('status', ['withdrawn', 'draft', 'live', 'closed', 'awarded'])
+    def test_400_if_incorrect_status_supplied(self, status):
+        res = self.client.post(
+            self.url.format(brief_id=123), data={'cancel_reason': status}
+        )
+
+        assert res.status_code == 400
+        assert "Not a valid choice" in res.get_data(as_text=True)
+        assert self.data_api_client.update_brief_as_unsuccessful.called is False
+        assert self.data_api_client.cancel_brief.called is False
+
+    @pytest.mark.parametrize('status', ['cancel', 'unsuccessful'])
+    def test_redirect_on_successful_status_change(self, status):
+        res = self.client.post(
+            self.url.format(brief_id=123), data={'cancel_reason': status}
+        )
+
+        redirect_text = html.fromstring(res.get_data(as_text=True)).text_content().strip()
+        expected_url = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/123'
+
+        assert res.status_code == 302
+        assert expected_url in redirect_text
+        self.assert_flashes("updated-brief", "message")
+
+    def test_flash_message_shown_on_brief_cancel(self):
+
+        with self.client.session_transaction() as session:
+            session['_flashes'] = [
+                ('message', {'updated-brief': "My Amazing Brief"})
+            ]
+        expected_url = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/123'
+        res = self.client.get(expected_url)
+        flash_div = html.fromstring(res.get_data(as_text=True)).xpath('//div[@class="banner-success-without-action"]')
+        assert flash_div[0].text_content().strip() == "You've updated 'My Amazing Brief'"
