@@ -1,5 +1,3 @@
-import six
-
 from flask import current_app, render_template, url_for, abort, redirect, session, Blueprint
 
 from dmapiclient.audit import AuditTypes
@@ -63,7 +61,7 @@ def submit_create_buyer_account():
                     "buyercreate.fail: Create user email failed to send. "
                     "error {error} email_hash {email_hash}",
                     extra={
-                        'error': six.text_type(e),
+                        'error': str(e),
                         'email_hash': hash_string(email_address)})
                 abort(503, response="Failed to send user creation email.")
 

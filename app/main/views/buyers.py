@@ -1,7 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
 import inflection
-import sys
 import flask_featureflags
 
 
@@ -598,11 +597,7 @@ class DownloadBriefResponsesView(View):
         if brief['status'] not in CLOSED_PUBLISHED_BRIEF_STATUSES:
             abort(404)
 
-        # Filename must be unicode
-        if sys.version_info[0] == 3:
-            filename = inflection.parameterize(str(brief['title']))
-        else:
-            filename = inflection.parameterize(u"{}".format(brief['title']))
+        filename = inflection.parameterize(str(brief['title']))
 
         kwargs.update({
             'brief': brief,

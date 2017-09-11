@@ -14,7 +14,6 @@ from dmapiclient import DataAPIClient
 from freezegun import freeze_time
 import functools
 import inflection
-import sys
 
 from werkzeug.exceptions import NotFound
 
@@ -2662,16 +2661,10 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
             'lot_slug': mock.Mock()
         }
 
-        # Filename must be unicode
-        if sys.version_info[0] == 3:
-            filename = inflection.parameterize(str(brief['briefs']['title']))
-        else:
-            filename = inflection.parameterize(u"{}".format(brief['briefs']['title']))
-
         expected = dict(**kwargs)
         expected['brief'] = brief['briefs']
         expected['responses'] = self.instance.get_responses.return_value
-        expected['filename'] = 'supplier-responses-' + filename
+        expected['filename'] = 'supplier-responses-{}'.format(inflection.parameterize(str(brief['briefs']['title'])))
 
         self.instance.data_api_client.get_brief.return_value = brief
 
