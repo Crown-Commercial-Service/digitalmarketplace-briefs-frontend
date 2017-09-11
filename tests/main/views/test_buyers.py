@@ -1694,6 +1694,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
 
             assert "Awarded to " not in page_html
             assert document.xpath('//a[contains(text(), "Delete draft requirement")]')
+            assert not document.xpath('//a[contains(text(), "Withdraw requirement")]')
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_live_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1733,7 +1734,13 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-            assert not document.xpath('//a[contains(text(), "Delete")]')
+
+            expected_link_text = 'Withdraw requirement'
+            expected_link_url = 'https://www.gov.uk/guidance/how-to-make-changes-to-your-published-digital-outcomes-and-specialists-requirements#when-to-withdraw-your-requirements'  # noqa
+
+            assert document.xpath(
+                "//a[text() = '{}'][contains(@href,'{}')]".format(expected_link_text, expected_link_url))
+            assert not document.xpath('//a[contains(text(), "Delete draft requirement")]')
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_closed_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1773,6 +1780,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
 
             assert "Awarded to " not in page_html
             assert not document.xpath('//a[contains(text(), "Delete draft requirement")]')
+            assert not document.xpath('//a[contains(text(), "Withdraw requirement")]')
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     @pytest.mark.parametrize(
@@ -1813,6 +1821,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
 
             assert "Awarded to " not in page_html
             assert not document.xpath('//a[contains(text(), "Delete draft requirement")]')
+            assert not document.xpath('//a[contains(text(), "Withdraw requirement")]')
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_awarded_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1864,6 +1873,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
             assert "Awarded to 100 Percent IT Ltd" in page_html
             assert not document.xpath('//a[contains(text(), "Delete draft requirement")]')
+            assert not document.xpath('//a[contains(text(), "Withdraw requirement")]')
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_cancel_link_present_on_closed_brief_summary(self, data_api_client, framework_status):
