@@ -273,15 +273,11 @@
       {% if brief.status == 'closed' %}
         <a href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirement</a>
      {% endif %}
+     {% if not delete_requested %}
+          {% if framework.status == 'live' and brief.status == 'draft' %}
+          <a href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, delete_requested=True) }}">Delete draft requirement</a>
+          {% endif %}
+      {% endif %}
     </div>
   </div>
-  {% if not delete_requested %}
-     <div class="grid-row">
-       <div class="column-two-thirds">
-         {% if framework.status == 'live' and brief.status == 'draft' %}
-         <a href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, delete_requested=True) }}">Delete</a>
-         {% endif %}
-       </div>
-     </div>
-   {% endif %}
 {% endblock %}

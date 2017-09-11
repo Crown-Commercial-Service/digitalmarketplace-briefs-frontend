@@ -1693,7 +1693,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-            assert document.xpath('//a[contains(text(), "Delete")]')
+            assert document.xpath('//a[contains(text(), "Delete draft requirement")]')
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_live_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1772,7 +1772,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-            assert not document.xpath('//a[contains(text(), "Delete")]')
+            assert not document.xpath('//a[contains(text(), "Delete draft requirement")]')
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     @pytest.mark.parametrize(
@@ -1812,7 +1812,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert "The contract was not awarded - {}.".format(award_description) in page_html
 
             assert "Awarded to " not in page_html
-            assert not document.xpath('//a[contains(text(), "Delete")]')
+            assert not document.xpath('//a[contains(text(), "Delete draft requirement")]')
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_awarded_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1863,7 +1863,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
                 'View suppliers who applied',
             ]
             assert "Awarded to 100 Percent IT Ltd" in page_html
-            assert not document.xpath('//a[contains(text(), "Delete")]')
+            assert not document.xpath('//a[contains(text(), "Delete draft requirement")]')
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_cancel_link_present_on_closed_brief_summary(self, data_api_client, framework_status):
