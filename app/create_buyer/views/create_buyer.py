@@ -39,7 +39,7 @@ def submit_create_buyer_account():
             token = generate_token(
                 {
                     "role": "buyer",
-                    "email_address":  email_address
+                    "email_address": email_address
                 },
                 current_app.config['SHARED_EMAIL_KEY'],
                 current_app.config['INVITE_EMAIL_SALT']

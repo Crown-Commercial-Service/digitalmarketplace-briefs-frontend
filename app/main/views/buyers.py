@@ -209,7 +209,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
             completed_sections[section.slug] = True if optional == 0 else False
 
     brief['clarificationQuestions'] = [
-        dict(question, number=index+1)
+        dict(question, number=index + 1)
         for index, question in enumerate(brief['clarificationQuestions'])
     ]
 
@@ -598,8 +598,11 @@ class DownloadBriefResponsesView(View):
         if brief['status'] not in CLOSED_PUBLISHED_BRIEF_STATUSES:
             abort(404)
 
-        text_type = str if sys.version_info[0] == 3 else unicode
-        filename = inflection.parameterize(text_type(brief['title']))
+        # Filename must be unicode
+        if sys.version_info[0] == 3:
+            filename = inflection.parameterize(str(brief['title']))
+        else:
+            filename = inflection.parameterize(u"{}".format(brief['title']))
 
         kwargs.update({
             'brief': brief,
@@ -920,7 +923,7 @@ def supplier_questions(framework_slug, lot_slug, brief_id):
         abort(404)
 
     brief['clarificationQuestions'] = [
-        dict(question, number=index+1)
+        dict(question, number=index + 1)
         for index, question in enumerate(brief['clarificationQuestions'])
     ]
 
