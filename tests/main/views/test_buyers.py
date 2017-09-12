@@ -1653,6 +1653,13 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
 
 @mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestBriefSummaryPage(BaseApplicationTest):
+
+    @staticmethod
+    def _side_link_list(document):
+        return [
+            (e.text_content(), e.get('href')) for e in document.xpath('//div[@class="column-one-third"]//a')
+        ]
+
     def test_show_draft_brief_summary_page(self, data_api_client):
         with self.app.app_context():
             self.login_as_buyer()
@@ -1693,8 +1700,12 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-            assert document.xpath('//a[contains(text(), "Delete draft requirement")]')
-            assert not document.xpath('//a[contains(text(), "Withdraw requirement")]')
+            assert self._side_link_list(document) == [
+                (
+                    "Delete draft requirement",
+                    "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?delete_requested=True"  # noqa
+                )
+            ]
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_live_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1734,13 +1745,12 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-
-            expected_link_text = 'Withdraw requirement'
-            expected_link_url = 'https://www.gov.uk/guidance/how-to-make-changes-to-your-published-digital-outcomes-and-specialists-requirements#when-to-withdraw-your-requirements'  # noqa
-
-            assert document.xpath(
-                "//a[text() = '{}'][contains(@href,'{}')]".format(expected_link_text, expected_link_url))
-            assert not document.xpath('//a[contains(text(), "Delete draft requirement")]')
+            assert self._side_link_list(document) == [
+                (
+                    'Withdraw requirement',
+                    'https://www.gov.uk/guidance/how-to-make-changes-to-your-published-digital-outcomes-and-specialists-requirements#when-to-withdraw-your-requirements'  # noqa
+                )
+            ]
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_closed_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1779,8 +1789,12 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-            assert not document.xpath('//a[contains(text(), "Delete draft requirement")]')
-            assert not document.xpath('//a[contains(text(), "Withdraw requirement")]')
+            assert self._side_link_list(document) == [
+                (
+                    'Cancel requirement',
+                    '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/cancel'
+                )
+            ]
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     @pytest.mark.parametrize(
@@ -1820,8 +1834,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert "The contract was not awarded - {}.".format(award_description) in page_html
 
             assert "Awarded to " not in page_html
-            assert not document.xpath('//a[contains(text(), "Delete draft requirement")]')
-            assert not document.xpath('//a[contains(text(), "Withdraw requirement")]')
+            assert self._side_link_list(document) == []
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_awarded_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1872,61 +1885,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
                 'View suppliers who applied',
             ]
             assert "Awarded to 100 Percent IT Ltd" in page_html
-            assert not document.xpath('//a[contains(text(), "Delete draft requirement")]')
-            assert not document.xpath('//a[contains(text(), "Withdraw requirement")]')
-
-    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
-    def test_cancel_link_present_on_closed_brief_summary(self, data_api_client, framework_status):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status=framework_status,
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True),
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(status="closed")
-
-        res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
-        )
-
-        page_html = res.get_data(as_text=True)
-        document = html.fromstring(page_html)
-
-        expected_link_text = 'Cancel requirement'
-        expected_link_url = '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234'
-
-        assert res.status_code == 200
-        assert document.xpath("//a[text() = '{}'][contains(@href,'{}')]".format(expected_link_text, expected_link_url))
-
-    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
-    @pytest.mark.parametrize('brief_status', ['draft', 'live', 'awarded', 'cancelled', 'unsuccessful'])
-    def test_cancel_link_not_present_on_brief_summary_if_status_not_closed(
-        self,
-        data_api_client,
-        brief_status,
-        framework_status
-    ):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status=framework_status,
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True),
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(status=brief_status)
-
-        res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
-        )
-
-        page_html = res.get_data(as_text=True)
-        document = html.fromstring(page_html)
-
-        assert res.status_code == 200
-        assert "Cancel requirement" not in document.text_content()
+            assert self._side_link_list(document) == []
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_clarification_questions_page_for_live_brief_with_no_questions(
