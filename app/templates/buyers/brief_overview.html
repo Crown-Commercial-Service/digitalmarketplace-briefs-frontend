@@ -38,8 +38,23 @@
           </form>
         </div>
       {% endif %}
-   {% endblock %}
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {%
+            with
+            message = "You've updated '{}'".format(message.get('updated-brief')) if 'updated-brief' in message else message,
+            type = "destructive-without-action" if category == "error" else "success"
+            %}
+              {% include "toolkit/notification-banner.html" %}
+            {% endwith %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    {% endblock %}
   </div>
+
   <div class="grid-row">
     <div class="column-two-thirds">
       {% with heading = brief.get('title', brief['lotName']) %}
@@ -255,9 +270,9 @@
       </ol>
     </div>
     <div class="column-one-third">
-      {% if brief.publishedAt %}
-        {% include 'buyers/_requirements_meta.html' %}
-      {% endif %}
+      {% if brief.status == 'closed' %}
+        <a href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirement</a>
+     {% endif %}
     </div>
   </div>
   {% if not delete_requested %}
