@@ -22,6 +22,7 @@ from ..forms.awards import AwardedBriefResponseForm
 
 from dmapiclient import HTTPError
 from dmutils.dates import get_publishing_dates
+from dmutils.formats import DATETIME_FORMAT
 from dmutils import csv_generator
 from datetime import datetime
 
@@ -55,12 +56,21 @@ def buyer_dashboard():
 def buyer_dos_requirements():
     user_briefs = data_api_client.find_briefs(current_user.id).get('briefs', [])
 
-    draft_briefs = add_unanswered_counts_to_briefs(
-        [brief for brief in user_briefs if brief['status'] == 'draft'],
-        content_loader
+    draft_briefs = sorted(
+        add_unanswered_counts_to_briefs([brief for brief in user_briefs if brief['status'] == 'draft'], content_loader),
+        key=lambda i: datetime.strptime(i['createdAt'], DATETIME_FORMAT),
+        reverse=True
     )
-    live_briefs = [brief for brief in user_briefs if brief['status'] == 'live']
-    closed_briefs = [brief for brief in user_briefs if brief['status'] in CLOSED_BRIEF_STATUSES]
+    live_briefs = sorted(
+        [brief for brief in user_briefs if brief['status'] == 'live'],
+        key=lambda i: datetime.strptime(i['publishedAt'], DATETIME_FORMAT),
+        reverse=True
+    )
+    closed_briefs = sorted(
+        [brief for brief in user_briefs if brief['status'] in CLOSED_BRIEF_STATUSES],
+        key=lambda i: datetime.strptime(i['applicationsClosedAt'], DATETIME_FORMAT),
+        reverse=True
+    )
 
     return render_template(
         'buyers/dashboard.html',

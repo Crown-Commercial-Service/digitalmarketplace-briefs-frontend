@@ -36,36 +36,31 @@ def find_briefs_mock():
                 "id": 20,
                 "status": "draft",
                 "title": "A draft brief"
-            },
-            {
+            }, {
                 "id": 21,
                 "status": "live",
                 "title": "A live brief",
                 "publishedAt": "2016-02-04T12:00:00.000000Z"
-            },
-            {
+            }, {
                 "id": 22,
                 "status": "closed",
                 "title": "A closed brief with brief responses",
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
-                "applicationsClosedAt": "2016-02-18T12:00:00.000000Z"
-            },
-            {
+                "applicationsClosedAt": "2016-02-21T12:01:00.000000Z"
+            }, {
                 "id": 23,
                 "status": "withdrawn",
                 "title": "A withdrawn brief",
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
-                "withdrawnAt": "2016-02-05T12:00:00.000000Z"
-            },
-            {
+                "withdrawnAt": "2016-02-05T12:00:00.000000Z",
+                "applicationsClosedAt": "2016-02-20T12:00:00.000000Z"
+            }, {
                 "id": 24,
                 "status": "awarded",
                 "title": "An awarded brief",
                 "publishedAt": "2016-02-03T12:00:00.000000Z",
                 "applicationsClosedAt": "2016-02-19T12:00:00.000000Z"
-
-            },
-            {
+            }, {
                 "id": 25,
                 "status": "closed",
                 "title": "A closed brief with no brief responses",
@@ -144,7 +139,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert closed_row_cells[0].xpath('.//a/@href')[0] == \
             '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22'
 
-        assert tables[2].xpath('.//tbody/tr/td')[1].text_content().strip() == "Thursday 18 February 2016"
+        assert tables[2].xpath('.//tbody/tr/td')[1].text_content().strip() == "Sunday 21 February 2016"
 
         assert closed_row_cells[2].xpath('.//a')[0].text_content() == "View responses"
         assert closed_row_cells[2].xpath('.//a/@href')[0] == \
