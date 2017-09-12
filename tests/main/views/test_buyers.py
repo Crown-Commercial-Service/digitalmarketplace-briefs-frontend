@@ -1654,10 +1654,15 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
 @mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestBriefSummaryPage(BaseApplicationTest):
 
+    SIDE_LINKS_XPATH = '//div[@class="column-one-third"]//a'
+    INSTRUCTION_LINKS_XPATH = '//main[@id="content"]//ul/li/a'
+
     @staticmethod
-    def _side_link_list(document):
+    def _get_links(document, xpath, text_only=None):
+        if text_only:
+            return [e.text_content() for e in document.xpath(xpath)]
         return [
-            (e.text_content(), e.get('href')) for e in document.xpath('//div[@class="column-one-third"]//a')
+            (e.text_content(), e.get('href')) for e in document.xpath(xpath)
         ]
 
     def test_show_draft_brief_summary_page(self, data_api_client):
@@ -1683,7 +1688,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             document = html.fromstring(page_html)
 
             assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-            assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+            assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
                 'Title',
                 'Specialist role',
                 'Location',
@@ -1700,7 +1705,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-            assert self._side_link_list(document) == [
+            assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
                     "Delete draft requirement",
                     "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?delete_requested=True"  # noqa
@@ -1733,7 +1738,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             document = html.fromstring(page_html)
 
             assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-            assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+            assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
                 'View question and answer dates',
                 'View your published requirements',
                 'Publish questions and answers',
@@ -1745,7 +1750,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-            assert self._side_link_list(document) == [
+            assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
                     'Withdraw requirement',
                     'https://www.gov.uk/guidance/how-to-make-changes-to-your-published-digital-outcomes-and-specialists-requirements#when-to-withdraw-your-requirements'  # noqa
@@ -1778,7 +1783,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             document = html.fromstring(page_html)
 
             assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-            assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+            assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
                 'View your published requirements',
                 'View and shortlist suppliers',
                 'How to shortlist suppliers',
@@ -1789,7 +1794,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-            assert self._side_link_list(document) == [
+            assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
                     'Cancel requirement',
                     '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/cancel'
@@ -1827,14 +1832,14 @@ class TestBriefSummaryPage(BaseApplicationTest):
             document = html.fromstring(page_html)
 
             assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-            assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+            assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
                 'View your published requirements',
                 'View suppliers who applied',
             ]
             assert "The contract was not awarded - {}.".format(award_description) in page_html
 
             assert "Awarded to " not in page_html
-            assert self._side_link_list(document) == []
+            assert self._get_links(document, self.SIDE_LINKS_XPATH) == []
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_awarded_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1880,12 +1885,12 @@ class TestBriefSummaryPage(BaseApplicationTest):
             document = html.fromstring(page_html)
 
             assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-            assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+            assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
                 'View your published requirements',
                 'View suppliers who applied',
             ]
             assert "Awarded to 100 Percent IT Ltd" in page_html
-            assert self._side_link_list(document) == []
+            assert self._get_links(document, self.SIDE_LINKS_XPATH) == []
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_clarification_questions_page_for_live_brief_with_no_questions(
