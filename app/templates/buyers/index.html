@@ -16,7 +16,7 @@
 
 {% block main_content %}
 <div class="grid-row">
-  <div class="column-full">
+  <div class="column-two-thirds">
     {% with
         context = current_user.email_address,
         heading = current_user.name
@@ -24,37 +24,28 @@
     {% include 'toolkit/page-heading.html' %}
     {% endwith %}
   </div>
-  <div class="column-full dm-account-overview-options">
+  <div class="column-two-thirds dm-account-overview-options">
     
-    <div class="framework">
-      <div class="dmspeak">
-        <h3 class="heading-xmedium">Cloud hosting, software and support</h3>
-      </div>
-      <p>Buy cloud technology through the G-Cloud framework.</p>
-      <p>
-        {% if user_projects_total %}
-          <a href="/buyers/direct-award/g-cloud">View your saved searches</a><br>
-        {% else %}
-          You don't have any saved searches
-        {% endif %}
-      </p>
-    </div>
+  <div class="dmspeak">
+    <h2 class="heading-xmedium">Cloud hosting, software and support</h2>
+    <p>
+      {% if user_projects_total %}
+        <a href="/buyers/direct-award/g-cloud">View your saved searches</a><br>
+      {% else %}
+        You don't have any saved searches
+      {% endif %}
+    </p>
+  
+    <h2 class="heading-xmedium">Digital outcomes, specialists and user research</h2>
+    <p>
+      {% if user_briefs_total %}
+        <a href="{{ url_for('buyers.buyer_dos_requirements') }}">View your requirements</a><br>  
+      {% else %}   
+        You don't have any requirements
+      {% endif %}
+    </p>
+  </div>
 
-    <div class="framework">
-      <div class="dmspeak">
-        <h3 class="heading-xmedium">Digital outcomes, specialists and user research</h3>
-      </div>
-      <p>Buy services through the Digital Outcomes and Specialists framework.</p>
-      <p>
-        {% if user_briefs_total %}
-          <a href="{{ url_for('buyers.buyer_dos_requirements') }}">View your requirements</a><br>  
-        {% else %}   
-          You don't have any requirements
-        {% endif %}
-      </p>
-    </div>
-
-             
   </div>
 </div>
 {% endblock %}

@@ -257,8 +257,7 @@ class TestBuyerRoleRequired(BaseApplicationTest):
             page_text = res.get_data(as_text=True)
 
             assert res.status_code == 200
-            assert 'buyer@email.com' in page_text
-            assert u'Ā Buyer' in page_text
+            assert 'Your requirements' in page_text
 
 
 @mock.patch('app.main.views.buyers.data_api_client', autospec=True)
@@ -3700,3 +3699,23 @@ class TestCancelBrief(BaseApplicationTest):
         res = self.client.get(expected_url)
         flash_div = html.fromstring(res.get_data(as_text=True)).xpath('//div[@class="banner-success-without-action"]')
         assert flash_div[0].text_content().strip() == "You've updated 'My Amazing Brief'"
+
+
+class TestBuyerAccountOverview(BaseApplicationTest):
+
+    def setup_method(self, method):
+        super(TestBuyerAccountOverview, self).setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+    def test_buyer_account_overview_page_renders(self):
+        if self.app.config.get('FEATURE_FLAGS_DIRECT_AWARD_PROJECTS'):
+            self.data_api_client.find_briefs.return_value = find_briefs_mock()
+            self.data_api_client.find_direct_award_projects.return_value = {"projects": []}
+            self.login_as_buyer()
+            res = self.client.get('/buyers')
+            assert res.status_code == 200
+            assert 'Cloud hosting, software and support' in res.get_data(as_text=True)
+            assert 'Digital outcomes, specialists and user research' in res.get_data(as_text=True)
+        else:
+            assert True

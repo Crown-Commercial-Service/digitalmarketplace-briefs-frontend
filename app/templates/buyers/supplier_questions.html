@@ -4,16 +4,7 @@
 
 {% block breadcrumb %}
   {%
-    with items = [
-      {
-        "link": "/",
-        "label": "Digital Marketplace"
-      },
-      {
-        "link": url_for(".buyer_dashboard"),
-        "label": "Your account"
-      }
-    ]
+    with items = breadcrumbs
   %}
     {% include "toolkit/breadcrumb.html" %}
   {% endwith %}
