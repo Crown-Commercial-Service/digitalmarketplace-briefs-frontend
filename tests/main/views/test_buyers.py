@@ -144,7 +144,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert closed_row_cells[2].xpath('.//a/@href')[0] == \
             '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/responses'
 
-        assert closed_row_cells[2].xpath('.//a')[1].text_content() == "Tell us who won this contract"
+        assert closed_row_cells[2].xpath('.//a')[1].text_content() == "Let suppliers know the outcome"
         assert closed_row_cells[2].xpath('.//a/@href')[1] == \
             '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/award-contract'
 
@@ -163,7 +163,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert withdrawn_row.xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
         assert withdrawn_row_cells[1] == "Withdrawn"
         assert "View responses" not in withdrawn_row_cells[2]
-        assert "Tell us who won this contract" not in withdrawn_row_cells[2]
+        assert "Let suppliers know the outcome" not in withdrawn_row_cells[2]
 
     def test_closed_briefs_section_with_awarded_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
@@ -180,7 +180,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert awarded_row.xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
         assert awarded_row_cells[1] == "Friday 19 February 2016"
         assert "View responses" not in awarded_row_cells[2]
-        assert "Tell us who won this contract" not in awarded_row_cells[2]
+        assert "Let suppliers know the outcome" not in awarded_row_cells[2]
 
     def test_closed_briefs_section_with_cancelled_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
@@ -197,7 +197,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert cancelled_row.xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
         assert cancelled_row_cells[1] == "Wednesday 17 February 2016"
         assert "View responses" not in cancelled_row_cells[2]
-        assert "Tell us who won this contract" not in cancelled_row_cells[2]
+        assert "Let suppliers know the outcome" not in cancelled_row_cells[2]
 
     def test_closed_briefs_section_with_unsuccessful_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
@@ -214,7 +214,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert unsuccessful_row.xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
         assert unsuccessful_row_cells[1] == "Tuesday 16 February 2016"
         assert "View responses" not in unsuccessful_row_cells[2]
-        assert "Tell us who won this contract" not in unsuccessful_row_cells[2]
+        assert "Let suppliers know the outcome" not in unsuccessful_row_cells[2]
 
     def test_flash_message_shown_if_brief_has_just_been_updated(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
