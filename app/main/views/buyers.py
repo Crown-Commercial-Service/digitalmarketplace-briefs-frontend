@@ -545,7 +545,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
         )
 
     if request.method == "POST":
-        form = AwardedBriefResponseForm(request.form, brief_responses=brief_responses)
+        form = AwardedBriefResponseForm(brief_responses, request.form)
         if not form.validate_on_submit():
             form_errors = [{'question': form[key].label.text, 'input_name': key} for key in form.errors]
             return render_template(
@@ -576,7 +576,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
                 )
             )
 
-    form = AwardedBriefResponseForm(brief_responses=brief_responses)
+    form = AwardedBriefResponseForm(brief_responses)
     pending_brief_responses = list(filter(lambda x: x.get('awardDetails', {}).get('pending'), brief_responses))
     form['brief_response'].data = pending_brief_responses[0]["id"] if pending_brief_responses else None
 
@@ -588,10 +588,20 @@ def award_brief(framework_slug, lot_slug, brief_id):
     ), 200
 
 
-@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/cancel', methods=['GET', 'POST'])
+@main.route(
+    '/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/cancel',
+    methods=['GET', 'POST'],
+)
+@main.route(
+    '/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/cancel-award',
+    methods=['GET', 'POST'],
+    endpoint="cancel_award_brief"
+)
 def cancel_brief(framework_slug, lot_slug, brief_id):
     form = None
     errors = {}
+    end_point = request.endpoint.strip(request.blueprint + '.')
+    label_text = "Why didn't you award a contract for {}?" if end_point == 'cancel_award_brief' else None
     get_framework_and_lot(
         framework_slug,
         lot_slug,
@@ -605,8 +615,25 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
     if brief["status"] != "closed":
         abort(404)
 
+    if award_flow:
+        label_text = "Why didn't you award a contract for {}?"
+        previous_page_url = url_for(
+            '.award_or_cancel_brief',
+            framework_slug=brief['frameworkSlug'],
+            lot_slug=brief['lotSlug'],
+            brief_id=brief['id']
+        )
+    else:
+        # Use default label text
+        label_text = 'Why do you need to cancel {}?'
+        previous_page_url = url_for(
+            '.view_brief_overview',
+            framework_slug=brief['frameworkSlug'],
+            lot_slug=brief['lotSlug'],
+            brief_id=brief['id']
+        )
     if request.method == "POST":
-        form = CancelBriefForm(request.form, brief=brief)
+        form = CancelBriefForm(brief, label_text, request.form)
         if not form.validate_on_submit():
             errors = {
                 key: {'question': form[key].label.text, 'input_name': key, 'message': form[key].errors[0]}
@@ -648,7 +675,7 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
     return render_template(
         "buyers/cancel_brief.html",
         brief=brief,
-        form=form or CancelBriefForm(brief=brief),
+        form=form or CancelBriefForm(brief, label_text),
         errors=errors,
         breadcrumbs=breadcrumbs,
     ), 200 if not errors else 400

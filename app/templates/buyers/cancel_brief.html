@@ -23,7 +23,7 @@
       <div class="single-question-page">
 
         {% with
-        heading = "Why do you need to cancel {}?".format(brief.get('title', brief['lotName'])),
+        heading = form.cancel_reason.label.text,
         smaller = True
         %}
           {% include 'toolkit/page-heading.html' %}
@@ -34,7 +34,7 @@
           {%
             with
             name = "cancel_reason",
-            question = "Why do you need to cancel {}?".format(brief.get('title', brief['lotName'])),
+            question = form.cancel_reason.label.text,
             type = "radio",
             options = form.cancel_reason.toolkit_macro_options,
             value = form.cancel_reason.data,
