@@ -146,7 +146,7 @@ class TestBuyerDashboard(BaseApplicationTest):
 
         assert closed_row_cells[2].xpath('.//a')[1].text_content() == "Let suppliers know the outcome"
         assert closed_row_cells[2].xpath('.//a/@href')[1] == \
-            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/award-contract'
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/award'
 
     def test_closed_briefs_section_with_withdrawn_brief(self, data_api_client, find_briefs_mock):
         data_api_client.find_briefs.return_value = find_briefs_mock
