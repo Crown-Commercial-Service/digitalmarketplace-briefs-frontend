@@ -29,7 +29,7 @@
           {% include 'toolkit/page-heading.html' %}
         {% endwith %}
 
-        <form method="POST" action="{{ url_for('.cancel_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+        <form method="POST" action="{{ url_for(request.endpoint, framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           {%
             with
