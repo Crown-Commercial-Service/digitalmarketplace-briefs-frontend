@@ -19,6 +19,8 @@ from ..helpers.buyers_helpers import (
 from ..helpers.ods import SpreadSheet
 from ..forms.awards import AwardedBriefResponseForm
 from ..forms.cancel import CancelBriefForm
+from ..forms.award_or_cancel import AwardOrCancelBriefForm
+
 
 from dmapiclient import HTTPError
 from dmutils.dates import get_publishing_dates
@@ -449,6 +451,56 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
         brief=brief,
         breadcrumbs=breadcrumbs
     ), 200
+
+
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award', methods=['GET', 'POST'])
+def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
+    form = None
+    errors = {}
+    get_framework_and_lot(
+        framework_slug,
+        lot_slug,
+        data_api_client,
+        allowed_statuses=['live', 'expired'],
+        must_allow_brief=True,
+    )
+    brief = data_api_client.get_brief(brief_id)["briefs"]
+
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
+        abort(404)
+
+    if brief['status'] != "closed":
+        abort(404)
+
+    if request.method == "POST":
+        form = AwardOrCancelBriefForm(brief, request.form)
+        if not form.validate_on_submit():
+            errors = {
+                key: {'question': form[key].label.text, 'input_name': key, 'message': form[key].errors[0]}
+                for key, value in form.errors.items()
+            }
+        else:
+            answer = form.data.get('award_or_cancel_decision')
+            if answer == 'back':
+                return redirect(url_for('.buyer_dos_requirements'))
+            elif answer == 'yes':
+                return redirect(
+                    url_for('.award_brief', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
+                )
+            elif answer == 'no':
+                return redirect(url_for(
+                    '.cancel_award_brief', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
+                )
+            else:
+                # We should never get here as the form validates the answers against the available choices.
+                abort(500, "Unexpected answer to award or cancel brief")
+
+    return render_template(
+        "buyers/award_or_cancel_brief.html",
+        brief=brief,
+        form=form or AwardOrCancelBriefForm(brief),
+        errors=errors,
+    ), 200 if not errors else 400
 
 
 @main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award-contract', methods=['GET', 'POST'])
