@@ -95,7 +95,7 @@
               'title': 'Publish requirements',
               'description': {
                 'draft': '',
-                'live': 'Your requirements are open for applications until {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
+                'live': 'Open for applications until {}.'.format(brief.applicationsClosedAt | utcdatetimeformat),
                 'closed': 'Done',
                 'awarded': 'Done',
                 'cancelled': 'Done',
@@ -272,16 +272,13 @@
     <div class="column-one-third">
       {% if brief.status == 'closed' %}
         <a href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirement</a>
-     {% endif %}
+      {% elif brief.status == 'live' %}
+        <a href="https://www.gov.uk/guidance/how-to-make-changes-to-your-published-digital-outcomes-and-specialists-requirements#when-to-withdraw-your-requirements">Withdraw requirement</a>
+      {% elif brief.status == 'draft' %}
+        {% if not delete_requested %}
+          <a href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, delete_requested=True) }}">Delete draft requirement</a>
+        {% endif %}
+      {% endif %}
     </div>
   </div>
-  {% if not delete_requested %}
-     <div class="grid-row">
-       <div class="column-two-thirds">
-         {% if framework.status == 'live' and brief.status == 'draft' %}
-         <a href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, delete_requested=True) }}">Delete</a>
-         {% endif %}
-       </div>
-     </div>
-   {% endif %}
 {% endblock %}

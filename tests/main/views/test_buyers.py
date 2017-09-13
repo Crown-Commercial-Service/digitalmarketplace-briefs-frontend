@@ -1653,6 +1653,18 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
 
 @mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestBriefSummaryPage(BaseApplicationTest):
+
+    SIDE_LINKS_XPATH = '//div[@class="column-one-third"]//a'
+    INSTRUCTION_LINKS_XPATH = '//main[@id="content"]//ul/li/a'
+
+    @staticmethod
+    def _get_links(document, xpath, text_only=None):
+        if text_only:
+            return [e.text_content() for e in document.xpath(xpath)]
+        return [
+            (e.text_content(), e.get('href')) for e in document.xpath(xpath)
+        ]
+
     def test_show_draft_brief_summary_page(self, data_api_client):
         with self.app.app_context():
             self.login_as_buyer()
@@ -1676,7 +1688,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             document = html.fromstring(page_html)
 
             assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-            assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+            assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
                 'Title',
                 'Specialist role',
                 'Location',
@@ -1693,7 +1705,12 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-            assert document.xpath('//a[contains(text(), "Delete")]')
+            assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
+                (
+                    "Delete draft requirement",
+                    "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?delete_requested=True"  # noqa
+                )
+            ]
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_live_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1721,7 +1738,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             document = html.fromstring(page_html)
 
             assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-            assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+            assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
                 'View question and answer dates',
                 'View your published requirements',
                 'Publish questions and answers',
@@ -1733,7 +1750,12 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-            assert not document.xpath('//a[contains(text(), "Delete")]')
+            assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
+                (
+                    'Withdraw requirement',
+                    'https://www.gov.uk/guidance/how-to-make-changes-to-your-published-digital-outcomes-and-specialists-requirements#when-to-withdraw-your-requirements'  # noqa
+                )
+            ]
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_closed_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1761,7 +1783,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             document = html.fromstring(page_html)
 
             assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-            assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+            assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
                 'View your published requirements',
                 'View and shortlist suppliers',
                 'How to shortlist suppliers',
@@ -1772,7 +1794,12 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
-            assert not document.xpath('//a[contains(text(), "Delete")]')
+            assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
+                (
+                    'Cancel requirement',
+                    '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/cancel'
+                )
+            ]
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     @pytest.mark.parametrize(
@@ -1805,14 +1832,14 @@ class TestBriefSummaryPage(BaseApplicationTest):
             document = html.fromstring(page_html)
 
             assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-            assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+            assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
                 'View your published requirements',
                 'View suppliers who applied',
             ]
             assert "The contract was not awarded - {}.".format(award_description) in page_html
 
             assert "Awarded to " not in page_html
-            assert not document.xpath('//a[contains(text(), "Delete")]')
+            assert self._get_links(document, self.SIDE_LINKS_XPATH) == []
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_awarded_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1858,65 +1885,12 @@ class TestBriefSummaryPage(BaseApplicationTest):
             document = html.fromstring(page_html)
 
             assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-            assert [e.text_content() for e in document.xpath('//main[@id="content"]//ul/li/a')] == [
+            assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
                 'View your published requirements',
                 'View suppliers who applied',
             ]
             assert "Awarded to 100 Percent IT Ltd" in page_html
-            assert not document.xpath('//a[contains(text(), "Delete")]')
-
-    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
-    def test_cancel_link_present_on_closed_brief_summary(self, data_api_client, framework_status):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status=framework_status,
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True),
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(status="closed")
-
-        res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
-        )
-
-        page_html = res.get_data(as_text=True)
-        document = html.fromstring(page_html)
-
-        expected_link_text = 'Cancel requirement'
-        expected_link_url = '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234'
-
-        assert res.status_code == 200
-        assert document.xpath("//a[text() = '{}'][contains(@href,'{}')]".format(expected_link_text, expected_link_url))
-
-    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
-    @pytest.mark.parametrize('brief_status', ['draft', 'live', 'awarded', 'cancelled', 'unsuccessful'])
-    def test_cancel_link_not_present_on_brief_summary_if_status_not_closed(
-        self,
-        data_api_client,
-        brief_status,
-        framework_status
-    ):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status=framework_status,
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True),
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(status=brief_status)
-
-        res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
-        )
-
-        page_html = res.get_data(as_text=True)
-        document = html.fromstring(page_html)
-
-        assert res.status_code == 200
-        assert "Cancel requirement" not in document.text_content()
+            assert self._get_links(document, self.SIDE_LINKS_XPATH) == []
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_clarification_questions_page_for_live_brief_with_no_questions(
@@ -2099,33 +2073,6 @@ class TestBriefSummaryPage(BaseApplicationTest):
             # section with single question and a description
             assert section_4_link[0].get('href').strip() == \
                 '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-4'
-
-    def test_no_meta_data_is_shown_for_a_draft_brief(self, data_api_client):
-        with self.app.app_context():
-            self.login_as_buyer()
-            data_api_client.get_framework.return_value = api_stubs.framework(
-                slug="digital-outcomes-and-specialists-2",
-                status='live',
-                lots=[
-                    api_stubs.lot(slug='digital-specialists', allows_brief=True),
-                ]
-            )
-            data_api_client.get_brief.return_value = api_stubs.brief(
-                status="draft",
-                framework_slug="digital-outcomes-and-specialists-2",
-                framework_name="Digital Outcomes and Specialists 2",
-            )
-
-            res = self.client.get(
-                "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/1234"
-            )
-            assert res.status_code == 200
-
-            document = html.fromstring(res.get_data(as_text=True))
-
-            meta_data_container = document.xpath('//*[@id="requirements-meta"]')
-
-            assert not meta_data_container
 
 
 @mock.patch("app.main.views.buyers.data_api_client", autospec=True)

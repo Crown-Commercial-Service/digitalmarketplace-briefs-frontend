@@ -51,6 +51,11 @@ ol.instruction-list-item-top li {
   margin-bottom: 0;
 }
 
+ul.instruction-list .divider:first-child,
+ol.instruction-list .divider:first-child {
+  padding-top:0
+}
+
 ol.steps {
   @include bold-27;
   padding-left: 1em; // 27px
