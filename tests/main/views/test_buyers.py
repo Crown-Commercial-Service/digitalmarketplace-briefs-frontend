@@ -2270,7 +2270,6 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
-
         self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
@@ -3445,7 +3444,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         assert len(submit_button) == 1
 
         secondary_link_text = document.xpath('//div[@class="secondary-action-link"]//a[1]')[0]
-        assert secondary_link_text.text_content() == "Back to previous page"
+        assert secondary_link_text.text_content() == "Previous page"
 
         secondary_link = document.xpath('//div[@class="secondary-action-link"]//a[1]/@href')[0]
         assert secondary_link == \
@@ -3597,7 +3596,13 @@ class TestCancelBrief(BaseApplicationTest):
         self.data_api_client_patch.stop()
         super(TestCancelBrief, self).teardown_method(method)
 
-    def test_cancel_brief_200s_with_correct_default_content(self):
+    def test_cancel_brief_form_displays_default_title_correctly_when_accessed_through_cancel_url(self):
+        """
+        This form has a dynamic title dependent on the url it is accessed through.
+
+        This test checks for the default "Why do you need to cancel <brief_name>? title when accessed
+        through the '/cancel' url".
+        """
         self.login_as_buyer()
         res = self.client.get(self.url.format(brief_id=1234))
 
@@ -3615,6 +3620,73 @@ class TestCancelBrief(BaseApplicationTest):
 
         submit_button = document.xpath('//input[@class="button-save" and @value="Update requirement"]')
         assert len(submit_button) == 1
+
+        expected_previous_page_link_text = 'Previous page'
+        expected_previous_page_link_url = (
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+        )
+
+        assert (
+            document.xpath("//a[text()='{}']/@href".format(expected_previous_page_link_text))[0] ==
+            expected_previous_page_link_url
+        )
+
+    def test_cancel_form_post_action_is_correct_when_accessed_from_cancel_url(self):
+        url = (
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/'
+            'digital-outcomes/{brief_id}/cancel'
+        )
+
+        self.login_as_buyer()
+        res = self.client.get(url.format(brief_id=1234))
+        document = html.fromstring(res.get_data(as_text=True))
+        assert document.xpath('//form[@action="{}"]'.format(url.format(brief_id=1234)))[0] is not None
+
+        res = self.client.post(url.format(brief_id=1234))
+        document = html.fromstring(res.get_data(as_text=True))
+        assert document.xpath('//form[@action="{}"]'.format(url.format(brief_id=1234)))[0] is not None
+
+    def test_cancel_form_displays_correctly_accessed_from_award_flow_url(self):
+        url = (
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/'
+            'digital-outcomes/{brief_id}/cancel-award'
+        )
+
+        self.login_as_buyer()
+        res = self.client.get(url.format(brief_id=1234))
+        assert res.status_code == 200
+
+        document = html.fromstring(res.get_data(as_text=True))
+        page_title = document.xpath('//h1')[0].text_content()
+        assert "Why didn't you award a contract for {}?".format(self.brief.get('title')) in page_title
+
+        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirement"]')
+        assert len(submit_button) == 1
+
+        expected_previous_page_link_text = 'Previous page'
+        expected_previous_page_link_url = (
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award'
+        )
+
+        assert (
+            document.xpath("//a[text()='{}']/@href".format(expected_previous_page_link_text))[0] ==
+            expected_previous_page_link_url
+        )
+
+    def test_cancel_form_post_action_is_correct_when_accessed_from_award_flow_url(self):
+        url = (
+            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/'
+            'digital-outcomes/{brief_id}/cancel-award'
+        )
+
+        self.login_as_buyer()
+        res = self.client.get(url.format(brief_id=1234))
+        document = html.fromstring(res.get_data(as_text=True))
+        assert document.xpath('//form[@action="{}"]'.format(url.format(brief_id=1234)))[0] is not None
+
+        res = self.client.post(url.format(brief_id=1234))
+        document = html.fromstring(res.get_data(as_text=True))
+        assert document.xpath('//form[@action="{}"]'.format(url.format(brief_id=1234)))[0] is not None
 
     def test_404_if_user_is_not_brief_owner(self):
         self.data_api_client.get_brief.return_value['briefs']['users'][0]['id'] = 234
@@ -3647,7 +3719,16 @@ class TestCancelBrief(BaseApplicationTest):
 
         assert res.status_code == 400
         assert "You need to answer this question." in validation_message
-        assert self.data_api_client.cancel_brief.called is False
+
+    def test_that_no_option_chosen_does_not_trigger_update(self):
+        res = self.client.post(self.url.format(brief_id=123))
+
+        document = html.fromstring(res.get_data(as_text=True))
+        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
+
+        assert res.status_code == 400
+        self.data_api_client.cancel_brief.assert_not_called()
+
 
     def test_cancel_triggers_cancel_brief(self):
         res = self.client.post(
@@ -3673,8 +3754,16 @@ class TestCancelBrief(BaseApplicationTest):
 
         assert res.status_code == 400
         assert "Not a valid choice" in res.get_data(as_text=True)
-        assert self.data_api_client.update_brief_as_unsuccessful.called is False
-        assert self.data_api_client.cancel_brief.called is False
+
+    @pytest.mark.parametrize('status', ['withdrawn', 'draft', 'live', 'closed', 'awarded'])
+    def test_update_methods_not_called_if_incorrect_status_supplied(self, status):
+        res = self.client.post(
+            self.url.format(brief_id=123), data={'cancel_reason': status}
+        )
+
+        assert res.status_code == 400
+        self.data_api_client.update_brief_as_unsuccessful.assert_not_called()
+        self.data_api_client.cancel_brief.assert_not_called()
 
     @pytest.mark.parametrize('status', ['cancel', 'unsuccessful'])
     def test_redirect_on_successful_status_change(self, status):
@@ -3719,3 +3808,114 @@ class TestBuyerAccountOverview(BaseApplicationTest):
             assert 'Digital outcomes, specialists and user research' in res.get_data(as_text=True)
         else:
             assert True
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super(TestBuyerAccountOverview, self).teardown_method(method)
+
+
+class TestAwardOrCancelBrief(BaseApplicationTest):
+    url = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award'
+
+    def setup_method(self, method):
+        super(TestAwardOrCancelBrief, self).setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists-2',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-outcomes', allows_brief=True),
+            ]
+        )
+        self.brief = api_stubs.brief(
+            user_id=123,
+            framework_slug='digital-outcomes-and-specialists-2',
+            lot_slug="digital-outcomes",
+            status='closed'
+        )['briefs']
+
+        self.data_api_client.get_brief.return_value = {"briefs": self.brief}
+        self.login_as_buyer()
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super(TestAwardOrCancelBrief, self).teardown_method(method)
+
+    def test_404_if_user_is_not_brief_owner(self):
+        self.data_api_client.get_brief.return_value['briefs']['users'][0]['id'] = 234
+
+        res = self.client.get(self.url.format(brief_id=self.brief["id"]))
+
+        assert res.status_code == 404
+
+    @pytest.mark.parametrize('status', ['withdrawn', 'draft', 'live', 'cancelled', 'unsuccessful', 'awarded'])
+    def test_404_if_brief_not_closed(self, status):
+        self.data_api_client.get_brief.return_value['briefs']['status'] = status
+
+        res = self.client.get(self.url.format(brief_id=self.brief["id"]))
+
+        assert res.status_code == 404
+
+    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
+    def test_200_for_acceptable_framework_statuses(self, framework_status):
+        self.data_api_client.get_framework.return_value['frameworks']['status'] = framework_status
+
+        res = self.client.get(self.url.format(brief_id=123))
+
+        assert res.status_code == 200
+
+    def test_that_no_option_chosen_triggers_error(self):
+        res = self.client.post(self.url.format(brief_id=123))
+
+        document = html.fromstring(res.get_data(as_text=True))
+        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
+
+        assert res.status_code == 400
+        assert "You need to answer this question." in validation_message
+        assert self.data_api_client.cancel_brief.called is False
+
+    def test_yes_redirects_to_award_form_page(self):
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'yes'})
+
+        redirect_text = html.fromstring(res.get_data(as_text=True)).text_content().strip()
+        expected_url = (
+            'http://localhost/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/'
+            'digital-outcomes/{}/award-contract'
+        ).format(self.brief['id'])
+
+        assert res.status_code == 302
+        assert res.location == expected_url
+
+    def test_no_redirects_to_cancel_or_award_form_page(self):
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'no'})
+
+        expected_url = (
+            'http://localhost/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/'
+            'digital-outcomes/{}/cancel-award'
+        ).format(self.brief['id'])
+
+        assert res.status_code == 302
+        assert res.location == expected_url
+
+    def test_back_redirects_to_buyer_dos_requiremnents_list(self):
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'back'})
+
+        expected_url = 'http://localhost/buyers/requirements/digital-outcomes-and-specialists'
+
+        assert res.status_code == 302
+        assert res.location == expected_url
+
+    def test_random_post_data_triggers_invalid_choice(self):
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'foo'})
+
+        document = html.fromstring(res.get_data(as_text=True))
+        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
+
+        assert res.status_code == 400
+        assert "Not a valid choice" in validation_message
