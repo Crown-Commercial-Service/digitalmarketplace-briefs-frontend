@@ -600,8 +600,8 @@ def award_brief(framework_slug, lot_slug, brief_id):
 def cancel_brief(framework_slug, lot_slug, brief_id):
     form = None
     errors = {}
-    end_point = request.endpoint.strip(request.blueprint + '.')
-    label_text = "Why didn't you award a contract for {}?" if end_point == 'cancel_award_brief' else None
+    award_flow = request.endpoint.strip(request.blueprint + '.') == 'cancel_award_brief'
+
     get_framework_and_lot(
         framework_slug,
         lot_slug,
@@ -678,6 +678,7 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
         form=form or CancelBriefForm(brief, label_text),
         errors=errors,
         breadcrumbs=breadcrumbs,
+        previous_page_url=previous_page_url
     ), 200 if not errors else 400
 
 
