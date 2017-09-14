@@ -1,7 +1,7 @@
 {% extends "_base_page.html" %}
 {% import "toolkit/summary-table.html" as summary %}
 {% block page_title %}
-    {% if FEATURE_DIRECT_AWARD_PROJECTS %}
+    {% if 'DIRECT_AWARD_PROJECTS' is active_feature %}
         Your requirements 
     {% else %}
         Your account
@@ -44,7 +44,7 @@
         {% endwith %}
 
         <div class="column-two-thirds">
-            {% if FEATURE_DIRECT_AWARD_PROJECTS %}
+            {% if 'DIRECT_AWARD_PROJECTS' is active_feature %}
                 {% with
                     heading = "Your requirements"
                 %}

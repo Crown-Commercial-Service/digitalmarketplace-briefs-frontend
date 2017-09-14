@@ -93,7 +93,6 @@ def buyer_dos_requirements():
         live_briefs=live_briefs,
         closed_briefs=closed_briefs,
         breadcrumbs=breadcrumbs,
-        FEATURE_DIRECT_AWARD_PROJECTS=flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'),
     )
 
 
