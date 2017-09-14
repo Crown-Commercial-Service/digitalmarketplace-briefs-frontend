@@ -138,7 +138,7 @@ class TestBuyersHelpers(object):
             'frameworkSlug': 'dos',
             'lotSlug': 'digital-specialists',
             'required1': True
-            }
+        }
         content = content_loader.get_manifest('dos', 'edit_brief').filter(
             {'lot': 'digital-specialists'}
         )

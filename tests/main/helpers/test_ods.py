@@ -1,11 +1,10 @@
 import mock
-import unittest
 import functools
 
 import app.main.helpers.ods as ods
 
 from hypothesis import strategies as st
-from hypothesis import given, example, assume
+from hypothesis import given, example
 
 po = functools.partial(mock.patch.object, autospec=True)
 
@@ -102,7 +101,7 @@ class TestSheet(object):
     def test_get_row(self, instance, name):
         instance._rows[name] = expected = mock.Mock()
 
-        with po(ods, 'Row') as Row:
+        with po(ods, 'Row'):
             assert expected == instance.get_row(name)
 
     @given(st.text().map(ods.Sheet), st.dictionaries(st.text(), st.text()))
@@ -208,6 +207,7 @@ class TestSpreadSheet(object):
         instance._document = mock.MagicMock(spec_set=instance._document)
 
         buf = mock.Mock()
+        fontface = mock.Mock()
 
         instance.add_font(fontface)
 

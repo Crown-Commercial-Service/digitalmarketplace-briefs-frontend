@@ -1,7 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
 import inflection
-import sys
 import flask_featureflags
 
 
@@ -209,7 +208,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
             completed_sections[section.slug] = True if optional == 0 else False
 
     brief['clarificationQuestions'] = [
-        dict(question, number=index+1)
+        dict(question, number=index + 1)
         for index, question in enumerate(brief['clarificationQuestions'])
     ]
 
@@ -598,8 +597,7 @@ class DownloadBriefResponsesView(View):
         if brief['status'] not in CLOSED_PUBLISHED_BRIEF_STATUSES:
             abort(404)
 
-        text_type = str if sys.version_info[0] == 3 else unicode
-        filename = inflection.parameterize(text_type(brief['title']))
+        filename = inflection.parameterize(str(brief['title']))
 
         kwargs.update({
             'brief': brief,
@@ -920,7 +918,7 @@ def supplier_questions(framework_slug, lot_slug, brief_id):
         abort(404)
 
     brief['clarificationQuestions'] = [
-        dict(question, number=index+1)
+        dict(question, number=index + 1)
         for index, question in enumerate(brief['clarificationQuestions'])
     ]
 

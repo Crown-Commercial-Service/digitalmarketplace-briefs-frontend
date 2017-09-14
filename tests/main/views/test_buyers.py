@@ -14,7 +14,6 @@ from dmapiclient import DataAPIClient
 from freezegun import freeze_time
 import functools
 import inflection
-import sys
 
 from werkzeug.exceptions import NotFound
 
@@ -657,16 +656,6 @@ class TestEveryDamnPage(BaseApplicationTest):
 
     def test_expired_framework_get_edit_brief_question(self):
         self._load_page("/digital-specialists/1234/edit/section-1/required1", 404, framework_status='expired')
-
-    def test_expired_framework_post_edit_brief_question(self):
-        data = {"required1": True}
-        self._load_page(
-            "/digital-outcomes/1234/edit/section-1/required1",
-            404,
-            method='post',
-            data=data,
-            framework_status='expired'
-        )
 
     @pytest.mark.parametrize("lot_slug", ('digital-outcomes', 'digital-specialists'))
     def test_expired_framework_post_edit_brief_question(self, lot_slug):
@@ -1567,7 +1556,6 @@ class TestPublishBrief(BaseApplicationTest):
         res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                               "digital-specialists/1234/publish")
         page_html = res.get_data(as_text=True)
-        document = html.fromstring(page_html)
 
         assert res.status_code == 200
         assert "You still need to complete the following questions before your requirements " \
@@ -2673,18 +2661,14 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
             'lot_slug': mock.Mock()
         }
 
-        text_type = str if sys.version_info[0] == 3 else unicode
-
-        filename = inflection.parameterize(text_type(brief['briefs']['title']))
-
         expected = dict(**kwargs)
         expected['brief'] = brief['briefs']
         expected['responses'] = self.instance.get_responses.return_value
-        expected['filename'] = 'supplier-responses-' + filename
+        expected['filename'] = 'supplier-responses-{}'.format(inflection.parameterize(str(brief['briefs']['title'])))
 
         self.instance.data_api_client.get_brief.return_value = brief
 
-        with po(buyers, 'get_framework_and_lot') as get_framework_and_lot,\
+        with po(buyers, 'get_framework_and_lot'),\
                 po(buyers, 'is_brief_correct') as is_brief_correct,\
                 mock.patch.object(buyers, 'current_user') as current_user:
 
@@ -2716,9 +2700,9 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
 
         self.instance.data_api_client.get_brief.return_value = brief
 
-        with po(buyers, 'get_framework_and_lot') as get_framework_and_lot,\
+        with po(buyers, 'get_framework_and_lot'),\
                 po(buyers, 'is_brief_correct') as is_brief_correct,\
-                mock.patch.object(buyers, 'current_user') as current_user:
+                mock.patch.object(buyers, 'current_user'):
 
             is_brief_correct.return_value = False
             with pytest.raises(NotFound):
@@ -2737,9 +2721,9 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
 
         self.instance.data_api_client.get_brief.return_value = brief
 
-        with po(buyers, 'get_framework_and_lot') as get_framework_and_lot,\
+        with po(buyers, 'get_framework_and_lot'),\
                 po(buyers, 'is_brief_correct') as is_brief_correct,\
-                mock.patch.object(buyers, 'current_user') as current_user:
+                mock.patch.object(buyers, 'current_user'):
 
             is_brief_correct.return_value = True
             with pytest.raises(NotFound):
@@ -2786,8 +2770,6 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
         k = 0
 
         for i, question in enumerate(questions):
-            length = len(self.brief[question['id']])
-            offset = 0
 
             for l, name in enumerate(self.brief[question['id']]):
                 k += 1
@@ -2819,8 +2801,6 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
         k = 0
 
         for i, question in enumerate(questions):
-            length = len(self.brief[question['id']])
-            offset = 0
 
             for l, name in enumerate(self.brief[question['id']]):
                 k += 1
@@ -2922,7 +2902,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
     def test_dispatch_request(self):
         kwargs = {'foo': 'bar', 'baz': 'abc'}
 
-        self.instance.get_context_data = get_context_data = mock.Mock()
+        self.instance.get_context_data = mock.Mock()
 
         self.instance.create_response = create_response = mock.Mock()
 
@@ -3303,7 +3283,7 @@ class TestAwardBrief(BaseApplicationTest):
         for i, brief_response in enumerate([(2, 'Aobbins'), (90, 'Bobbins'), (4444, 'Cobbins'), (23, 'Dobbins')]):
             input_id = document.xpath('//input[@id="input-brief_response-{}"]/@value'.format(i + 1))[0]
             assert int(input_id) == brief_response[0]
-            label = document.xpath('//label[@for="input-brief_response-{}"]'.format(i+1))[0]
+            label = document.xpath('//label[@for="input-brief_response-{}"]'.format(i + 1))[0]
             assert self._strip_whitespace(label.text_content()) == brief_response[1]
 
     def test_award_brief_get_populates_form_with_a_previously_chosen_brief_response(self):
