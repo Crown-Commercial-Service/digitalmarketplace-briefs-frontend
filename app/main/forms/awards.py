@@ -12,18 +12,16 @@ class AwardedBriefResponseForm(Form):
         coerce=int
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, brief_responses, *args, **kwargs):
         """
-            Requires extra keyword arguments:
+            Requires extra argument:
              - `brief_responses` - list of BriefResponses for the multiple choice
         """
         super(AwardedBriefResponseForm, self).__init__(*args, **kwargs)
 
-        # popping this kwarg so we don't risk it getting fed to wtforms default implementation which might use it
-        # as a data field if there were a name collision
         brief_responses = list(
             sorted(
-                [{'id': b['id'], 'name': b['supplierName']} for b in kwargs.pop("brief_responses", [])],
+                [{'id': b['id'], 'name': b['supplierName']} for b in brief_responses],
                 key=lambda x: x['name']
             )
         )
