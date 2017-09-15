@@ -2472,10 +2472,9 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
         self.data_api_client = mock.MagicMock(spec_set=DataAPIClient)
         self.content_loader = mock.MagicMock(spec_set=ContentLoader)
 
-        self.instance = buyers.DownloadBriefResponsesView(
-            data_api_client=self.data_api_client,
-            content_loader=self.content_loader
-        )
+        self.instance = buyers.DownloadBriefResponsesView()
+        self.instance.data_api_client = self.data_api_client
+        self.instance.content_loader = self.content_loader
 
         self.brief = api_stubs.brief(status='closed')['briefs']
         self.brief['essentialRequirements'] = [
@@ -2648,7 +2647,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
 
         assert result == []
 
-    def test_get_context_data(self):
+    def test_get_file_context(self):
         self.instance.get_responses = mock.Mock()
 
         brief = api_stubs.brief(status='closed')
@@ -2659,7 +2658,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
             'lot_slug': mock.Mock()
         }
 
-        expected = dict(**kwargs)
+        expected = {}
         expected['brief'] = brief['briefs']
         expected['responses'] = self.instance.get_responses.return_value
         expected['filename'] = 'supplier-responses-{}'.format(inflection.parameterize(str(brief['briefs']['title'])))
@@ -2670,7 +2669,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
                 po(buyers, 'is_brief_correct') as is_brief_correct,\
                 mock.patch.object(buyers, 'current_user') as current_user:
 
-            result = self.instance.get_context_data(**kwargs)
+            result = self.instance.get_file_context(**kwargs)
 
         is_brief_correct.assert_called_once_with(brief['briefs'],
                                                  kwargs['framework_slug'],
@@ -2685,7 +2684,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
 
         assert result == expected
 
-    def test_get_context_data_with_incorrect_brief(self):
+    def test_get_file_context_with_incorrect_brief(self):
         self.instance.get_responses = mock.Mock()
 
         brief = api_stubs.brief(status='closed')
@@ -2704,9 +2703,9 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
 
             is_brief_correct.return_value = False
             with pytest.raises(NotFound):
-                self.instance.get_context_data(**kwargs)
+                self.instance.get_file_context(**kwargs)
 
-    def test_get_context_data_with_open_brief(self):
+    def test_get_file_context_with_open_brief(self):
         self.instance.get_responses = mock.Mock()
 
         brief = api_stubs.brief(status='live')
@@ -2725,9 +2724,9 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
 
             is_brief_correct.return_value = True
             with pytest.raises(NotFound):
-                self.instance.get_context_data(**kwargs)
+                self.instance.get_file_context(**kwargs)
 
-    def test_generate_ods(self):
+    def test_populate_styled_ods_with_data(self):
         questions = [
             {'id': 'supplierName', 'name': 'Supplier', 'type': 'text'},
             {'id': 'respondToEmailAddress', 'name': 'Email address', 'type': 'text'},
@@ -2739,7 +2738,8 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
             Question(question) for question in questions
         ])
 
-        doc = self.instance.generate_ods(self.brief, self.responses)
+        doc = self.instance.populate_styled_ods_with_data(self.instance.create_blank_ods_with_styles(),
+                                                          {'brief': self.brief, 'responses': self.responses})
 
         sheet = doc.sheet("Supplier evidence")
 
@@ -2752,7 +2752,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
             for j, response in enumerate(self.responses):
                 assert sheet.read_cell(j + 2, i + 1) == response[question['id']]
 
-    def test_generate_ods_with_boolean_list(self):
+    def test_populate_styled_ods_with_data_with_boolean_list(self):
         questions = [
             {'id': 'blah', 'name': 'Blah Blah', 'type': 'boolean_list'},
         ]
@@ -2761,7 +2761,8 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
             Question(question) for question in questions
         ])
 
-        doc = self.instance.generate_ods(self.brief, self.responses)
+        doc = self.instance.populate_styled_ods_with_data(self.instance.create_blank_ods_with_styles(),
+                                                          {'brief': self.brief, 'responses': self.responses})
 
         sheet = doc.sheet("Supplier evidence")
 
@@ -2782,7 +2783,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
                 for j, response in enumerate(self.responses):
                     assert sheet.read_cell(j + 2, k) == str(response[question['id']][l]).lower()
 
-    def test_generate_ods_with_dynamic_list(self):
+    def test_populate_styled_ods_with_data_with_dynamic_list(self):
         questions = [
             {'id': 'niceToHaveRequirements', 'name': 'Nice-to-have skills & evidence', 'type': 'dynamic_list'},
             {'id': 'essentialRequirements', 'name': 'Essential skills & evidence', 'type': 'dynamic_list'},
@@ -2792,7 +2793,8 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
             Question(question) for question in questions
         ])
 
-        doc = self.instance.generate_ods(self.brief, self.responses)
+        doc = self.instance.populate_styled_ods_with_data(self.instance.create_blank_ods_with_styles(),
+                                                          {'brief': self.brief, 'responses': self.responses})
 
         sheet = doc.sheet("Supplier evidence")
 
@@ -2813,7 +2815,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
                 for j, response in enumerate(self.responses):
                     assert sheet.read_cell(j + 2, k) == response[question['id']][l].get('evidence', '')
 
-    def test_generate_ods_missing_with_dynamic_list(self):
+    def test_populate_styled_ods_with_data_missing_with_dynamic_list(self):
         questions = [
             {'id': 'niceToHaveRequirements', 'name': 'Nice-to-have skills & evidence', 'type': 'dynamic_list'},
             {'id': 'essentialRequirements', 'name': 'Essential skills & evidence', 'type': 'dynamic_list'},
@@ -2828,7 +2830,8 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
         del self.responses[0]['niceToHaveRequirements']
         del self.responses[1]['niceToHaveRequirements']
 
-        doc = self.instance.generate_ods(self.brief, self.responses)
+        doc = self.instance.populate_styled_ods_with_data(self.instance.create_blank_ods_with_styles(),
+                                                          {'brief': self.brief, 'responses': self.responses})
 
         sheet = doc.sheet("Supplier evidence")
 
@@ -2839,76 +2842,6 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
 
             for j, response in enumerate(self.responses):
                 assert sheet.read_cell(j + 2, k) == response['essentialRequirements'][l].get('evidence', '')
-
-    def test_create_ods_response(self):
-        context = {'brief': api_stubs.brief(status='closed')['briefs'],
-                   'responses': mock.Mock(),
-                   'filename': 'foobar'}
-
-        self.instance.generate_ods = mock.Mock()
-
-        with po(buyers, 'BytesIO') as BytesIO,\
-                po(buyers, 'Response') as Response:
-
-            result = self.instance.create_ods_response(context)
-
-        assert result == (Response.return_value, 200)
-
-        BytesIO.assert_called_once_with()
-
-        buf = BytesIO.return_value
-
-        self.instance.generate_ods.assert_called_once_with(context['brief'],
-                                                           context['responses'])
-
-        self.instance.generate_ods.return_value.save.assert_called_once_with(buf)
-
-        Response.assert_called_once_with(
-            buf.getvalue.return_value,
-            mimetype='application/vnd.oasis.opendocument.spreadsheet',
-            headers={
-                "Content-Disposition": (
-                    "attachment;filename=foobar.ods"
-                ).format(context['brief']['id']),
-                "Content-Type": "application/vnd.oasis.opendocument.spreadsheet"
-            }
-        )
-
-    def test_create_response(self):
-        self.instance.create_ods_response = mock.Mock()
-        self.instance.create_csv_response = mock.Mock()
-
-        context = {'responses': [{'essentialRequirementsMet': True}]}
-
-        result = self.instance.create_response(context)
-
-        assert result == self.instance.create_ods_response.return_value
-
-        self.instance.create_ods_response.assert_called_once_with(context)
-
-        self.instance.create_ods_response = mock.Mock()
-        self.instance.create_csv_response = mock.Mock()
-
-        context = {'responses': [{}]}
-
-        result = self.instance.create_response(context)
-
-        assert result == self.instance.create_csv_response.return_value
-
-        self.instance.create_csv_response.assert_called_once_with(context)
-
-    def test_dispatch_request(self):
-        kwargs = {'foo': 'bar', 'baz': 'abc'}
-
-        self.instance.get_context_data = mock.Mock()
-
-        self.instance.create_response = create_response = mock.Mock()
-
-        result = self.instance.dispatch_request(**kwargs)
-
-        assert create_response.return_value == result
-
-        self.instance.get_context_data.assert_called_once_with(**kwargs)
 
 
 @mock.patch("app.main.views.buyers.data_api_client", autospec=True)
@@ -3009,10 +2942,12 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
             lines = page.splitlines()
             # There are only the two eligible responses included
             assert len(lines) == 3
-            assert lines[0] == "Supplier,Date the specialist can start work,Day rate,Nice1,Nice2,Nice3,Email address"
+            assert lines[0] == (
+                '''"Supplier","Date the specialist can start work","Day rate","Nice1","Nice2","Nice3","Email address"'''
+            )
             # The response with two nice-to-haves is sorted to above the one with only one
-            assert lines[1] == "Kev's Pies,A week Friday,£3.50,False,True,True,test2@email.com"
-            assert lines[2] == "Kev's Butties,Next Tuesday,£1.49,True,False,False,test1@email.com"
+            assert lines[1] == '''"Kev's Pies","A week Friday","£3.50","False","True","True","test2@email.com"'''
+            assert lines[2] == '''"Kev's Butties","Next Tuesday","£1.49","True","False","False","test1@email.com"'''
 
     def test_download_brief_responses_for_brief_without_nice_to_haves(self, data_api_client):
         data_api_client.get_framework.return_value = api_stubs.framework(
@@ -3056,10 +2991,14 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
         lines = page.splitlines()
 
         assert len(lines) == 3
-        assert lines[0] == "Supplier,Date the specialist can start work,Day rate,Nice1,Nice2,Nice3,Email address"
+        assert lines[0] == (
+            '''"Supplier","Date the specialist can start work","Day rate","Nice1","Nice2","Nice3","Email address"'''
+        )
         # The values with internal commas are surrounded by quotes, and all other characters appear as in the data
-        assert lines[1] == 'Kev\'s \'Pies,&quot;A week Friday&rdquot;,&euro;3.50,False,True,True,"te,st2@email.com"'
-        assert lines[2] == '"K,ev’s ""Bu,tties",❝Next — Tuesday❞,"¥1.49,",True,False,False,test1@email.com'
+        assert lines[1] == '"Kev\'s \'Pies","&quot;A week Friday&rdquot;","&euro;3.50","False","True","True",' \
+                           '"te,st2@email.com"'
+        assert lines[2] == '"K,ev’s ""Bu,tties","❝Next — Tuesday❞","¥1.49,","True","False","False",' \
+                           '"test1@email.com"'
 
     def test_404_if_brief_does_not_belong_to_buyer(self, data_api_client):
         data_api_client.get_framework.return_value = api_stubs.framework(
