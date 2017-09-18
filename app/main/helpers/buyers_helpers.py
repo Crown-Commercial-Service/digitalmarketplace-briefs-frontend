@@ -93,7 +93,7 @@ def get_briefs_breadcrumbs(additional_breadcrumbs=[]):
         },
         {
             "link": url_for("buyers.buyer_dos_requirements"),
-            "label": "Your requirements"
+            "label": "Requirements"
         }
     ]
 
