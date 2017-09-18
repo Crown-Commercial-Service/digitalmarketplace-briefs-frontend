@@ -13,7 +13,7 @@ from .. import main, content_loader
 from ..helpers.buyers_helpers import (
     get_framework_and_lot, get_sorted_responses_for_brief, count_unanswered_questions,
     brief_can_be_edited, add_unanswered_counts_to_briefs, is_brief_correct,
-    section_has_at_least_one_required_question
+    section_has_at_least_one_required_question, get_briefs_breadcrumbs
 )
 
 from ..helpers.ods import SpreadSheet
@@ -72,11 +72,27 @@ def buyer_dos_requirements():
         reverse=True
     )
 
+    breadcrumbs = [
+        {
+            "link": "/",
+            "label": "Digital Marketplace"
+        }
+    ]
+
+    if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
+        breadcrumbs += [
+            {
+                "link": url_for("buyers.buyer_dashboard"),
+                "label": "Your account"
+            }
+        ]
+
     return render_template(
         'buyers/dashboard.html',
         draft_briefs=draft_briefs,
         live_briefs=live_briefs,
-        closed_briefs=closed_briefs
+        closed_briefs=closed_briefs,
+        breadcrumbs=breadcrumbs,
     )
 
 
@@ -212,6 +228,8 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         for index, question in enumerate(brief['clarificationQuestions'])
     ]
 
+    breadcrumbs = get_briefs_breadcrumbs()
+
     return render_template(
         "buyers/brief_overview.html",
         framework=framework,
@@ -223,7 +241,8 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         delete_requested=delete_requested,
         call_off_contract_url=call_off_contract_url,
         framework_agreement_url=framework_agreement_url,
-        awarded_brief_response_supplier_name=awarded_brief_response_supplier_name
+        awarded_brief_response_supplier_name=awarded_brief_response_supplier_name,
+        breadcrumbs=breadcrumbs
     ), 200
 
 
@@ -248,10 +267,22 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
     if not section:
         abort(404)
 
+    breadcrumbs = get_briefs_breadcrumbs([
+        {
+            "link": url_for(
+                ".view_brief_overview",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']),
+            "label": brief['title']
+        }
+    ])
+
     return render_template(
         "buyers/section_summary.html",
         brief=brief,
-        section=section
+        section=section,
+        breadcrumbs=breadcrumbs,
     ), 200
 
 
@@ -275,11 +306,24 @@ def edit_brief_question(framework_slug, lot_slug, brief_id, section_slug, questi
     question = section.get_question(question_id)
     if not question:
         abort(404)
+
+    breadcrumbs = get_briefs_breadcrumbs([
+        {
+            "link": url_for(
+                ".view_brief_overview",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']),
+            "label": brief['title']
+        }
+    ])
+
     return render_template(
         "buyers/edit_brief_question.html",
         brief=section.unformat_data(brief),
         section=section,
-        question=question
+        question=question,
+        breadcrumbs=breadcrumbs,
     ), 200
 
 
@@ -317,12 +361,25 @@ def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, ques
 
         # we need the brief_id to build breadcrumbs and the update_data to fill in the form.
         brief.update(update_data)
+
+        breadcrumbs = get_briefs_breadcrumbs([
+            {
+                "link": url_for(
+                    ".view_brief_overview",
+                    framework_slug=brief['frameworkSlug'],
+                    lot_slug=brief['lotSlug'],
+                    brief_id=brief['id']),
+                "label": brief['title']
+            }
+        ])
+
         return render_template(
             "buyers/edit_brief_question.html",
             brief=brief,
             section=section,
             question=question,
-            errors=errors
+            errors=errors,
+            breadcrumbs=breadcrumbs,
         ), 400
 
     if section.has_summary_page:
@@ -374,11 +431,23 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
     for response in brief_responses:
         counter[all(response['essentialRequirements'])] += 1
 
+    breadcrumbs = get_briefs_breadcrumbs([
+        {
+            "link": url_for(
+                ".view_brief_overview",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']),
+            "label": brief['title']
+        }
+    ])
+
     return render_template(
         "buyers/brief_responses.html",
         response_counts={"failed": counter[False], "eligible": counter[True]},
         brief_responses_require_evidence=brief_responses_require_evidence,
-        brief=brief
+        brief=brief,
+        breadcrumbs=breadcrumbs
     ), 200
 
 
@@ -392,6 +461,17 @@ def award_brief(framework_slug, lot_slug, brief_id):
         must_allow_brief=True,
     )
     brief = data_api_client.get_brief(brief_id)["briefs"]
+
+    breadcrumbs = get_briefs_breadcrumbs([
+        {
+            "link": url_for(
+                ".view_brief_overview",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']),
+            "label": brief['title']
+        }
+    ])
 
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
         abort(404)
@@ -421,6 +501,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
                 brief=brief,
                 form=form,
                 form_errors=form_errors,
+                breadcrumbs=breadcrumbs,
             ), 400
 
         if form.data:
@@ -450,7 +531,8 @@ def award_brief(framework_slug, lot_slug, brief_id):
     return render_template(
         "buyers/award.html",
         brief=brief,
-        form=form
+        form=form,
+        breadcrumbs=breadcrumbs,
     ), 200
 
 
@@ -500,11 +582,23 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
             except HTTPError as e:
                 abort(500, "Unexpected API error when cancelling brief")
 
+    breadcrumbs = get_briefs_breadcrumbs([
+        {
+            "link": url_for(
+                ".view_brief_overview",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']),
+            "label": brief['title']
+        }
+    ])
+
     return render_template(
         "buyers/cancel_brief.html",
         brief=brief,
         form=form or CancelBriefForm(brief=brief),
         errors=errors,
+        breadcrumbs=breadcrumbs,
     ), 200 if not errors else 400
 
 
@@ -531,6 +625,17 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
     section_id = content.get_next_editable_section_id()
     section = content.get_section(section_id)
 
+    breadcrumbs = get_briefs_breadcrumbs([
+        {
+            "link": url_for(
+                ".view_brief_overview",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']),
+            "label": brief['title']
+        }
+    ])
+
     if request.method == "POST":
         award_data = section.get_data(request.form)
         try:
@@ -550,7 +655,8 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
                 data=award_data,
                 errors=errors,
                 pending_brief_response=brief_response,
-                section=section
+                section=section,
+                breadcrumbs=breadcrumbs,
             ), 400
 
         flash({"updated-brief": brief.get("title")})
@@ -566,6 +672,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
         data={},
         pending_brief_response=brief_response,
         section=section,
+        breadcrumbs=breadcrumbs,
     ), 200
 
 
@@ -840,6 +947,17 @@ def publish_brief(framework_slug, lot_slug, brief_id):
         email_address = brief_users['emailAddress']
         dates = get_publishing_dates(brief)
 
+        breadcrumbs = get_briefs_breadcrumbs([
+            {
+                "link": url_for(
+                    ".view_brief_overview",
+                    framework_slug=brief['frameworkSlug'],
+                    lot_slug=brief['lotSlug'],
+                    brief_id=brief['id']),
+                "label": brief['title']
+            }
+        ])
+
         return render_template(
             "buyers/brief_publish_confirmation.html",
             email_address=email_address,
@@ -847,7 +965,8 @@ def publish_brief(framework_slug, lot_slug, brief_id):
             unanswered_required=unanswered_required,
             sections=sections,
             brief=brief,
-            dates=dates
+            dates=dates,
+            breadcrumbs=breadcrumbs
         ), 200
 
 
@@ -922,9 +1041,12 @@ def supplier_questions(framework_slug, lot_slug, brief_id):
         for index, question in enumerate(brief['clarificationQuestions'])
     ]
 
+    breadcrumbs = get_briefs_breadcrumbs()
+
     return render_template(
         "buyers/supplier_questions.html",
         brief=brief,
+        breadcrumbs=breadcrumbs,
     )
 
 
@@ -970,11 +1092,23 @@ def add_supplier_question(framework_slug, lot_slug, brief_id):
             errors = section.get_error_messages(e.message)
             status_code = 400
 
+    breadcrumbs = get_briefs_breadcrumbs([
+        {
+            "link": url_for(
+                ".view_brief_overview",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']),
+            "label": brief['title']
+        }
+    ])
+
     return render_template(
         "buyers/edit_brief_question.html",
         brief=brief,
         section=section,
         question=section.questions[0],
         button_label="Publish question and answer",
-        errors=errors
+        errors=errors,
+        breadcrumbs=breadcrumbs
     ), status_code

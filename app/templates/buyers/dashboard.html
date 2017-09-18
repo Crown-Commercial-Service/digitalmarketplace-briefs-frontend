@@ -1,15 +1,17 @@
 {% extends "_base_page.html" %}
 {% import "toolkit/summary-table.html" as summary %}
-{% block page_title %}Your account - Digital Marketplace{% endblock %}
+{% block page_title %}
+    {% if 'DIRECT_AWARD_PROJECTS' is active_feature %}
+        Your requirements 
+    {% else %}
+        Your account
+    {% endif %}
+    - Digital Marketplace
+{% endblock %}
 
 {% block breadcrumb %}
   {%
-    with items = [
-    {
-        "link": "/",
-        "label": "Digital Marketplace"
-    }
-    ]
+    with items = breadcrumbs
   %}
     {% include "toolkit/breadcrumb.html" %}
   {% endwith %}
@@ -42,12 +44,20 @@
         {% endwith %}
 
         <div class="column-two-thirds">
-            {% with
-                context = current_user.email_address,
-                heading = current_user.name
-            %}
-            {% include 'toolkit/page-heading.html' %}
-            {% endwith %}
+            {% if 'DIRECT_AWARD_PROJECTS' is active_feature %}
+                {% with
+                    heading = "Your requirements"
+                %}
+                {% include 'toolkit/page-heading.html' %}
+                {% endwith %}
+            {% else %}
+                {% with
+                    context = current_user.email_address,
+                    heading = current_user.name
+                %}
+                {% include 'toolkit/page-heading.html' %}
+                {% endwith %}
+            {%  endif %}
         </div>
     </div>
 

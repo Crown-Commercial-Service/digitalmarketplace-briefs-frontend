@@ -1,4 +1,5 @@
-from flask import abort
+from flask import abort, url_for
+import flask_featureflags
 
 
 def get_framework_and_lot(framework_slug, lot_slug, data_api_client, allowed_statuses=None, must_allow_brief=False):
@@ -78,3 +79,28 @@ def get_sorted_responses_for_brief(brief, data_api_client):
         )
     else:
         return brief_responses
+
+
+def get_briefs_breadcrumbs(additional_breadcrumbs=[]):
+    breadcrumbs = [
+        {
+            "link": "/",
+            "label": "Digital Marketplace"
+        },
+        {
+            "link": url_for("buyers.buyer_dashboard"),
+            "label": "Your account"
+        },
+        {
+            "link": url_for("buyers.buyer_dos_requirements"),
+            "label": "Your requirements"
+        }
+    ]
+
+    if additional_breadcrumbs:
+        breadcrumbs += additional_breadcrumbs
+
+    if not flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
+        breadcrumbs.pop(2)
+
+    return breadcrumbs
