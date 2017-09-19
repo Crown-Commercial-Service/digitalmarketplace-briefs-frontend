@@ -1,9 +1,7 @@
 from flask import current_app, render_template, url_for, abort, redirect, session, Blueprint
 
 from dmapiclient.audit import AuditTypes
-from dmutils.email import generate_token, send_email
-from dmutils.email.exceptions import EmailError
-from dmutils.email.helpers import hash_string
+from dmutils.email import InviteUser
 
 from app import data_api_client
 
@@ -26,7 +24,6 @@ def submit_create_buyer_account():
     current_app.logger.info(
         "buyercreate: post create-buyer-account")
     form = EmailAddressForm()
-
     if form.validate_on_submit():
         email_address = form.email_address.data
         if not data_api_client.is_email_address_with_valid_buyer_domain(email_address):
@@ -34,40 +31,18 @@ def submit_create_buyer_account():
                 "create_buyer/create_buyer_user_error.html",
                 error='invalid_buyer_domain'), 400
         else:
-            token = generate_token(
-                {
-                    "role": "buyer",
-                    "email_address": email_address
-                },
-                current_app.config['SHARED_EMAIL_KEY'],
-                current_app.config['INVITE_EMAIL_SALT']
-            )
-            url = url_for('external.create_user', encoded_token=token, _external=True)
-            email_body = render_template("emails/create_buyer_user_email.html", url=url)
-
-            try:
-                send_email(
-                    email_address,
-                    email_body,
-                    current_app.config['DM_MANDRILL_API_KEY'],
-                    current_app.config['CREATE_USER_SUBJECT'],
-                    current_app.config['RESET_PASSWORD_EMAIL_FROM'],
-                    current_app.config['RESET_PASSWORD_EMAIL_NAME'],
-                    ["user-creation"]
-                )
-                session['email_sent_to'] = email_address
-            except EmailError as e:
-                current_app.logger.error(
-                    "buyercreate.fail: Create user email failed to send. "
-                    "error {error} email_hash {email_hash}",
-                    extra={
-                        'error': str(e),
-                        'email_hash': hash_string(email_address)})
-                abort(503, response="Failed to send user creation email.")
+            token_data = {
+                'role': 'buyer',
+                'email_address': email_address
+            }
+            user_invite = InviteUser(token_data)
+            invite_link = url_for('external.create_user', encoded_token=user_invite.token, _external=True)
+            user_invite.send_invite_email(invite_link)
 
             data_api_client.create_audit_event(
                 audit_type=AuditTypes.invite_user,
-                data={'invitedEmail': email_address})
+                data={'invitedEmail': email_address}
+            )
 
             return redirect(url_for('.create_your_account_complete'), 302)
     else:
