@@ -97,8 +97,31 @@
         });
       }
     },
+    'awardDetailsSubmitButtonClick': function () {
+      var currentURL = GOVUK.GDM.analytics.location.pathname();
+
+      // check we're on the award details page
+      if (currentURL.match('\/buyers\/frameworks\/[a-z0-9-]+\/requirements\/[a-z0-9-]+\/[0-9]+\/award\/[0-9]+\/contract-details')) {
+        GOVUK.analytics.trackEvent('Buyer Award', 'Awarded');
+      }
+
+    },
+    'cancelAwardSubmitButtonClick': function () {
+      var currentURL = GOVUK.GDM.analytics.location.pathname();
+
+      // check we're on the 'why did you cancel' page
+      if (currentURL.match('\/buyers\/frameworks\/[a-z0-9-]+\/requirements\/[a-z0-9-]+\/[0-9]+\/cancel-award')) {
+        var selectedCancelReason = $("input[name='cancel_reason']:checked").val();
+        if (selectedCancelReason) {
+          GOVUK.analytics.trackEvent('Buyer Award', 'Not-awarded', {'label': selectedCancelReason});
+        }
+      }
+
+    },
     'init': function () {
       $('body').on('click', 'a', this.supplierListDownload)
+        .on('click', 'input[type=submit]', this.awardDetailsSubmitButtonClick)
+        .on('click', 'input[type=submit]', this.cancelAwardSubmitButtonClick);
     }
   };
 })(window, window.GOVUK);
