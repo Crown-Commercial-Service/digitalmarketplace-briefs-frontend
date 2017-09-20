@@ -3251,9 +3251,9 @@ class TestAwardBrief(BaseApplicationTest):
         assert res.status_code == 302
         assert res.location == 'http://localhost/user/login?next={}'.format(target_url.replace('/', '%2F'))
 
-    def test_award_brief_get_returns_404_if_brief_not_closed(self):
-        brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='live')
-        self.data_api_client.get_brief.return_value = brief_stub
+    @pytest.mark.parametrize('status', ['live', 'draft', 'withdrawn', 'awarded', 'cancelled', 'unsuccessful'])
+    def test_award_brief_get_returns_404_if_brief_not_closed(self, status):
+        self.data_api_client.get_brief.return_value['briefs']['status'] = status
         self.login_as_buyer()
         res = self.client.get(self.url.format(brief_id=1234))
         assert res.status_code == 404
@@ -3785,8 +3785,8 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
 
         assert res.status_code == 404
 
-    @pytest.mark.parametrize('status', ['withdrawn', 'draft', 'live', 'cancelled', 'unsuccessful', 'awarded'])
-    def test_404_if_brief_not_closed(self, status):
+    @pytest.mark.parametrize('status', ['withdrawn', 'draft', 'live'])
+    def test_404_if_brief_not_closed_and_award_flow_not_yet_completed(self, status):
         self.data_api_client.get_brief.return_value['briefs']['status'] = status
 
         res = self.client.get(self.url.format(brief_id=self.brief["id"]))
@@ -3800,6 +3800,20 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         res = self.client.get(self.url.format(brief_id=123))
 
         assert res.status_code == 200
+
+    @pytest.mark.parametrize('status', ['awarded', 'cancelled', 'unsuccessful'])
+    def test_200_with_error_message_if_award_flow_already_completed(self, status):
+        self.data_api_client.get_brief.return_value['briefs']['status'] = status
+
+        res = self.client.get(self.url.format(brief_id=self.brief["id"]))
+
+        document = html.fromstring(res.get_data(as_text=True))
+        page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
+        view_outcome_link = document.xpath('//div[@class="single-question-page"]//a')[0].text_content()
+
+        assert res.status_code == 200
+        assert page_title == "RequirementsalreadyupdatedforIneedathingtodoathing"
+        assert view_outcome_link == "View the outcome of the requirements"
 
     def test_that_no_option_chosen_triggers_error(self):
         res = self.client.post(self.url.format(brief_id=123))
