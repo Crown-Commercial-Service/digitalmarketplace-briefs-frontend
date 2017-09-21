@@ -495,11 +495,22 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
                 # We should never get here as the form validates the answers against the available choices.
                 abort(500, "Unexpected answer to award or cancel brief")
 
+    breadcrumbs = get_briefs_breadcrumbs([{
+        "label": brief['title'],
+        "link": url_for(
+            ".view_brief_overview",
+            framework_slug = brief['frameworkSlug'],
+            lot_slug = brief['lotSlug'],
+            brief_id = brief['id']
+        )
+    }])
+
     return render_template(
         "buyers/award_or_cancel_brief.html",
         brief=brief,
         form=form or AwardOrCancelBriefForm(brief),
         errors=errors,
+        breadcrumbs=breadcrumbs
     ), 200 if not errors else 400
 
 
