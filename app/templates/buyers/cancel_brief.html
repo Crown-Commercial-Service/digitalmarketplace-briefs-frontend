@@ -23,18 +23,18 @@
       <div class="single-question-page">
 
         {% with
-        heading = "Why do you need to cancel {}?".format(brief.get('title', brief['lotName'])),
+        heading = form.cancel_reason.label.text,
         smaller = True
         %}
           {% include 'toolkit/page-heading.html' %}
         {% endwith %}
 
-        <form method="POST" action="{{ url_for('.cancel_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+        <form method="POST" action="{{ url_for(request.endpoint, framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           {%
             with
             name = "cancel_reason",
-            question = "Why do you need to cancel {}?".format(brief.get('title', brief['lotName'])),
+            question = form.cancel_reason.label.text,
             type = "radio",
             options = form.cancel_reason.toolkit_macro_options,
             value = form.cancel_reason.data,
@@ -56,6 +56,14 @@
           {% endwith %}
         {% endblock %}
         </form>
+
+        {%
+          with
+          url=previous_page_url,
+          text="Previous page"
+        %}
+          {% include "toolkit/secondary-action-link.html" %}
+        {% endwith %}
       </div>
     </div>
   </div>

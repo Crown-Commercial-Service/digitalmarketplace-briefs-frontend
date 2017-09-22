@@ -1,0 +1,60 @@
+{% extends "_base_page.html" %}
+
+{% import "toolkit/forms/macros/forms.html" as forms %}
+
+{% block page_title %}{{ brief.title or brief.lotName }} – Digital Marketplace{% endblock %}
+
+{% block breadcrumb %}
+  {% with items = breadcrumbs %}
+    {% include "toolkit/breadcrumb.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block main_content %}
+  {% if errors %}
+    {% with errors = errors.values() %}
+      {% include 'toolkit/forms/validation.html' %}
+    {% endwith %}
+  {% endif %}
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <div class="single-question-page">
+
+        {% with
+        heading = form.award_or_cancel_decision.label.text,
+        smaller = True
+        %}
+          {% include 'toolkit/page-heading.html' %}
+        {% endwith %}
+
+          <p class="question-advice">The information you provide will be shown on the opportunity. This makes the buying process more transparent.</p>
+          <form method="POST" action="{{ url_for('.award_or_cancel_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            {%
+                  with
+                  name = "award_or_cancel_decision",
+                  question = form.award_or_cancel_decision.label.text,
+                  type = "radio",
+                  options = form.award_or_cancel_decision.toolkit_macro_options,
+                  value = form.award_or_cancel_decision.data,
+                  error = errors.get('award_or_cancel_decision', {}).get('message', None)
+                  %}
+              {% include "toolkit/forms/selection-buttons.html" %}
+          {% endwith %}
+
+
+          {% block save_button %}
+            {%
+              with
+              label="Save and continue",
+              name="submit",
+              type="save"
+            %}
+            {% include "toolkit/button.html" %}
+          {% endwith %}
+        {% endblock %}
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
