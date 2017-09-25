@@ -3910,6 +3910,12 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         assert res.status_code == 302
         assert res.location == expected_url
 
+    def test_back_causes_flash_message(self):
+        self.login_as_buyer()
+        self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'back'})
+
+        self.assert_flashes("updated-brief")
+
     def test_random_post_data_triggers_invalid_choice(self):
         self.login_as_buyer()
         res = self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'foo'})
