@@ -32,7 +32,6 @@ class Config(object):
 
     DM_DATA_API_URL = None
     DM_DATA_API_AUTH_TOKEN = None
-    DM_MANDRILL_API_KEY = None
     DM_NOTIFY_API_KEY = None
 
     NOTIFY_TEMPLATES = {
@@ -97,7 +96,6 @@ class Test(Config):
     DM_DATA_API_URL = "http://wrong.completely.invalid:5000"
     DM_DATA_API_AUTH_TOKEN = "myToken"
 
-    DM_MANDRILL_API_KEY = 'MANDRILL'
     DM_NOTIFY_API_KEY = "not_a_real_key-00000000-fake-uuid-0000-000000000000"
     SHARED_EMAIL_KEY = "KEY"
     SECRET_KEY = "KEY"
@@ -114,7 +112,6 @@ class Development(Config):
     DM_DATA_API_URL = "http://localhost:5000"
     DM_DATA_API_AUTH_TOKEN = "myToken"
 
-    DM_MANDRILL_API_KEY = "not_a_real_key"
     DM_NOTIFY_API_KEY = "not_a_real_key-00000000-fake-uuid-0000-000000000000"
     SECRET_KEY = "verySecretKey"
     SHARED_EMAIL_KEY = "very_secret"
