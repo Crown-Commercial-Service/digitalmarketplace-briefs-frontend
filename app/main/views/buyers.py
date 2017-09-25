@@ -482,6 +482,7 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
         else:
             answer = form.data.get('award_or_cancel_decision')
             if answer == 'back':
+                flash({"updated-brief": brief.get("title")})
                 return redirect(url_for('.buyer_dos_requirements'))
             elif answer == 'yes':
                 return redirect(
