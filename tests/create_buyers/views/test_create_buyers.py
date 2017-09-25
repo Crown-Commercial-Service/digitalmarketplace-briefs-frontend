@@ -1,5 +1,5 @@
 import mock
-from flask import session
+from flask import session, current_app
 from dmutils.email.exceptions import EmailError
 from dmapiclient.audit import AuditTypes
 from ...helpers import BaseApplicationTest
@@ -13,9 +13,9 @@ class TestBuyersCreation(BaseApplicationTest):
         assert res.status_code == 200
         assert 'Create a buyer account' in res.get_data(as_text=True)
 
-    @mock.patch('app.create_buyer.views.create_buyer.send_email')
+    @mock.patch('app.create_buyer.views.create_buyer.send_user_account_email')
     @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
-    def test_should_be_able_to_submit_valid_email_address(self, data_api_client, send_email):
+    def test_should_be_able_to_submit_valid_email_address(self, data_api_client, send_user_account_email):
         res = self.client.post(
             '/buyers/create',
             data={'email_address': 'valid@test.gov.uk'},
@@ -31,9 +31,9 @@ class TestBuyersCreation(BaseApplicationTest):
         )
         assert res.status_code == 200
 
-    @mock.patch('app.create_buyer.views.create_buyer.send_email')
+    @mock.patch('app.create_buyer.views.create_buyer.send_user_account_email')
     @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
-    def test_creating_account_doesnt_affect_csrf_token(self, data_api_client, send_email):
+    def test_creating_account_doesnt_affect_csrf_token(self, data_api_client, send_user_account_email):
         with self.client as c:
             c.get(
                 '/buyers/create',
@@ -94,22 +94,43 @@ class TestBuyersCreation(BaseApplicationTest):
         assert "You must use a public sector email address" in data
         assert "The email you used doesn't belong to a recognised public sector domain." in data
 
+    @mock.patch('app.create_buyer.views.create_buyer.send_user_account_email')
     @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
-    @mock.patch('app.create_buyer.views.create_buyer.send_email')
-    def test_should_503_if_email_fails_to_send(self, send_email, data_api_client):
-        data_api_client.is_email_address_with_valid_buyer_domain.return_value = True
-        send_email.side_effect = EmailError("Arrrgh")
-        res = self.client.post(
-            '/buyers/create',
-            data={'email_address': 'valid@test.gov.uk'},
-            follow_redirects=True
-        )
-        assert res.status_code == 503
-        assert USER_CREATION_EMAIL_ERROR in res.get_data(as_text=True)
+    def test_should_send_mail_with_correct_params(self, data_api_client, send_user_account_email):
+        with self.app.app_context():
 
-    @mock.patch('app.create_buyer.views.create_buyer.send_email')
+            res = self.client.post(
+                '/buyers/create',
+                data={'email_address': 'valid@test.gov.uk'},
+                follow_redirects=False
+            )
+
+            send_user_account_email.assert_called_once_with(
+                'buyer',
+                'valid@test.gov.uk',
+                current_app.config['NOTIFY_TEMPLATES']['create_user_account']
+            )
+
+            assert res.status_code == 302
+            assert res.location == 'http://localhost/buyers/create-your-account-complete'
+
+
+    @mock.patch('dmutils.email.user_account_email.DMNotifyClient')
     @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
-    def test_should_create_audit_event_when_email_sent(self, data_api_client, send_email):
+    def test_email_address_is_correctly_stored_in_session(self, data_api_client, DMNotifyClient):
+        with self.client as c:
+            c.post(
+                '/buyers/create',
+                data={'email_address': 'valid@test.gov.uk'},
+                follow_redirects=False
+            )
+
+            assert session.get('email_sent_to') == 'valid@test.gov.uk'
+
+
+    @mock.patch('app.create_buyer.views.create_buyer.send_user_account_email')
+    @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
+    def test_should_create_audit_event_when_email_sent(self, data_api_client, send_user_account_email):
         res = self.client.post(
             '/buyers/create',
             data={'email_address': 'valid@test.gov.uk'},
