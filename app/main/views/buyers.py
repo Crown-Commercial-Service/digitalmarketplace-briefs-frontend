@@ -500,9 +500,9 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
         "label": brief['title'],
         "link": url_for(
             ".view_brief_overview",
-            framework_slug = brief['frameworkSlug'],
-            lot_slug = brief['lotSlug'],
-            brief_id = brief['id']
+            framework_slug=brief['frameworkSlug'],
+            lot_slug=brief['lotSlug'],
+            brief_id=brief['id']
         )
     }])
 

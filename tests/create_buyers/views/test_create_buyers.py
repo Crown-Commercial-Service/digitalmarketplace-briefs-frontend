@@ -1,6 +1,5 @@
 import mock
 from flask import session, current_app
-from dmutils.email.exceptions import EmailError
 from dmapiclient.audit import AuditTypes
 from ...helpers import BaseApplicationTest
 
@@ -114,7 +113,6 @@ class TestBuyersCreation(BaseApplicationTest):
             assert res.status_code == 302
             assert res.location == 'http://localhost/buyers/create-your-account-complete'
 
-
     @mock.patch('dmutils.email.user_account_email.DMNotifyClient')
     @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
     def test_email_address_is_correctly_stored_in_session(self, data_api_client, DMNotifyClient):
@@ -126,7 +124,6 @@ class TestBuyersCreation(BaseApplicationTest):
             )
 
             assert session.get('email_sent_to') == 'valid@test.gov.uk'
-
 
     @mock.patch('app.create_buyer.views.create_buyer.send_user_account_email')
     @mock.patch('app.create_buyer.views.create_buyer.data_api_client')
