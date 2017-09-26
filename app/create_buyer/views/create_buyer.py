@@ -1,4 +1,4 @@
-from flask import current_app, render_template, url_for, abort, redirect, session, Blueprint
+from flask import current_app, render_template, url_for, redirect, session, Blueprint
 
 from dmapiclient.audit import AuditTypes
 from dmutils.email import send_user_account_email

@@ -3723,12 +3723,8 @@ class TestCancelBrief(BaseApplicationTest):
     def test_that_no_option_chosen_does_not_trigger_update(self):
         res = self.client.post(self.url.format(brief_id=123))
 
-        document = html.fromstring(res.get_data(as_text=True))
-        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
-
         assert res.status_code == 400
         self.data_api_client.cancel_brief.assert_not_called()
-
 
     def test_cancel_triggers_cancel_brief(self):
         res = self.client.post(
@@ -3880,7 +3876,6 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         self.login_as_buyer()
         res = self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'yes'})
 
-        redirect_text = html.fromstring(res.get_data(as_text=True)).text_content().strip()
         expected_url = (
             'http://localhost/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/'
             'digital-outcomes/{}/award-contract'
