@@ -19,10 +19,20 @@
   <div class="grid-row">
     <div class="column-two-thirds">
       <div class="single-question-page">
-
+        {% if already_awarded %}
+          {% with
+                heading = "Requirements already updated for {}".format(brief.title),
+                smaller = true
+          %}
+            {% include 'toolkit/page-heading.html' %}
+          {% endwith %}
+            <p>
+              <a href="{{ url_for('external.get_brief_by_id', framework_framework=brief.frameworkFramework, brief_id=brief.id) }}">View the outcome of the requirements</a>
+            </p>
+      {% else %}
         {% with
-        heading = form.award_or_cancel_decision.label.text,
-        smaller = True
+          heading = form.award_or_cancel_decision.label.text,
+          smaller = True
         %}
           {% include 'toolkit/page-heading.html' %}
         {% endwith %}
@@ -40,20 +50,20 @@
                   error = errors.get('award_or_cancel_decision', {}).get('message', None)
                   %}
               {% include "toolkit/forms/selection-buttons.html" %}
-          {% endwith %}
+            {% endwith %}
 
-
-          {% block save_button %}
-            {%
-              with
-              label="Save and continue",
-              name="submit",
-              type="save"
-            %}
-            {% include "toolkit/button.html" %}
-          {% endwith %}
-        {% endblock %}
-        </form>
+            {% block save_button %}
+              {%
+                with
+                label="Save and continue",
+                name="submit",
+                type="save"
+              %}
+                {% include "toolkit/button.html" %}
+              {% endwith %}
+            {% endblock %}
+          </form>
+        {% endif %}
       </div>
     </div>
   </div>
