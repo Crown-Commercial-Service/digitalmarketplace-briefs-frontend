@@ -3497,7 +3497,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
             error_spans = document.xpath('//span[@class="validation-message"]')
             assert self._strip_whitespace(error_spans[0].text_content()) == "Youranswermustbeavaliddate."
             assert self._strip_whitespace(error_spans[1].text_content()) == \
-                "Valuemustbeinnumbersanddecimalpointsonly,forexample9900.95for9900poundsand95pence."
+                "Enteryourvalueinpoundsandpenceusingnumbersanddecimalsonly,forexample9900.05for9900poundsand5pence."
 
             # Prefilled form input
             assert document.xpath('//input[@id="input-awardedContractValue"]/@value')[0] == "incorrect"
