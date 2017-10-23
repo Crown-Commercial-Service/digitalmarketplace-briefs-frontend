@@ -624,6 +624,12 @@ class TestEveryDamnPage(BaseApplicationTest):
     def test_post_delete_a_brief(self):
         data = {"delete_confirmed": True}
         self._load_page("/digital-specialists/1234/delete", 302, method='post', data=data)
+        self.assert_flashes("requirements_deleted")
+
+    def test_post_withdraw_a_brief(self):
+        data = {"withdraw_confirmed": True}
+        self._load_page("/digital-specialists/1234/withdraw", 302, method='post', data=data, brief_status='live')
+        self.assert_flashes("requirements_withdrawn")
 
     # Wrong lots
 
@@ -647,9 +653,10 @@ class TestEveryDamnPage(BaseApplicationTest):
     def test_wrong_lot_publish_brief(self):
         self._load_page("/digital-outcomes/1234/publish", 404)
 
-    def test_wrong_lot_post_delete_a_brief(self):
-        data = {"delete_confirmed": True}
-        self._load_page("/digital-outcomes/1234/delete", 404, method='post', data=data)
+    @pytest.mark.parametrize('action', ['delete', 'withdraw'])
+    def test_wrong_lot_post_delete_or_withdraw_a_brief(self, action):
+        data = {"{}_confirmed".format(action): True}
+        self._load_page("/digital-outcomes/1234/{}".format(action), 404, method='post', data=data)
 
     # not allowed for expired framework_slug
 
@@ -1639,6 +1646,80 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
 
 
 @mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+class TestWithdrawBriefSubmission(BaseApplicationTest):
+
+    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
+    def test_delete_brief_submission(self, data_api_client, framework_status):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status=framework_status,
+            lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief(status='live')
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
+            data={"withdraw_confirmed": True}
+        )
+
+        assert res.status_code == 302
+        assert data_api_client.delete_brief.call_args_list == []
+        assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
+
+    @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill'])
+    def test_404_if_framework_is_not_live_or_expired(self, data_api_client, framework_status):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status=framework_status,
+            lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief()
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
+            data={"withdraw_confirmed": True}
+        )
+        assert res.status_code == 404
+        assert not data_api_client.delete_brief.called
+
+    @pytest.mark.parametrize('status', ['draft', 'closed', 'awarded', 'cancelled', 'unsuccessful', 'withdrawn'])
+    def test_cannot_withdraw_non_live_brief(self, data_api_client, status):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief(status=status)
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
+            data={"withdraw_confirmed": True}
+        )
+
+        assert res.status_code == 404
+        assert data_api_client.delete_brief.call_args_list == []
+
+    def test_404_if_brief_does_not_belong_to_user(self, data_api_client):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief(user_id=234)
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
+            data={"withdraw_confirmed": True}
+        )
+
+        assert res.status_code == 404
+
+
+@mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestBriefSummaryPage(BaseApplicationTest):
 
     SIDE_LINKS_XPATH = '//div[@class="column-one-third"]//a'
@@ -1740,7 +1821,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
                     'Withdraw requirement',
-                    'https://www.gov.uk/guidance/how-to-make-changes-to-your-published-digital-outcomes-and-specialists-requirements#when-to-withdraw-your-requirements'  # noqa
+                    "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?withdraw_requested=True"  # noqa
                 )
             ]
 

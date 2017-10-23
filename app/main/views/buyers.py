@@ -206,6 +206,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
     sections = content.summary(brief)
     delete_requested = True if request.args.get('delete_requested') else False
+    withdraw_requested = True if request.args.get('withdraw_requested') else False
 
     content_loader.load_messages(brief['frameworkSlug'], ['urls'])
     call_off_contract_url = content_loader.get_message(brief['frameworkSlug'], 'urls', 'call_off_contract_url')
@@ -235,6 +236,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         completed_sections=completed_sections,
         step_sections=[section.step for section in sections if hasattr(section, 'step')],
         delete_requested=delete_requested,
+        withdraw_requested=withdraw_requested,
         call_off_contract_url=call_off_contract_url,
         framework_agreement_url=framework_agreement_url,
         awarded_brief_response_supplier_name=awarded_brief_response_supplier_name,
@@ -1021,6 +1023,29 @@ def delete_a_brief(framework_slug, lot_slug, brief_id):
 
     data_api_client.delete_brief(brief_id, current_user.email_address)
     flash({"requirements_deleted": brief.get("title")})
+
+    if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
+        return redirect(url_for(".buyer_dos_requirements"))
+
+    return redirect(url_for('.buyer_dashboard'))
+
+
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/withdraw', methods=['POST'])
+def withdraw_a_brief(framework_slug, lot_slug, brief_id):
+    get_framework_and_lot(
+        framework_slug,
+        lot_slug,
+        data_api_client,
+        allowed_statuses=['live', 'expired'],
+        must_allow_brief=True
+    )
+    brief = data_api_client.get_brief(brief_id)["briefs"]
+
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id) or brief['status'] != 'live':
+        abort(404)
+
+    data_api_client.withdraw_brief(brief_id, current_user.email_address)
+    flash({"requirements_withdrawn": brief.get("title")})
 
     if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
         return redirect(url_for(".buyer_dos_requirements"))

@@ -29,6 +29,29 @@
           </form>
         </div>
       {% endif %}
+      {% if withdraw_requested %}
+        <div class="column-one-whole">
+          <form action="{{ url_for('buyers.withdraw_a_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input type="hidden" name="withdraw_confirmed" value="true" />
+            {% set withdraw_text = "You should only withdraw your requirements if you:" %}
+            {% set withdraw_list_items = [
+                "want to change something that may affect whether suppliers apply, for example, the budget range or role",
+                "can no longer offer the work"
+              ]
+            %}
+            {%
+              with
+              heading = "Are you sure you want to withdraw these requirements?",
+              content = "<p>{}</p><ul><li>{}</li></ul>".format(withdraw_text, withdraw_list_items|join("</li><li>"))|safe,
+              type = "destructive",
+              action = '<button type="submit" class="button-destructive banner-action">Withdraw requirements</button>'|safe
+            %}
+              {% include "toolkit/notification-banner.html" %}
+            {% endwith %}
+          </form>
+        </div>
+      {% endif %}
 
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -264,7 +287,9 @@
       {% if brief.status == 'closed' %}
         <a href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirement</a>
       {% elif brief.status == 'live' %}
-        <a href="https://www.gov.uk/guidance/how-to-make-changes-to-your-published-digital-outcomes-and-specialists-requirements#when-to-withdraw-your-requirements">Withdraw requirement</a>
+        {% if not withdraw_requested %}
+          <a href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, withdraw_requested=True) }}">Withdraw requirement</a>
+        {% endif %}
       {% elif brief.status == 'draft' %}
         {% if not delete_requested %}
           <a href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, delete_requested=True) }}">Delete draft requirement</a>
