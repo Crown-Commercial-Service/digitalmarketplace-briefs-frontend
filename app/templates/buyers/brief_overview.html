@@ -20,12 +20,14 @@
           <form action="{{ url_for('buyers.delete_a_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="hidden" name="delete_confirmed" value="true" />
-            <div class="banner-destructive-with-action">
-              <p class="banner-message">
-               Are you sure you want to delete these requirements?
-              </p>
-              <button type="submit" class="button-destructive banner-action">Yes, delete</button>
-            </div>
+            {%
+              with
+              message = "Are you sure you want to delete these requirements?",
+              type = "destructive",
+              action = '<button type="submit" class="button-destructive banner-action">Yes, delete</button>'|safe
+            %}
+              {% include "toolkit/notification-banner.html" %}
+            {% endwith %}
           </form>
         </div>
       {% endif %}
