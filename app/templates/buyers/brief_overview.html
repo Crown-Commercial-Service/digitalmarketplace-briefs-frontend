@@ -211,7 +211,7 @@
                 'live': 'You must give your chosen supplier a contract before they start work.',
                 'closed': 'You must give your chosen supplier a contract before they start work.',
                 'awarded': 'Done',
-                'cancelled': 'The contract was not awarded - the requirement was cancelled.',
+                'cancelled': 'The contract was not awarded - the requirements were cancelled.',
                 'unsuccessful': 'The contract was not awarded - no suitable suppliers applied.',
               },
               'body': {
@@ -287,14 +287,14 @@
     </div>
     <div class="column-one-third">
       {% if brief.status == 'closed' %}
-        <a href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirement</a>
+        <a href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirements</a>
       {% elif brief.status == 'live' %}
         {% if not withdraw_requested %}
-          <a href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, withdraw_requested=True) }}">Withdraw requirement</a>
+          <a href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, withdraw_requested=True) }}">Withdraw requirements</a>
         {% endif %}
       {% elif brief.status == 'draft' %}
         {% if not delete_requested %}
-          <a href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, delete_requested=True) }}">Delete draft requirement</a>
+          <a href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, delete_requested=True) }}">Delete draft requirements</a>
         {% endif %}
       {% endif %}
     </div>

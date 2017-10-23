@@ -1775,7 +1775,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert "Awarded to " not in page_html
             assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
-                    "Delete draft requirement",
+                    "Delete draft requirements",
                     "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?delete_requested=True"  # noqa
                 )
             ]
@@ -1820,7 +1820,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert "Awarded to " not in page_html
             assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
-                    'Withdraw requirement',
+                    'Withdraw requirements',
                     "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?withdraw_requested=True"  # noqa
                 )
             ]
@@ -1864,7 +1864,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert "Awarded to " not in page_html
             assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
-                    'Cancel requirement',
+                    'Cancel requirements',
                     '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/cancel'
                 )
             ]
@@ -1872,7 +1872,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     @pytest.mark.parametrize(
         'status,award_description',
-        [('cancelled', 'the requirement was cancelled'), ('unsuccessful', 'no suitable suppliers applied')]
+        [('cancelled', 'the requirements were cancelled'), ('unsuccessful', 'no suitable suppliers applied')]
     )
     def test_show_cancelled_and_unsuccessful_brief_summary_page_for_live_and_expired_framework(
             self, data_api_client, status, award_description, framework_status):
@@ -3638,7 +3638,7 @@ class TestCancelBrief(BaseApplicationTest):
         page_title = document.xpath('//h1')[0].text_content()
         assert "Why do you need to cancel {}?".format(self.brief.get('title')) in page_title
 
-        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirement"]')
+        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirements"]')
         assert len(submit_button) == 1
 
         expected_previous_page_link_text = 'Previous page'
@@ -3680,7 +3680,7 @@ class TestCancelBrief(BaseApplicationTest):
         page_title = document.xpath('//h1')[0].text_content()
         assert "Why didn't you award a contract for {}?".format(self.brief.get('title')) in page_title
 
-        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirement"]')
+        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirements"]')
         assert len(submit_button) == 1
 
         expected_previous_page_link_text = 'Previous page'

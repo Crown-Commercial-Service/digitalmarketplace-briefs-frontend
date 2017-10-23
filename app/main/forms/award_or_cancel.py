@@ -3,7 +3,7 @@ from wtforms import RadioField, validators
 
 
 class AwardOrCancelBriefForm(Form):
-    """Form for the buyer to tell us whether they want to award or cancel the requirement
+    """Form for the buyer to tell us whether they want to award or cancel the requirements
     """
     choices = [
         ('yes', 'Yes'),
