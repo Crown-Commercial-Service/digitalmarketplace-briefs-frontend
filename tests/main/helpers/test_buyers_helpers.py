@@ -103,6 +103,18 @@ class TestBuyersHelpers(object):
             brief, 'digital-outcomes-and-specialists', 'digital-specialists', 123, allow_withdrawn=allow_withdrawn
         ) is result
 
+    @pytest.mark.parametrize(
+        'allowed_statuses, result', [
+            (['live', 'closed'], True),
+            (['closed'], False)
+        ]
+    )
+    def test_is_brief_correct_allowed_statuses(self, allowed_statuses, result):
+        brief = api_stubs.brief(user_id=123, status='live')['briefs']
+        assert helpers.buyers_helpers.is_brief_correct(
+            brief, 'digital-outcomes-and-specialists', 'digital-specialists', 123, allowed_statuses=allowed_statuses
+        ) is result
+
     def test_is_brief_associated_with_user(self):
         brief = api_stubs.brief(user_id=123)['briefs']
         assert helpers.buyers_helpers.is_brief_associated_with_user(brief, 123) is True
