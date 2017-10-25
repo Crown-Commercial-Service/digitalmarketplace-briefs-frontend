@@ -134,6 +134,7 @@ class Preview(Live):
 
 class Staging(Live):
     FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2017-02-07')
+    FEATURE_FLAGS_DIRECT_AWARD_PROJECTS = enabled_since('2017-10-24')
 
     NOTIFY_TEMPLATES = {
         'create_user_account': '84f5d812-df9d-4ab8-804a-06f64f5abd30',
