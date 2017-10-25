@@ -3878,7 +3878,7 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
     def test_200_for_acceptable_framework_statuses(self, framework_status):
         self.data_api_client.get_framework.return_value['frameworks']['status'] = framework_status
 
-        res = self.client.get(self.url.format(brief_id=123))
+        res = self.client.get(self.url.format(brief_id=self.brief["id"]))
 
         assert res.status_code == 200
 

@@ -411,10 +411,9 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
     )
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
-    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
-        abort(404)
-
-    if brief['status'] not in CLOSED_PUBLISHED_BRIEF_STATUSES:
+    if not is_brief_correct(
+        brief, framework_slug, lot_slug, current_user.id, allowed_statuses=CLOSED_PUBLISHED_BRIEF_STATUSES
+    ):
         abort(404)
 
     brief_responses = data_api_client.find_brief_responses(brief_id)['briefResponses']
@@ -462,7 +461,10 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
     )
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
-    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
+    if not is_brief_correct(
+        brief, framework_slug, lot_slug, current_user.id,
+        allowed_statuses=["awarded", "cancelled", "unsuccessful", "closed"]
+    ):
         abort(404)
 
     breadcrumbs = get_briefs_breadcrumbs([{
@@ -477,8 +479,6 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
 
     if brief['status'] in ["awarded", "cancelled", "unsuccessful"]:
         already_awarded = True
-    elif brief['status'] != "closed":
-        abort(404)
     else:
         already_awarded = False
 
@@ -538,10 +538,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
         }
     ])
 
-    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
-        abort(404)
-
-    if brief['status'] != "closed":
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id, allowed_statuses=['closed']):
         abort(404)
 
     brief_responses = data_api_client.find_brief_responses(
@@ -623,9 +620,7 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
         must_allow_brief=True,
     )
     brief = data_api_client.get_brief(brief_id)["briefs"]
-    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
-        abort(404)
-    if brief["status"] != "closed":
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id, allowed_statuses=['closed']):
         abort(404)
 
     if award_flow:
@@ -1041,7 +1036,7 @@ def withdraw_a_brief(framework_slug, lot_slug, brief_id):
     )
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
-    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id) or brief['status'] != 'live':
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id, allowed_statuses=['live']):
         abort(404)
 
     data_api_client.withdraw_brief(brief_id, current_user.email_address)
@@ -1066,10 +1061,7 @@ def supplier_questions(framework_slug, lot_slug, brief_id):
     )
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
-    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
-        abort(404)
-
-    if brief["status"] != "live":
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id, allowed_statuses=['live']):
         abort(404)
 
     brief['clarificationQuestions'] = [
@@ -1098,10 +1090,7 @@ def add_supplier_question(framework_slug, lot_slug, brief_id):
     )
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
-    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id):
-        abort(404)
-
-    if brief["status"] != "live":
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id, allowed_statuses=['live']):
         abort(404)
 
     content = content_loader.get_manifest(brief['frameworkSlug'], "clarification_question").filter({})
