@@ -3,10 +3,10 @@ from wtforms import RadioField, validators
 
 
 class CancelBriefForm(Form):
-    """Form for the buyer to tell us why they are cancelling the requirement
+    """Form for the buyer to tell us why they are cancelling the requirements
     """
     choices = [
-        ('cancel', 'The requirement has been cancelled'),
+        ('cancel', 'Your requirements have been cancelled'),
         ('unsuccessful', 'There were no suitable suppliers'),
     ]
     cancel_reason = RadioField(

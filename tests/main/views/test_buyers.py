@@ -569,105 +569,6 @@ class TestCopyBrief(BaseApplicationTest):
         self.data_api_client.copy_brief.assert_called_once_with('1234', 'buyer@email.com')
 
 
-class TestEveryDamnPage(BaseApplicationTest):
-    def _load_page(self, url, status_code, method='get', data=None, framework_status='live', brief_status='draft'):
-        data = {} if data is None else data
-        baseurl = "/buyers/frameworks/digital-outcomes-and-specialists/requirements"
-        with mock.patch('app.main.views.buyers.content_loader', autospec=True) as content_loader, \
-                mock.patch('app.main.views.buyers.data_api_client', autospec=True) as data_api_client:
-            self.login_as_buyer()
-            data_api_client.get_framework.return_value = api_stubs.framework(
-                slug='digital-outcomes-and-specialists',
-                status=framework_status,
-                lots=[
-                    api_stubs.lot(slug='digital-specialists', allows_brief=True),
-                    api_stubs.lot(slug='digital-outcomes', allows_brief=True)
-                ]
-            )
-            brief_stub = api_stubs.brief()
-            brief_stub['briefs'].update({'status': brief_status})
-            if brief_status != 'draft':
-                brief_stub['briefs'].update({'publishedAt': '2017-01-21T12:00:00.000000Z'})
-            data_api_client.get_brief.return_value = brief_stub
-
-            content_fixture = ContentLoader('tests/fixtures/content')
-            content_fixture.load_manifest('dos', 'data', 'edit_brief')
-            content_loader.get_manifest.return_value = content_fixture.get_manifest('dos', 'edit_brief')
-
-            res = getattr(self.client, method)(
-                "{}{}".format(baseurl, url),
-                data=data)
-            assert res.status_code == status_code
-
-    # These should all work as expected
-
-    def test_get_view_brief_overview(self):
-        for framework_status in ['live', 'expired']:
-            self._load_page("/digital-specialists/1234", 200, framework_status=framework_status)
-
-    def test_get_view_section_summary(self):
-        self._load_page("/digital-specialists/1234/section-1", 200)
-
-    def test_get_edit_brief_question(self):
-        self._load_page("/digital-specialists/1234/edit/section-1/required1", 200)
-
-    def test_post_edit_brief_question(self):
-        data = {"required1": True}
-        self._load_page("/digital-specialists/1234/edit/section-1/required1", 302, method='post', data=data)
-
-    def test_get_view_brief_responses(self):
-        for framework_status in ['live', 'expired']:
-            self._load_page("/digital-specialists/1234/responses", 200, brief_status='closed')
-
-    # get and post are the same for publishing
-
-    def test_post_delete_a_brief(self):
-        data = {"delete_confirmed": True}
-        self._load_page("/digital-specialists/1234/delete", 302, method='post', data=data)
-
-    # Wrong lots
-
-    def test_wrong_lot_get_view_brief_overview(self):
-        self._load_page("/digital-outcomes/1234", 404)
-
-    def test_wrong_lot_get_view_section_summary(self):
-        self._load_page("/digital-outcomes/1234/section-1", 404)
-
-    def test_wrong_lot_get_edit_brief_question(self):
-        self._load_page("/digital-outcomes/1234/edit/section-1/required1", 404)
-
-    def test_wrong_lot_post_edit_brief_question(self):
-        data = {"required1": True}
-        self._load_page("/digital-outcomes/1234/edit/section-1/required1", 404, method='post', data=data)
-
-    def test_wrong_lot_get_view_brief_responses(self):
-        self._load_page("/digital-outcomes/1234/responses", 404)
-
-    # get and post are the same for publishing
-    def test_wrong_lot_publish_brief(self):
-        self._load_page("/digital-outcomes/1234/publish", 404)
-
-    def test_wrong_lot_post_delete_a_brief(self):
-        data = {"delete_confirmed": True}
-        self._load_page("/digital-outcomes/1234/delete", 404, method='post', data=data)
-
-    # not allowed for expired framework_slug
-
-    def test_expired_framework_get_edit_brief_question(self):
-        self._load_page("/digital-specialists/1234/edit/section-1/required1", 404, framework_status='expired')
-
-    @pytest.mark.parametrize("lot_slug", ('digital-outcomes', 'digital-specialists'))
-    def test_expired_framework_post_edit_brief_question(self, lot_slug):
-        data = {"required1": True}
-        self._load_page(
-            "/{}/1234/edit/section-1/required1".format(lot_slug),
-            404,
-            method='post',
-            data=data,
-            framework_status='expired'
-        )
-
-
 @mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestEditBriefSubmission(BaseApplicationTest):
 
@@ -869,6 +770,24 @@ class TestEditBriefSubmission(BaseApplicationTest):
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-octopuses"
             "/1234/edit/description-of-work/organisation")
+
+        assert res.status_code == 404
+
+    def test_404_if_post_brief_has_wrong_lot(self, data_api_client):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True)
+            ]
+        )
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-octopuses"
+            "/1234/edit/description-of-work/organisation",
+            data={"organisation": True}
+        )
 
         assert res.status_code == 404
 
@@ -1134,27 +1053,27 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
         assert res.status_code == 404
         assert not data_api_client.update_brief.called
 
-    def test_404_if_framework_status_is_not_live(self, data_api_client):
-        for framework_status in ['coming', 'open', 'pending', 'standstill', 'expired']:
-            self.login_as_buyer()
-            data_api_client.get_framework.return_value = api_stubs.framework(
-                slug='digital-outcomes-and-specialists',
-                status='open',
-                lots=[
-                    api_stubs.lot(slug='digital-specialists', allows_brief=True)
-                ]
-            )
-            data_api_client.get_brief.return_value = api_stubs.brief()
+    @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill', 'expired'])
+    def test_404_if_framework_status_is_not_live(self, data_api_client, framework_status):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status=framework_status,
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True)
+            ]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief()
 
-            res = self.client.post(
-                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
-                "digital-specialists/1234/edit/description-of-work/organisation",
-                data={
-                    "title": "A new title"
-                })
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
+            "digital-specialists/1234/edit/description-of-work/organisation",
+            data={
+                "title": "A new title"
+            })
 
-            assert res.status_code == 404
-            assert not data_api_client.update_brief.called
+        assert res.status_code == 404
+        assert not data_api_client.update_brief.called
 
     def test_404_if_brief_is_already_live(self, data_api_client):
         self.login_as_buyer()
@@ -1275,6 +1194,27 @@ class TestPublishBrief(BaseApplicationTest):
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
             "digital-specialists/1234/edit/your-organisation",
+            data={
+                "organisation": "GDS"
+            })
+
+        assert res.status_code == 404
+        assert not data_api_client.update_brief.called
+
+    def test_404_if_brief_has_wrong_lot(self, data_api_client):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True)
+            ]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief()
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
+            "digital-outcomes/1234/edit/your-organisation",
             data={
                 "organisation": "GDS"
             })
@@ -1582,6 +1522,7 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
             assert res.status_code == 302
             assert data_api_client.delete_brief.called
             assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
+            self.assert_flashes("requirements_deleted")
 
     def test_404_if_framework_is_not_live_or_expired(self, data_api_client):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
@@ -1637,6 +1578,115 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
 
         assert res.status_code == 404
 
+    def test_404_if_brief_has_wrong_lot(self, data_api_client):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True)
+            ]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief()
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1234/delete",
+            data={"delete_confirmed": True})
+
+        assert res.status_code == 404
+
+
+@mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+class TestWithdrawBriefSubmission(BaseApplicationTest):
+
+    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
+    def test_withdraw_brief_submission(self, data_api_client, framework_status):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status=framework_status,
+            lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief(status='live')
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
+            data={"withdraw_confirmed": True}
+        )
+
+        assert res.status_code == 302
+        assert data_api_client.delete_brief.call_args_list == []
+        assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
+        self.assert_flashes("requirements_withdrawn")
+
+    @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill'])
+    def test_404_if_framework_is_not_live_or_expired(self, data_api_client, framework_status):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status=framework_status,
+            lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief()
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
+            data={"withdraw_confirmed": True}
+        )
+        assert res.status_code == 404
+        assert not data_api_client.delete_brief.called
+
+    @pytest.mark.parametrize('status', ['draft', 'closed', 'awarded', 'cancelled', 'unsuccessful', 'withdrawn'])
+    def test_cannot_withdraw_non_live_brief(self, data_api_client, status):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief(status=status)
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
+            data={"withdraw_confirmed": True}
+        )
+
+        assert res.status_code == 404
+        assert data_api_client.delete_brief.call_args_list == []
+
+    def test_404_if_brief_does_not_belong_to_user(self, data_api_client):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief(user_id=234, status='live')
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
+            data={"withdraw_confirmed": True}
+        )
+
+        assert res.status_code == 404
+
+    def test_404_if_brief_has_wrong_lot(self, data_api_client):
+        self.login_as_buyer()
+        data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True)
+            ]
+        )
+        data_api_client.get_brief.return_value = api_stubs.brief(status='live')
+
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1234/withdraw",
+            data={"delete_confirmed": True})
+
+        assert res.status_code == 404
+
 
 @mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestBriefSummaryPage(BaseApplicationTest):
@@ -1652,12 +1702,13 @@ class TestBriefSummaryPage(BaseApplicationTest):
             (e.text_content(), e.get('href')) for e in document.xpath(xpath)
         ]
 
-    def test_show_draft_brief_summary_page(self, data_api_client):
+    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
+    def test_show_draft_brief_summary_page(self, data_api_client, framework_status):
         with self.app.app_context():
             self.login_as_buyer()
             data_api_client.get_framework.return_value = api_stubs.framework(
                 slug='digital-outcomes-and-specialists',
-                status='live',
+                status=framework_status,
                 lots=[
                     api_stubs.lot(slug='digital-specialists', allows_brief=True),
                 ]
@@ -1694,7 +1745,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert "Awarded to " not in page_html
             assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
-                    "Delete draft requirement",
+                    "Delete draft requirements",
                     "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?delete_requested=True"  # noqa
                 )
             ]
@@ -1739,8 +1790,8 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert "Awarded to " not in page_html
             assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
-                    'Withdraw requirement',
-                    'https://www.gov.uk/guidance/how-to-make-changes-to-your-published-digital-outcomes-and-specialists-requirements#when-to-withdraw-your-requirements'  # noqa
+                    'Withdraw requirements',
+                    "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?withdraw_requested=True"  # noqa
                 )
             ]
 
@@ -1783,7 +1834,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             assert "Awarded to " not in page_html
             assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
-                    'Cancel requirement',
+                    'Cancel requirements',
                     '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/cancel'
                 )
             ]
@@ -1791,7 +1842,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     @pytest.mark.parametrize(
         'status,award_description',
-        [('cancelled', 'the requirement was cancelled'), ('unsuccessful', 'no suitable suppliers applied')]
+        [('cancelled', 'the requirements were cancelled'), ('unsuccessful', 'no suitable suppliers applied')]
     )
     def test_show_cancelled_and_unsuccessful_brief_summary_page_for_live_and_expired_framework(
             self, data_api_client, status, award_description, framework_status):
@@ -2021,6 +2072,24 @@ class TestBriefSummaryPage(BaseApplicationTest):
 
             assert res.status_code == 404
 
+    def test_404_if_brief_has_wrong_lot(self, data_api_client):
+        with self.app.app_context():
+            self.login_as_buyer()
+            data_api_client.get_framework.return_value = api_stubs.framework(
+                slug='digital-outcomes-and-specialists',
+                status='live',
+                lots=[
+                    api_stubs.lot(slug='digital-specialists', allows_brief=True),
+                ]
+            )
+            data_api_client.get_brief.return_value = api_stubs.brief()
+
+            res = self.client.get(
+                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1234"
+            )
+
+            assert res.status_code == 404
+
     @mock.patch("app.main.views.buyers.content_loader", autospec=True)
     def test_links_to_sections_go_to_the_correct_pages_whether_they_be_sections_or_questions(self, content_loader, data_api_client):  # noqa
         with self.app.app_context():
@@ -2060,6 +2129,51 @@ class TestBriefSummaryPage(BaseApplicationTest):
             # section with single question and a description
             assert section_4_link[0].get('href').strip() == \
                 '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-4'
+
+
+@mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+class TestViewBriefSectionSummaryPage(BaseApplicationTest):
+
+    @mock.patch('app.main.views.buyers.content_loader', autospec=True)
+    def test_get_view_section_summary(self, content_loader, data_api_client):
+        with self.app.app_context():
+            self.login_as_buyer()
+            data_api_client.get_framework.return_value = api_stubs.framework(
+                slug='digital-outcomes-and-specialists',
+                status='live',
+                lots=[
+                    api_stubs.lot(slug='digital-specialists', allows_brief=True),
+                ]
+            )
+            data_api_client.get_brief.return_value = api_stubs.brief()
+
+            content_fixture = ContentLoader('tests/fixtures/content')
+            content_fixture.load_manifest('dos', 'data', 'edit_brief')
+            content_loader.get_manifest.return_value = content_fixture.get_manifest('dos', 'edit_brief')
+
+            res = self.client.get(
+                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-1"
+            )
+
+            assert res.status_code == 200
+
+    def test_wrong_lot_get_view_section_summary(self, data_api_client):
+        with self.app.app_context():
+            self.login_as_buyer()
+            data_api_client.get_framework.return_value = api_stubs.framework(
+                slug='digital-outcomes-and-specialists',
+                status='live',
+                lots=[
+                    api_stubs.lot(slug='digital-specialists', allows_brief=True),
+                ]
+            )
+            data_api_client.get_brief.return_value = api_stubs.brief()
+
+            res = self.client.get(
+                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1234/section-1"
+            )
+
+            assert res.status_code == 404
 
 
 @mock.patch("app.main.views.buyers.data_api_client", autospec=True)
@@ -2363,6 +2477,22 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
             status='live',
             lots=[
                 api_stubs.lot(slug='digital-outcomes', allows_brief=False),
+            ]
+        )
+
+        self.login_as_buyer()
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1234/responses"
+        )
+
+        assert res.status_code == 404
+
+    def test_404_if_brief_has_wrong_lot(self):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True),
             ]
         )
 
@@ -3557,7 +3687,7 @@ class TestCancelBrief(BaseApplicationTest):
         page_title = document.xpath('//h1')[0].text_content()
         assert "Why do you need to cancel {}?".format(self.brief.get('title')) in page_title
 
-        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirement"]')
+        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirements"]')
         assert len(submit_button) == 1
 
         expected_previous_page_link_text = 'Previous page'
@@ -3599,7 +3729,7 @@ class TestCancelBrief(BaseApplicationTest):
         page_title = document.xpath('//h1')[0].text_content()
         assert "Why didn't you award a contract for {}?".format(self.brief.get('title')) in page_title
 
-        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirement"]')
+        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirements"]')
         assert len(submit_button) == 1
 
         expected_previous_page_link_text = 'Previous page'
@@ -3797,7 +3927,7 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
     def test_200_for_acceptable_framework_statuses(self, framework_status):
         self.data_api_client.get_framework.return_value['frameworks']['status'] = framework_status
 
-        res = self.client.get(self.url.format(brief_id=123))
+        res = self.client.get(self.url.format(brief_id=self.brief["id"]))
 
         assert res.status_code == 200
 

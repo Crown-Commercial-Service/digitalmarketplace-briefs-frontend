@@ -23,7 +23,7 @@
 
               <form method="POST" action="{{ url_for('.award_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
                   <p class="question-advice">
-                      The information you provide will be shown on the requirement. This makes the buying process more transparent.
+                      The information you provide will be shown on the requirements. This makes the buying process more transparent.
                   </p>
 
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
