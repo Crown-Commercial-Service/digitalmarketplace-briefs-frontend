@@ -205,8 +205,8 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
 
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
     sections = content.summary(brief)
-    delete_requested = True if request.args.get('delete_requested') else False
-    withdraw_requested = True if request.args.get('withdraw_requested') else False
+    delete_requested = request.args.get('delete_requested') and brief['status'] == 'draft'
+    withdraw_requested = request.args.get('withdraw_requested') and brief['status'] == 'live'
 
     content_loader.load_messages(brief['frameworkSlug'], ['urls'])
     call_off_contract_url = content_loader.get_message(brief['frameworkSlug'], 'urls', 'call_off_contract_url')

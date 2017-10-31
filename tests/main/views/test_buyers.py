@@ -1743,12 +1743,40 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
+            assert 'Are you sure you want to delete these requirements?' not in page_html  # Delete banner hidden
             assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
                     "Delete draft requirements",
                     "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?delete_requested=True"  # noqa
                 )
             ]
+
+    @pytest.mark.parametrize(
+        'status, banner_displayed',
+        [
+            ('draft', True),
+            ('live', False), ('closed', False), ('awarded', False), ('cancelled', False), ('unsuccessful', False)
+        ]
+    )
+    def test_brief_summary_with_delete_requested_displays_confirmation_banner_for_draft_briefs_only(
+            self, data_api_client, status, banner_displayed
+    ):
+        with self.app.app_context():
+            self.login_as_buyer()
+            data_api_client.get_framework.return_value = api_stubs.framework(
+                slug='digital-outcomes-and-specialists',
+                status='live',
+                lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
+            )
+            data_api_client.get_brief.return_value = api_stubs.brief(status=status)
+
+            res = self.client.get(
+                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?delete_requested=True"  # noqa
+            )
+
+            assert res.status_code == 200
+            page_html = res.get_data(as_text=True)
+            assert ('Are you sure you want to delete these requirements?' in page_html) == banner_displayed
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_live_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
@@ -1788,12 +1816,40 @@ class TestBriefSummaryPage(BaseApplicationTest):
             ]
 
             assert "Awarded to " not in page_html
+            assert 'Are you sure you want to withdraw these requirements?' not in page_html  # Withdraw banner hidden
             assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
                 (
                     'Withdraw requirements',
                     "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?withdraw_requested=True"  # noqa
                 )
             ]
+
+    @pytest.mark.parametrize(
+        'status, banner_displayed',
+        [
+            ('live', True),
+            ('draft', False), ('closed', False), ('awarded', False), ('cancelled', False), ('unsuccessful', False)
+        ]
+    )
+    def test_brief_summary_with_withdraw_requested_displays_confirmation_banner_for_live_briefs_only(
+            self, data_api_client, status, banner_displayed
+    ):
+        with self.app.app_context():
+            self.login_as_buyer()
+            data_api_client.get_framework.return_value = api_stubs.framework(
+                slug='digital-outcomes-and-specialists',
+                status='live',
+                lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
+            )
+            data_api_client.get_brief.return_value = api_stubs.brief(status=status)
+
+            res = self.client.get(
+                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?withdraw_requested=True"  # noqa
+            )
+
+            assert res.status_code == 200
+            page_html = res.get_data(as_text=True)
+            assert ('Are you sure you want to withdraw these requirements?' in page_html) == banner_displayed
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_closed_brief_summary_page_for_live_and_expired_framework(self, data_api_client, framework_status):
