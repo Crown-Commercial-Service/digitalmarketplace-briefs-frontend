@@ -45,7 +45,7 @@
             {%
               with
               heading = "Are you sure you want to withdraw these requirements?",
-              content = "<p>{}</p><ul><li>{}</li></ul>".format(withdraw_text, withdraw_list_items|join("</li><li>"))|safe,
+              banner_content = "<p>{}</p><ul><li>{}</li></ul>".format(withdraw_text, withdraw_list_items|join("</li><li>"))|safe,
               type = "destructive",
               action = '<button type="submit" class="button-destructive banner-action">Withdraw requirements</button>'|safe
             %}
