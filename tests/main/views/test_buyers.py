@@ -6,8 +6,11 @@ from dmapiclient import api_stubs, HTTPError
 from dmcontent.content_loader import ContentLoader
 from dmcontent.questions import Question
 import mock
-from lxml import html
+from lxml import html, etree
 import pytest
+
+from zipfile import ZipFile
+from io import BytesIO
 
 from app.main.views import buyers
 from dmapiclient import DataAPIClient
@@ -2696,7 +2699,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
                         "evidence": "There will be no nobhobs or cream custards on my watch."
                     },
                     {
-                        "evidence": "I even memorised the entire T section of the dictionary"
+                        "evidence": "Here is a bad character >\u001e<"
                     }
                 ],
                 "dayRate": "750",
@@ -2766,6 +2769,15 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
             assert res.status_code == 200
             assert res.mimetype == 'application/vnd.oasis.opendocument.spreadsheet'
             assert len(res.data) > 100
+
+            self._check_xml_files_in_zip_are_well_formed(res.data)
+
+    def _check_xml_files_in_zip_are_well_formed(self, raw_bytes):
+        with BytesIO(raw_bytes) as buffer, ZipFile(buffer) as ods_as_zip:
+            xml_files = (f for f in ods_as_zip.namelist() if f.endswith('.xml'))
+            for filename in xml_files:
+                with ods_as_zip.open(filename) as xml_data:
+                    etree.parse(xml_data)  # throws if not well-formed
 
     def test_404_if_framework_is_not_live_or_expired(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
