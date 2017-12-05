@@ -2964,22 +2964,20 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
 
         sheet = doc.sheet("Supplier evidence")
 
-        k = 0
+        row = 0
+        for question in questions:
+            for name_idx, name in enumerate(self.brief[question['id']]):
+                row += 1
 
-        for i, question in enumerate(questions):
-
-            for l, name in enumerate(self.brief[question['id']]):
-                k += 1
-
-                if l == 0:
-                    assert sheet.read_cell(0, k) == question['name']
+                if name_idx == 0:
+                    assert sheet.read_cell(0, row) == question['name']
                 else:
-                    assert sheet.read_cell(0, k) == ''
+                    assert sheet.read_cell(0, row) == ''
 
-                assert sheet.read_cell(1, k) == name
+                assert sheet.read_cell(1, row) == name
 
-                for j, response in enumerate(self.responses):
-                    assert sheet.read_cell(j + 2, k) == str(response[question['id']][l]).lower()
+                for col, response in enumerate(self.responses):
+                    assert sheet.read_cell(col + 2, row) == str(response[question['id']][name_idx]).lower()
 
     def test_populate_styled_ods_with_data_with_dynamic_list(self):
         questions = [
@@ -2996,22 +2994,20 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
 
         sheet = doc.sheet("Supplier evidence")
 
-        k = 0
+        row = 0
+        for question in questions:
+            for name_idx, name in enumerate(self.brief[question['id']]):
+                row += 1
 
-        for i, question in enumerate(questions):
-
-            for l, name in enumerate(self.brief[question['id']]):
-                k += 1
-
-                if l == 0:
-                    assert sheet.read_cell(0, k) == question['name']
+                if name_idx == 0:
+                    assert sheet.read_cell(0, row) == question['name']
                 else:
-                    assert sheet.read_cell(0, k) == ''
+                    assert sheet.read_cell(0, row) == ''
 
-                assert sheet.read_cell(1, k) == name
+                assert sheet.read_cell(1, row) == name
 
-                for j, response in enumerate(self.responses):
-                    assert sheet.read_cell(j + 2, k) == response[question['id']][l].get('evidence', '')
+                for col, response in enumerate(self.responses):
+                    assert sheet.read_cell(col + 2, row) == response[question['id']][name_idx].get('evidence', '')
 
     def test_populate_styled_ods_with_data_missing_with_dynamic_list(self):
         questions = [
