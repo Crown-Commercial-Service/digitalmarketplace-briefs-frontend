@@ -1,82 +1,58 @@
-// GOVUK Front-end toolkit styles
-@import "_grid_layout.scss";
-@import "_typography.scss";
+// Reset styles on core HTML elements that might be injected by eg a user's browser, so that we have a known clean base
+// for DM styles to build on.
+@import "toolkit/shared_scss/_reset.scss";
+
+// GOVUK Front-end toolkit variables, mixins and functions
+@import "_grid_layout.scss";    // Grid variables
+@import "_typography.scss";     // Core bold and heading mixins
 @import "_url-helpers.scss";
 
 // Path to assets for use with file-url()
 $path: "/static/images/";
 
-// Digital Marketplace front end toolkit components
-@import "forms/word-counter";
-@import "forms/list-entry";
-
-/* Classes shared between multiple apps */
-@import "toolkit/shared_scss/_reset.scss";
-@import "toolkit/shared_scss/_lists.scss";
-@import "toolkit/shared_scss/_dmspeak.scss";
-
-/* Blocks shared between multiple selectors */
+// Digital Marketplace Front-end toolkit shared CSS placeholders used by other DM toolkit styles
 @import "toolkit/shared_placeholders/_temporary-messages.scss";
 @import "toolkit/shared_placeholders/_placeholders.scss";
 @import "toolkit/shared_placeholders/_dm-typography.scss";
 @import "toolkit/shared_placeholders/_mixins.scss";
 
-// Digital Marketplace Front-end toolkit styles
+// Digital Marketplace Front-end toolkit shared styles between multiple apps
+@import "toolkit/shared_scss/_lists.scss";
+@import "toolkit/shared_scss/_dmspeak.scss";
+
+// Digital Marketplace Front-end toolkit styles (only import the files you need)
 @import "toolkit/_breadcrumb.scss";
-@import "toolkit/_browse-list.scss";
 @import "toolkit/_buttons.scss";
-@import "toolkit/_contact-details.scss";
 @import "toolkit/_document.scss";
 @import "toolkit/_grids.scss";
 @import "toolkit/_instruction-list.scss";
-@import "toolkit/_link-button.scss";
 @import "toolkit/_notification-banners.scss";
 @import "toolkit/_page-headings.scss";
 @import "toolkit/_phase-banner.scss";
 @import "toolkit/_proposition-header.scss";
 @import "toolkit/_secondary-action-link.scss";
-@import "toolkit/_service-id.scss";
-@import "toolkit/_temporary-message.scss";
 @import "toolkit/forms/_dates.scss";
 @import "toolkit/forms/_hint.scss";
-@import "toolkit/forms/_keyword-search.scss";
-@import "toolkit/forms/_option-select.scss";
+@import "toolkit/forms/_list-entry.scss";
 @import "toolkit/forms/_questions.scss";
 @import "toolkit/forms/_selection-buttons.scss";
 @import "toolkit/forms/_summary.scss";
 @import "toolkit/forms/_textboxes.scss";
 @import "toolkit/forms/_validation.scss";
-@import "toolkit/search/_search-result.scss";
+@import "toolkit/forms/_word-counter.scss";
 
+// App specific styles
+@import "_brief_submission.scss";
+@import "_footer.scss";
+@import "_text.scss";
+@import "_secondary-action-link.scss";
+@import "_error-pages.scss";
+
+// Misc styles
+// TODO: Move misc styling into their own partial files or the Digital Marketplace FE Toolkit
 #wrapper {
   @extend %site-width-container;
   padding-bottom: $gutter * 2;
-}
-
-@import "toolkit/forms/_hint.scss";
-@import "toolkit/forms/_questions.scss";
-@import "toolkit/shared_scss/_dmspeak.scss";
-
-// Buyers app styles
-@import "_brief_submission.scss";
-@import "_footer.scss";
-@import "_table.scss";
-@import "_text.scss";
-@import "_notice.scss";
-@import "_service-page.scss";
-@import "_index-page.scss";
-@import "_search-page.scss";
-@import "_secondary-action-link.scss";
-@import "_pagination.scss";
-@import "_publication.scss";
-@import "_supplier-a-to-z.scss";
-@import "_atoz_navigation.scss";
-@import "_error-pages.scss";
-
-.return-to-top {
-  display: block;
-  @include core-19;
-  margin: (1.5 * $gutter) 0 (2 * $gutter);
 }
 
 .marketplace-paragraph {
@@ -97,9 +73,4 @@ $path: "/static/images/";
 .break-link {
   display: inline-block;
   word-break: break-all;
-}
-
-.framework-lots ul li ul {
-  list-style: disc;
-  margin: 0px 0px 0px 20px;
 }
