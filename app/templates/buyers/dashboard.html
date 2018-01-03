@@ -67,7 +67,7 @@
 {{ summary.heading("Unpublished requirements", id="unpublished_requirements") }}
 {% call(item) summary.list_table(
     draft_briefs,
-    caption="Unpublished requirements caption",
+    caption="Unpublished requirements",
     empty_message="You don’t have any unpublished requirements",
     field_headings=[
         "Name",
@@ -99,7 +99,7 @@
 {{ summary.heading("Published requirements", id="published_requirements") }}
 {% call(item) summary.list_table(
     live_briefs,
-    caption="Published requirements caption",
+    caption="Published requirements",
     empty_message="You don’t have any published requirements",
     field_headings=[
         "Name",
@@ -121,7 +121,7 @@
 {{ summary.heading("Closed requirements", id="closed_requirements") }}
 {% call(item) summary.list_table(
     closed_briefs,
-    caption="Closed requirements caption",
+    caption="Closed requirements",
     empty_message="You don’t have any requirements that are closed",
     field_headings=[
         "Name",
