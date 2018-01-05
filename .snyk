@@ -1,0 +1,32 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.10.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  'npm:handlebars:20151207':
+    - gulp-jasmine-phantom > handlebars:
+        reason: None given
+        expires: '2018-02-04T16:59:20.844Z'
+    - gulp-jasmine-phantom > handlebars:
+        reason: None given
+        expires: '2018-02-04T16:59:20.844Z'
+  'npm:tunnel-agent:20170305':
+    - gulp-sass > node-sass > request > tunnel-agent:
+        reason: None given
+        expires: '2018-02-04T16:59:20.844Z'
+    - gulp-sass > node-sass > request > tunnel-agent:
+        reason: None given
+        expires: '2018-02-04T16:59:20.844Z'
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:minimatch:20160620':
+    - gulp-jasmine-phantom > glob > minimatch:
+        patched: '2018-01-05T16:59:20.853Z'
+    - gulp > vinyl-fs > glob-stream > minimatch:
+        patched: '2018-01-05T16:59:20.853Z'
+    - gulp > vinyl-fs > glob-watcher > gaze > globule > minimatch:
+        patched: '2018-01-05T16:59:20.853Z'
+    - gulp > vinyl-fs > glob-watcher > gaze > globule > glob > minimatch:
+        patched: '2018-01-05T16:59:20.853Z'
+  'npm:uglify-js:20151024':
+    - gulp-jasmine-phantom > handlebars > uglify-js:
+        patched: '2018-01-05T16:59:20.853Z'
