@@ -4,6 +4,7 @@ from flask_wtf.csrf import CsrfProtect
 
 import dmapiclient
 from dmutils import init_app, flask_featureflags
+from dmcontent.utils import try_load_manifest
 from dmcontent.content_loader import ContentLoader
 from dmutils.user import User
 
@@ -35,11 +36,12 @@ def create_app(config_name):
         if not framework_data['slug'] in application.config.get('DM_FRAMEWORK_CONTENT_MAP', {}):
             if framework_data['framework'] == 'g-cloud':
                 if framework_data['status'] != 'expired':
-                    content_loader.load_manifest(framework_data['slug'], 'services', 'search_filters')
-                # we need to be able to display old services, even on expired frameworks
-                content_loader.load_manifest(framework_data['slug'], 'services', 'display_service')
+                    try_load_manifest(content_loader, application, framework_data, 'services',
+                                      'services_search_filters')
+
+                try_load_manifest(content_loader, application, framework_data, 'services', 'display_service')
             elif framework_data['framework'] == 'digital-outcomes-and-specialists':
-                content_loader.load_manifest(framework_data['slug'], 'briefs', 'display_brief')
+                try_load_manifest(content_loader, application, framework_data, 'briefs', 'display_brief')
 
     from .create_buyer.views.create_buyer import create_buyer as create_buyer_blueprint
     from .main import dos as dos_blueprint
