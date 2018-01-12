@@ -4,20 +4,20 @@
   Sprockets-style (https://github.com/sstephenson/sprockets)
   directives to concatenate multiple Javascript files into one.
 */
-//= include ../../../node_modules/govuk_frontend_toolkit/javascripts/vendor/polyfills/bind.js
-//= include ../../../node_modules/jquery/dist/jquery.js
-//= include ../../../node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.js
-//= include ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/option-select.js
-//= include ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/list-entry.js
-//= include ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/word-counter.js
-//= include ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/validation.js
-//= include ../../../node_modules/govuk_frontend_toolkit/javascripts/govuk/selection-buttons.js
-//= include ../../../node_modules/govuk_frontend_toolkit/javascripts/govuk/shim-links-with-button-role.js
-//= include ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/shim-links-with-button-role.js
-//= include ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/show-hide-content.js
-//= include _analytics.js'
-//= include _onready.js'
-//= include _selection-buttons.js
+//= require ../../../node_modules/govuk_frontend_toolkit/javascripts/vendor/polyfills/bind.js
+//= require ../../../node_modules/jquery/dist/jquery.js
+//= require ../../../node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.js
+//= require ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/option-select.js
+//= require ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/list-entry.js
+//= require ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/word-counter.js
+//= require ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/validation.js
+//= require ../../../node_modules/govuk_frontend_toolkit/javascripts/govuk/selection-buttons.js
+//= require ../../../node_modules/govuk_frontend_toolkit/javascripts/govuk/shim-links-with-button-role.js
+//= require ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/shim-links-with-button-role.js
+//= require ../../../node_modules/digitalmarketplace-frontend-toolkit/toolkit/javascripts/show-hide-content.js
+//= require _analytics.js'
+//= require _onready.js'
+//= require _selection-buttons.js
 
 (function(GOVUK, GDM) {
 
