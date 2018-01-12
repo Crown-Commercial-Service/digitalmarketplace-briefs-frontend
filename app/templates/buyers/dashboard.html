@@ -20,31 +20,31 @@
 {% block main_content %}
 
     <div class="grid-row">
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    {% if category == 'error' %}
-                        <div class="banner-destructive-without-action">
-                    {% else %}
-                        <div class="banner-success-without-action">
-                    {% endif %}
-                            <p class="banner-message">
-                    {% if 'requirements_deleted' in message %}
-                            Your requirements &lsquo;{{ message.get('requirements_deleted') }}&rsquo; were deleted
-                    {% elif 'requirements_withdrawn' in message %}
-                            You've withdrawn your requirements for &lsquo;{{ message.get('requirements_withdrawn') }}&rsquo;.
-                    {% elif 'updated-brief' in message %}
-                            You've updated '{{ message.get('updated-brief') }}'
-                    {% else %}
-                        {{ message }}
-                    {% endif %}
-                            </p>
-                        </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
+        <div class="column-one-whole">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'error' %}
+                            <div class="banner-destructive-without-action">
+                        {% else %}
+                            <div class="banner-success-without-action">
+                        {% endif %}
+                                <p class="banner-message">
+                        {% if 'requirements_deleted' in message %}
+                                Your requirements &lsquo;{{ message.get('requirements_deleted') }}&rsquo; were deleted
+                        {% elif 'requirements_withdrawn' in message %}
+                                You've withdrawn your requirements for &lsquo;{{ message.get('requirements_withdrawn') }}&rsquo;.
+                        {% elif 'updated-brief' in message %}
+                                You've updated '{{ message.get('updated-brief') }}'
+                        {% else %}
+                            {{ message }}
+                        {% endif %}
+                                </p>
+                            </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
         <div class="column-two-thirds">
             {% if 'DIRECT_AWARD_PROJECTS' is active_feature %}
                 {% with
