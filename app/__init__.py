@@ -51,9 +51,12 @@ def create_app(config_name):
 
     application.register_blueprint(create_buyer_blueprint, url_prefix='/buyers')
     application.register_blueprint(dos_blueprint, url_prefix='/buyers')
-    application.register_blueprint(external_blueprint)
     application.register_blueprint(main_blueprint, url_prefix='/buyers')
     application.register_blueprint(status_blueprint, url_prefix='/buyers')
+
+    # Must be registered last so that any routes declared in the app are registered first (i.e. take precedence over
+    # the external NotImplemented routes in the dm-utils external blueprint).
+    application.register_blueprint(external_blueprint)
 
     login_manager.login_view = 'external.render_login'
     login_manager.login_message_category = "must_login"
