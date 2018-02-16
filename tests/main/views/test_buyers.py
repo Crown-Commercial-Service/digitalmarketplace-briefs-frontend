@@ -238,7 +238,7 @@ class TestBuyerRoleRequired(BaseApplicationTest):
             assert res.location == 'http://localhost/user/login?next={}'.format(
                 self.briefs_dashboard_url.replace('/', '%2F')
             )
-            self.assert_flashes('buyer-role-required', expected_category='error')
+            self.assert_flashes('You must log in with a buyer account to see this page.', expected_category='error')
 
     @mock.patch('app.main.views.buyers.data_api_client')
     def test_buyer_pages_ok_if_logged_in_as_buyer(self, data_api_client):

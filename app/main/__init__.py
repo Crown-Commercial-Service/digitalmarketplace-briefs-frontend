@@ -1,6 +1,8 @@
-from flask import Blueprint, current_app, flash
-from flask_login import current_user, login_required
+from functools import partial
+from flask import Blueprint
 from dmcontent.content_loader import ContentLoader
+from dmutils.access_control import require_login
+
 
 main = Blueprint('buyers', __name__)
 dos = Blueprint('dos', __name__)
@@ -18,12 +20,7 @@ content_loader.load_manifest('digital-outcomes-and-specialists-2', 'clarificatio
 content_loader.load_manifest('digital-outcomes-and-specialists-2', 'briefs', 'award_brief')
 
 
-@main.before_request
-@login_required
-def require_login():
-    if current_user.is_authenticated() and current_user.role != 'buyer':
-        flash('buyer-role-required', 'error')
-        return current_app.login_manager.unauthorized()
+main.before_request(partial(require_login, role='buyer'))
 
 
 @main.after_request
