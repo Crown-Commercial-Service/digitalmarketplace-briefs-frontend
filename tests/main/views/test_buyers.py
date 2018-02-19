@@ -3573,7 +3573,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
         assert page_title == "TellusaboutyourcontractwithBananaCorp"
 
-        submit_button = document.xpath('//input[@class="button-save" and @value="Submit"]')
+        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirements"]')
         assert len(submit_button) == 1
 
         secondary_link_text = document.xpath('//div[@class="secondary-action-link"]//a[1]')[0]
