@@ -521,7 +521,7 @@ detect-file@^1.0.0:
 
 "digitalmarketplace-frontend-toolkit@https://github.com/alphagov/digitalmarketplace-frontend-toolkit.git#336-custom-dimension-user-role":
   version "0.0.1"
-  resolved "https://github.com/alphagov/digitalmarketplace-frontend-toolkit.git#301fe7c1685cec3670d1be17fa7c4e5b6d14875a"
+  resolved "https://github.com/alphagov/digitalmarketplace-frontend-toolkit.git#410f45830a6dcc529e299016919373488a551e78"
   dependencies:
     del "^2.2.2"
     govuk-elements-sass "3.0.3"
