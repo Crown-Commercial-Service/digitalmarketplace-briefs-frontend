@@ -1608,7 +1608,7 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
         assert res.status_code == 302
         assert data_api_client.delete_brief.call_args_list == []
         assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-        self.assert_flashes("You've withdrawn your requirements for ‘I need a thing to do a thing’")
+        self.assert_flashes("You’ve withdrawn your requirements for ‘I need a thing to do a thing’")
 
     @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill'])
     def test_404_if_framework_is_not_live_or_expired(self, data_api_client, framework_status):
@@ -3598,7 +3598,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
             )
             assert res.status_code == 302
             assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-            self.assert_flashes("You've updated 'I need a thing to do a thing'", "message")
+            self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", "message")
 
     @mock.patch('app.main.views.buyers.is_brief_correct')
     def test_award_brief_details_raises_400_if_brief_not_correct(self, is_brief_correct):
@@ -3893,7 +3893,7 @@ class TestCancelBrief(BaseApplicationTest):
 
         assert res.status_code == 302
         assert expected_url in redirect_text
-        self.assert_flashes("You've updated 'I need a thing to do a thing'", "message")
+        self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", "message")
 
 
 class TestBuyerAccountOverview(BaseApplicationTest):
@@ -4033,7 +4033,7 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         self.login_as_buyer()
         self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'back'})
 
-        self.assert_flashes("You've updated 'I need a thing to do a thing'", "message")
+        self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", "message")
 
     def test_random_post_data_triggers_invalid_choice(self):
         self.login_as_buyer()

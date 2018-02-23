@@ -31,9 +31,9 @@ from collections import Counter
 CLOSED_BRIEF_STATUSES = ['closed', 'withdrawn', 'awarded', 'cancelled', 'unsuccessful']
 CLOSED_PUBLISHED_BRIEF_STATUSES = ['closed', 'awarded', 'cancelled', 'unsuccessful']
 
-BRIEF_UPDATED_MESSAGE = "You've updated '{brief[title]}'"
+BRIEF_UPDATED_MESSAGE = "You’ve updated ‘{brief[title]}’"
 BRIEF_DELETED_MESSAGE = "Your requirements ‘{brief[title]}’ were deleted"
-BRIEF_WITHDRAWN_MESSAGE = "You've withdrawn your requirements for ‘{brief[title]}’"
+BRIEF_WITHDRAWN_MESSAGE = "You’ve withdrawn your requirements for ‘{brief[title]}’"
 
 
 @main.route('')
