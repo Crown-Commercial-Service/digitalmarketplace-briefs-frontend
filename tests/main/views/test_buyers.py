@@ -20,6 +20,7 @@ import inflection
 
 from werkzeug.exceptions import NotFound
 
+
 po = functools.partial(mock.patch.object, autospec=True)
 
 
@@ -219,19 +220,6 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert "View responses" not in unsuccessful_row_cells[2]
         assert "Let suppliers know the outcome" not in unsuccessful_row_cells[2]
 
-    def test_flash_message_shown_if_brief_has_just_been_updated(self, data_api_client, find_briefs_mock):
-        data_api_client.find_briefs.return_value = find_briefs_mock
-
-        with self.client.session_transaction() as session:
-            session['_flashes'] = [
-                ('message', {'updated-brief': "My Amazing Brief"})
-            ]
-
-        res = self.client.get(self.briefs_dashboard_url)
-
-        flash_div = html.fromstring(res.get_data(as_text=True)).xpath('//div[@class="banner-success-without-action"]')
-        assert flash_div[0].text_content().strip() == "You've updated 'My Amazing Brief'"
-
 
 class TestBuyerRoleRequired(BaseApplicationTest):
     def test_login_required_for_buyer_pages(self):
@@ -250,7 +238,7 @@ class TestBuyerRoleRequired(BaseApplicationTest):
             assert res.location == 'http://localhost/user/login?next={}'.format(
                 self.briefs_dashboard_url.replace('/', '%2F')
             )
-            self.assert_flashes('buyer-role-required', expected_category='error')
+            self.assert_flashes('You must log in with a buyer account to see this page.', expected_category='error')
 
     @mock.patch('app.main.views.buyers.data_api_client')
     def test_buyer_pages_ok_if_logged_in_as_buyer(self, data_api_client):
@@ -1525,7 +1513,7 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
             assert res.status_code == 302
             assert data_api_client.delete_brief.called
             assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-            self.assert_flashes("requirements_deleted")
+            self.assert_flashes("Your requirements ‘I need a thing to do a thing’ were deleted")
 
     def test_404_if_framework_is_not_live_or_expired(self, data_api_client):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
@@ -1620,7 +1608,7 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
         assert res.status_code == 302
         assert data_api_client.delete_brief.call_args_list == []
         assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-        self.assert_flashes("requirements_withdrawn")
+        self.assert_flashes("You’ve withdrawn your requirements for ‘I need a thing to do a thing’")
 
     @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill'])
     def test_404_if_framework_is_not_live_or_expired(self, data_api_client, framework_status):
@@ -3610,7 +3598,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
             )
             assert res.status_code == 302
             assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-            self.assert_flashes("updated-brief")
+            self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", "message")
 
     @mock.patch('app.main.views.buyers.is_brief_correct')
     def test_award_brief_details_raises_400_if_brief_not_correct(self, is_brief_correct):
@@ -3895,7 +3883,7 @@ class TestCancelBrief(BaseApplicationTest):
         self.data_api_client.cancel_brief.assert_not_called()
 
     @pytest.mark.parametrize('status', ['cancel', 'unsuccessful'])
-    def test_redirect_on_successful_status_change(self, status):
+    def test_redirect_and_flash_on_successful_status_change(self, status):
         res = self.client.post(
             self.url.format(brief_id=123), data={'cancel_reason': status}
         )
@@ -3905,18 +3893,7 @@ class TestCancelBrief(BaseApplicationTest):
 
         assert res.status_code == 302
         assert expected_url in redirect_text
-        self.assert_flashes("updated-brief", "message")
-
-    def test_flash_message_shown_on_brief_cancel(self):
-
-        with self.client.session_transaction() as session:
-            session['_flashes'] = [
-                ('message', {'updated-brief': "My Amazing Brief"})
-            ]
-        expected_url = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/123'
-        res = self.client.get(expected_url)
-        flash_div = html.fromstring(res.get_data(as_text=True)).xpath('//div[@class="banner-success-without-action"]')
-        assert flash_div[0].text_content().strip() == "You've updated 'My Amazing Brief'"
+        self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", "message")
 
 
 class TestBuyerAccountOverview(BaseApplicationTest):
@@ -4056,7 +4033,7 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         self.login_as_buyer()
         self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'back'})
 
-        self.assert_flashes("updated-brief")
+        self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", "message")
 
     def test_random_post_data_triggers_invalid_choice(self):
         self.login_as_buyer()

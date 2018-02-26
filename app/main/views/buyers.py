@@ -31,6 +31,10 @@ from collections import Counter
 CLOSED_BRIEF_STATUSES = ['closed', 'withdrawn', 'awarded', 'cancelled', 'unsuccessful']
 CLOSED_PUBLISHED_BRIEF_STATUSES = ['closed', 'awarded', 'cancelled', 'unsuccessful']
 
+BRIEF_UPDATED_MESSAGE = "You’ve updated ‘{brief[title]}’"
+BRIEF_DELETED_MESSAGE = "Your requirements ‘{brief[title]}’ were deleted"
+BRIEF_WITHDRAWN_MESSAGE = "You’ve withdrawn your requirements for ‘{brief[title]}’"
+
 
 @main.route('')
 def buyer_dashboard():
@@ -492,7 +496,7 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
             else:
                 answer = form.data.get('award_or_cancel_decision')
                 if answer == 'back':
-                    flash({"updated-brief": brief.get("title")})
+                    flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
                     return redirect(url_for('.buyer_dos_requirements'))
                 elif answer == 'yes':
                     return redirect(
@@ -662,7 +666,7 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
                     )
                 else:
                     abort(400, "Unrecognized status '{}'".format(new_status))
-                flash({"updated-brief": brief.get("title")})
+                flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
                 return redirect(
                     url_for('.view_brief_overview', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
                 )
@@ -747,7 +751,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
                 breadcrumbs=breadcrumbs,
             ), 400
 
-        flash({"updated-brief": brief.get("title")})
+        flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
 
         if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
             return redirect(url_for(".buyer_dos_requirements"))
@@ -1017,7 +1021,7 @@ def delete_a_brief(framework_slug, lot_slug, brief_id):
         abort(404)
 
     data_api_client.delete_brief(brief_id, current_user.email_address)
-    flash({"requirements_deleted": brief.get("title")})
+    flash(BRIEF_DELETED_MESSAGE.format(brief=brief))
 
     if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
         return redirect(url_for(".buyer_dos_requirements"))
@@ -1040,7 +1044,7 @@ def withdraw_a_brief(framework_slug, lot_slug, brief_id):
         abort(404)
 
     data_api_client.withdraw_brief(brief_id, current_user.email_address)
-    flash({"requirements_withdrawn": brief.get("title")})
+    flash(BRIEF_WITHDRAWN_MESSAGE.format(brief=brief))
 
     if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
         return redirect(url_for(".buyer_dos_requirements"))

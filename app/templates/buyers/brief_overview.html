@@ -60,7 +60,7 @@
           {% for category, message in messages %}
             {%
             with
-            message = "You've updated '{}'".format(message.get('updated-brief')) if 'updated-brief' in message else message,
+            message = message,
             type = "destructive-without-action" if category == "error" else "success"
             %}
               {% include "toolkit/notification-banner.html" %}
