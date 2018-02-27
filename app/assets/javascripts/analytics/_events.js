@@ -1,3 +1,5 @@
+// Custom app specific events. Everything else GA related is from the
+// digitalmarketplace-frontend-toolkit now
 (function (root, GOVUK) {
   "use strict";
 
@@ -12,7 +14,7 @@
         this.href = this.$target.prop('href');
       }
   };
-  
+
   LinkClick.prototype.category = function () {
       var category = 'internal-link';
 
@@ -43,13 +45,13 @@
         return $linkIcon.text().toLowerCase();
       };
 
-      if (match !== null) { 
+      if (match !== null) {
         return match[1];
       } else {
         return getExtensionFromHTML(this.$target);
       }
   };
-  
+
   var downloadLinkLabel = function (linkClick) {
     var path = GOVUK.GDM.analytics.location.pathname().match(/\/buyers\/frameworks\/([a-z\-]+)\/requirements\/([a-z\-]+)\/*(\d+)*/),
         lot = path[2],
@@ -81,7 +83,7 @@
           default:
             return false;
         }
-    } 
+    }
   };
 
   GOVUK.GDM.analytics.LinkClick = LinkClick;
