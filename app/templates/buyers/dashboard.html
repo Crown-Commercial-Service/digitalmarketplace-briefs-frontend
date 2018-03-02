@@ -1,12 +1,6 @@
 {% extends "_base_page.html" %}
 {% import "toolkit/summary-table.html" as summary %}
-{% block page_title %}
-    {% if 'DIRECT_AWARD_PROJECTS' is active_feature %}
-        Your requirements 
-    {% else %}
-        Your account
-    {% endif %}
-    - Digital Marketplace
+{% block page_title %}Your requirements - Digital Marketplace
 {% endblock %}
 
 {% block breadcrumb %}
@@ -38,20 +32,9 @@
             {% endwith %}
         </div>
         <div class="column-two-thirds">
-            {% if 'DIRECT_AWARD_PROJECTS' is active_feature %}
-                {% with
-                    heading = "Your requirements"
-                %}
-                {% include 'toolkit/page-heading.html' %}
-                {% endwith %}
-            {% else %}
-                {% with
-                    context = current_user.email_address,
-                    heading = current_user.name
-                %}
-                {% include 'toolkit/page-heading.html' %}
-                {% endwith %}
-            {%  endif %}
+            {% with heading = "Your requirements" %}
+            {% include 'toolkit/page-heading.html' %}
+            {% endwith %}
         </div>
     </div>
 

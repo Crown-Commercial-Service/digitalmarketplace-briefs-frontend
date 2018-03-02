@@ -58,7 +58,6 @@ class Config(object):
     # Feature Flags
     RAISE_ERROR_ON_MISSING_FEATURES = True
     FEATURE_FLAGS_NEW_SUPPLIER_FLOW = False
-    FEATURE_FLAGS_DIRECT_AWARD_PROJECTS = False
 
     # LOGGING
     DM_LOG_LEVEL = 'DEBUG'
@@ -101,7 +100,6 @@ class Test(Config):
     SECRET_KEY = "KEY"
 
     FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2016-11-29')
-    FEATURE_FLAGS_DIRECT_AWARD_PROJECTS = enabled_since('2017-08-15')
 
 
 class Development(Config):
@@ -117,7 +115,6 @@ class Development(Config):
     SHARED_EMAIL_KEY = "very_secret"
 
     FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2016-11-29')
-    FEATURE_FLAGS_DIRECT_AWARD_PROJECTS = enabled_since('2017-08-15')
 
 
 class Live(Config):
@@ -129,12 +126,10 @@ class Live(Config):
 
 class Preview(Live):
     FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2017-02-06')
-    FEATURE_FLAGS_DIRECT_AWARD_PROJECTS = enabled_since('2017-08-15')
 
 
 class Staging(Live):
     FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2017-02-07')
-    FEATURE_FLAGS_DIRECT_AWARD_PROJECTS = enabled_since('2017-10-24')
 
     NOTIFY_TEMPLATES = {
         'create_user_account': '84f5d812-df9d-4ab8-804a-06f64f5abd30',
@@ -146,7 +141,6 @@ class Staging(Live):
 
 class Production(Live):
     FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2017-02-08')
-    FEATURE_FLAGS_DIRECT_AWARD_PROJECTS = enabled_since('2017-10-26')
 
     NOTIFY_TEMPLATES = Staging.NOTIFY_TEMPLATES
 

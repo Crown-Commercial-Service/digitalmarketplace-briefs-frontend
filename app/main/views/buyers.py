@@ -1,7 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
 import inflection
-import flask_featureflags
 
 
 from flask import abort, render_template, request, redirect, url_for, flash, current_app
@@ -38,18 +37,14 @@ BRIEF_WITHDRAWN_MESSAGE = "You’ve withdrawn your requirements for ‘{brief[ti
 
 @main.route('')
 def buyer_dashboard():
-    if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
-        user_briefs_total = len(data_api_client.find_briefs(current_user.id).get('briefs', []))
-        user_projects_total = len(data_api_client.find_direct_award_projects(current_user.id).get('projects', []))
+    user_briefs_total = len(data_api_client.find_briefs(current_user.id).get('briefs', []))
+    user_projects_total = len(data_api_client.find_direct_award_projects(current_user.id).get('projects', []))
 
-        return render_template(
-            'buyers/index.html',
-            user_briefs_total=user_briefs_total,
-            user_projects_total=user_projects_total
-        )
-
-    else:
-        return buyer_dos_requirements()
+    return render_template(
+        'buyers/index.html',
+        user_briefs_total=user_briefs_total,
+        user_projects_total=user_projects_total
+    )
 
 
 @main.route('/requirements/digital-outcomes-and-specialists')
@@ -76,16 +71,12 @@ def buyer_dos_requirements():
         {
             "link": "/",
             "label": "Digital Marketplace"
+        },
+        {
+            "link": url_for("buyers.buyer_dashboard"),
+            "label": "Your account"
         }
     ]
-
-    if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
-        breadcrumbs += [
-            {
-                "link": url_for("buyers.buyer_dashboard"),
-                "label": "Your account"
-            }
-        ]
 
     return render_template(
         'buyers/dashboard.html',
@@ -753,10 +744,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
 
         flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
 
-        if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
-            return redirect(url_for(".buyer_dos_requirements"))
-
-        return redirect(url_for(".buyer_dashboard"))
+        return redirect(url_for(".buyer_dos_requirements"))
 
     return render_template(
         "buyers/award_details.html",
@@ -1023,10 +1011,7 @@ def delete_a_brief(framework_slug, lot_slug, brief_id):
     data_api_client.delete_brief(brief_id, current_user.email_address)
     flash(BRIEF_DELETED_MESSAGE.format(brief=brief))
 
-    if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
-        return redirect(url_for(".buyer_dos_requirements"))
-
-    return redirect(url_for('.buyer_dashboard'))
+    return redirect(url_for(".buyer_dos_requirements"))
 
 
 @main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/withdraw', methods=['POST'])
@@ -1046,10 +1031,7 @@ def withdraw_a_brief(framework_slug, lot_slug, brief_id):
     data_api_client.withdraw_brief(brief_id, current_user.email_address)
     flash(BRIEF_WITHDRAWN_MESSAGE.format(brief=brief))
 
-    if flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
-        return redirect(url_for(".buyer_dos_requirements"))
-
-    return redirect(url_for('.buyer_dashboard'))
+    return redirect(url_for(".buyer_dos_requirements"))
 
 
 @main.route(
