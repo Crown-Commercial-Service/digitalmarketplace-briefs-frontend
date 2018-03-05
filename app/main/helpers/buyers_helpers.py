@@ -1,5 +1,4 @@
 from flask import abort, url_for
-import flask_featureflags
 
 
 def get_framework_and_lot(framework_slug, lot_slug, data_api_client, allowed_statuses=None, must_allow_brief=False):
@@ -100,8 +99,5 @@ def get_briefs_breadcrumbs(additional_breadcrumbs=[]):
 
     if additional_breadcrumbs:
         breadcrumbs += additional_breadcrumbs
-
-    if not flask_featureflags.is_active('DIRECT_AWARD_PROJECTS'):
-        breadcrumbs.pop(2)
 
     return breadcrumbs

@@ -3904,16 +3904,13 @@ class TestBuyerAccountOverview(BaseApplicationTest):
         self.data_api_client = self.data_api_client_patch.start()
 
     def test_buyer_account_overview_page_renders(self):
-        if self.app.config.get('FEATURE_FLAGS_DIRECT_AWARD_PROJECTS'):
-            self.data_api_client.find_briefs.return_value = find_briefs_mock()
-            self.data_api_client.find_direct_award_projects.return_value = {"projects": []}
-            self.login_as_buyer()
-            res = self.client.get('/buyers')
-            assert res.status_code == 200
-            assert 'Cloud hosting, software and support' in res.get_data(as_text=True)
-            assert 'Digital outcomes, specialists and user research' in res.get_data(as_text=True)
-        else:
-            assert True
+        self.data_api_client.find_briefs.return_value = find_briefs_mock()
+        self.data_api_client.find_direct_award_projects.return_value = {"projects": []}
+        self.login_as_buyer()
+        res = self.client.get('/buyers')
+        assert res.status_code == 200
+        assert 'Cloud hosting, software and support' in res.get_data(as_text=True)
+        assert 'Digital outcomes, specialists and user research' in res.get_data(as_text=True)
 
     def teardown_method(self, method):
         self.data_api_client_patch.stop()
