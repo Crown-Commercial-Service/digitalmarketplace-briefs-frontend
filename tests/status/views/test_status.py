@@ -35,7 +35,7 @@ class TestStatus(BaseApplicationTest):
         self._data_api_client.get_status.return_value = {
             'status': 'error',
             'app_version': None,
-            'message': 'Cannot connect to Database'
+            'message': 'Cannot connect to database'
         }
 
         response = self.client.get('/buyers/_status')
@@ -47,7 +47,6 @@ class TestStatus(BaseApplicationTest):
         assert "{}".format(json_data['api_status']['status']) == "error"
 
     def test_status_no_response_in_one_upstream_api(self):
-
         self._data_api_client.get_status.return_value = None
 
         response = self.client.get('/buyers/_status')
@@ -56,4 +55,4 @@ class TestStatus(BaseApplicationTest):
         json_data = json.loads(response.get_data().decode('utf-8'))
 
         assert "{}".format(json_data['status']) == "error"
-        assert json_data.get('api_status') is None
+        assert json_data.get('api_status') == {'status': 'n/a'}
