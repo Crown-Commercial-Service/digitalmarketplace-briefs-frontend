@@ -31,4 +31,7 @@ def add_cache_control(response):
 
 from ..main import errors
 from .views import buyers as buyers_views
+from .views import supplier_questions as supplier_questions_views
+from .views import outcome as outcome_views
+from .views import download_responses as download_responses_views
 from .views import digital_outcomes_and_specialists
