@@ -2,18 +2,15 @@
 from __future__ import unicode_literals
 import inflection
 
-
 from flask import abort
 from flask_login import current_user
 
 from app import data_api_client
+from .buyers import CLOSED_PUBLISHED_BRIEF_STATUSES
 from .. import main, content_loader
 from ..helpers.buyers_helpers import get_framework_and_lot, get_sorted_responses_for_brief, is_brief_correct
 
 from dmutils.views import DownloadFileView
-
-CLOSED_BRIEF_STATUSES = ['closed', 'withdrawn', 'awarded', 'cancelled', 'unsuccessful']
-CLOSED_PUBLISHED_BRIEF_STATUSES = ['closed', 'awarded', 'cancelled', 'unsuccessful']
 
 
 class DownloadBriefResponsesView(DownloadFileView):

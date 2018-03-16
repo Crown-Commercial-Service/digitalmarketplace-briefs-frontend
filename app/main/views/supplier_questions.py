@@ -8,7 +8,6 @@ from app import data_api_client
 from .. import main, content_loader
 from ..helpers.buyers_helpers import get_framework_and_lot, is_brief_correct, get_briefs_breadcrumbs
 
-
 from dmapiclient import HTTPError
 
 

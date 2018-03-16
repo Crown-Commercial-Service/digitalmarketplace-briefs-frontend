@@ -13,11 +13,7 @@ from ..forms.awards import AwardedBriefResponseForm
 from ..forms.cancel import CancelBriefForm
 from ..forms.award_or_cancel import AwardOrCancelBriefForm
 
-
 from dmapiclient import HTTPError
-
-CLOSED_BRIEF_STATUSES = ['closed', 'withdrawn', 'awarded', 'cancelled', 'unsuccessful']
-CLOSED_PUBLISHED_BRIEF_STATUSES = ['closed', 'awarded', 'cancelled', 'unsuccessful']
 
 BRIEF_UPDATED_MESSAGE = "You’ve updated ‘{brief[title]}’"
 
