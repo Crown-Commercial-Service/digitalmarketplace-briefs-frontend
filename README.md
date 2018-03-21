@@ -46,7 +46,7 @@ instance pointed to by `DM_API_URL`.
 ### Create and activate the virtual environment
 
 ```
-virtualenv ./venv
+virtualenv -p python3 ./venv
 source ./venv/bin/activate
 ```
 
