@@ -36,7 +36,7 @@ class BaseApplicationTest(object):
 
     @staticmethod
     def user(id, email_address, supplier_id, supplier_name, name,
-             is_token_valid=True, locked=False, active=True, role='buyer'):
+             is_token_valid=True, locked=False, active=True, role='buyer', userResearchOptedIn=True):
 
         hours_offset = -1 if is_token_valid else 1
         date = datetime.utcnow() + timedelta(hours=hours_offset)
@@ -49,7 +49,8 @@ class BaseApplicationTest(object):
             "role": role,
             "locked": locked,
             'active': active,
-            'passwordChangedAt': password_changed_at
+            'passwordChangedAt': password_changed_at,
+            'userResearchOptedIn': userResearchOptedIn
         }
 
         if supplier_id:
@@ -175,16 +176,18 @@ class BaseApplicationTest(object):
         response = self.client.get('/auto-supplier-login')
         assert response.status_code == 200
 
-    def login_as_buyer(self):
+    def login_as_buyer(self, user_researh_opted_in=True):
         with patch('app.data_api_client') as login_api_client:
 
             login_api_client.authenticate_user.return_value = self.user(
-                123, "buyer@email.com", None, None, u'Ā Buyer', role='buyer')
+                123, "buyer@email.com", None, None, u'Ā Buyer', role='buyer', userResearchOptedIn=user_researh_opted_in)
 
             self.get_user_patch = patch.object(
                 data_api_client,
                 'get_user',
-                return_value=self.user(123, "buyer@email.com", None, None, u'Ā Buyer', role='buyer')
+                return_value=self.user(
+                    123, "buyer@email.com", None, None, u'Ā Buyer', role='buyer',
+                    userResearchOptedIn=user_researh_opted_in)
             )
             self.get_user_patch.start()
 
