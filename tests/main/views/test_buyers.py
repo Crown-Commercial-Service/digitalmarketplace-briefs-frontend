@@ -1245,75 +1245,74 @@ class TestPublishBrief(BaseApplicationTest):
             "can be published:" not in page_html
 
 
-@mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestDeleteBriefSubmission(BaseApplicationTest):
-    def test_delete_brief_submission(self, data_api_client):
+
+    def setup_method(self, method):
+        super().setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_brief.return_value = api_stubs.brief()
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True)
+            ]
+        )
+        self.login_as_buyer()
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
+
+    def test_delete_brief_submission(self):
         for framework_status in ['live', 'expired']:
-            self.login_as_buyer()
-            data_api_client.get_framework.return_value = api_stubs.framework(
+            self.data_api_client.get_framework.return_value = api_stubs.framework(
                 slug='digital-outcomes-and-specialists',
                 status=framework_status,
                 lots=[
                     api_stubs.lot(slug='digital-specialists', allows_brief=True)
                 ]
             )
-            data_api_client.get_brief.return_value = api_stubs.brief()
 
             res = self.client.post(
                 "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/delete"
             )
 
             assert res.status_code == 302
-            assert data_api_client.delete_brief.called
+            assert self.data_api_client.delete_brief.called
             assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
             self.assert_flashes("Your requirements ‘I need a thing to do a thing’ were deleted")
 
-    def test_404_if_framework_is_not_live_or_expired(self, data_api_client):
+    def test_404_if_framework_is_not_live_or_expired(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
-            self.login_as_buyer()
-            data_api_client.get_framework.return_value = api_stubs.framework(
+            self.data_api_client.get_framework.return_value = api_stubs.framework(
                 slug='digital-outcomes-and-specialists',
                 status=framework_status,
                 lots=[
                     api_stubs.lot(slug='digital-specialists', allows_brief=True)
                 ]
             )
-            data_api_client.get_brief.return_value = api_stubs.brief()
 
             res = self.client.post(
                 "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/delete",
             )
             assert res.status_code == 404
-            assert not data_api_client.delete_brief.called
+            assert not self.data_api_client.delete_brief.called
 
-    def test_cannot_delete_live_brief(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(status='live')
+    def test_cannot_delete_live_brief(self):
+        self.data_api_client.get_brief.return_value = api_stubs.brief(status='live')
 
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/delete",
         )
 
         assert res.status_code == 404
-        assert not data_api_client.delete_brief.called
+        assert not self.data_api_client.delete_brief.called
 
-    def test_404_if_brief_does_not_belong_to_user(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(user_id=234)
+    def test_404_if_brief_does_not_belong_to_user(self):
+        self.data_api_client.get_brief.return_value = api_stubs.brief(user_id=234)
 
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
@@ -1322,17 +1321,7 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
 
         assert res.status_code == 404
 
-    def test_404_if_brief_has_wrong_lot(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief()
-
+    def test_404_if_brief_has_wrong_lot(self):
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1234/delete",
             data={"delete_confirmed": True})
