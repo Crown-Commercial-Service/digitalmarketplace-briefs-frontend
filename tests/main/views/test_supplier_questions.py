@@ -7,11 +7,6 @@ import mock
 from lxml import html
 import pytest
 
-import functools
-
-
-po = functools.partial(mock.patch.object, autospec=True)
-
 
 @mock.patch('app.main.views.supplier_questions.data_api_client', autospec=True)
 class TestClarificationQuestionsPage(BaseApplicationTest):

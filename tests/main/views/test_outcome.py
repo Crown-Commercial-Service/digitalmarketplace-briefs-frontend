@@ -7,11 +7,6 @@ import mock
 from lxml import html
 import pytest
 
-import functools
-
-
-po = functools.partial(mock.patch.object, autospec=True)
-
 
 class TestAwardBrief(BaseApplicationTest):
     brief_responses = {

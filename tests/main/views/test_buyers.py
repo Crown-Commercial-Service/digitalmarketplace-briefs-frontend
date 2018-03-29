@@ -10,10 +10,6 @@ import pytest
 
 from app.main.views import buyers
 from freezegun import freeze_time
-import functools
-
-
-po = functools.partial(mock.patch.object, autospec=True)
 
 
 def find_briefs_mock():
