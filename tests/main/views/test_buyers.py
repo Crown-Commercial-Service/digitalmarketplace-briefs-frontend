@@ -1329,18 +1329,35 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
         assert res.status_code == 404
 
 
-@mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestWithdrawBriefSubmission(BaseApplicationTest):
 
-    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
-    def test_withdraw_brief_submission(self, data_api_client, framework_status):
+    def setup_method(self, method):
+        super().setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_brief.return_value = api_stubs.brief()
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True)
+            ]
+        )
         self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
+
+    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
+    def test_withdraw_brief_submission(self, framework_status):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status=framework_status,
             lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
         )
-        data_api_client.get_brief.return_value = api_stubs.brief(status='live')
+        self.data_api_client.get_brief.return_value = api_stubs.brief(status='live')
 
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
@@ -1348,36 +1365,28 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
         )
 
         assert res.status_code == 302
-        assert data_api_client.delete_brief.call_args_list == []
+        assert self.data_api_client.delete_brief.call_args_list == []
         assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
         self.assert_flashes("You’ve withdrawn your requirements for ‘I need a thing to do a thing’")
 
     @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill'])
-    def test_404_if_framework_is_not_live_or_expired(self, data_api_client, framework_status):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+    def test_404_if_framework_is_not_live_or_expired(self, framework_status):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status=framework_status,
             lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
         )
-        data_api_client.get_brief.return_value = api_stubs.brief()
 
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
             data={"withdraw_confirmed": True}
         )
         assert res.status_code == 404
-        assert not data_api_client.delete_brief.called
+        assert not self.data_api_client.delete_brief.called
 
     @pytest.mark.parametrize('status', ['draft', 'closed', 'awarded', 'cancelled', 'unsuccessful', 'withdrawn'])
-    def test_cannot_withdraw_non_live_brief(self, data_api_client, status):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(status=status)
+    def test_cannot_withdraw_non_live_brief(self, status):
+        self.data_api_client.get_brief.return_value = api_stubs.brief(status=status)
 
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
@@ -1385,16 +1394,10 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
         )
 
         assert res.status_code == 404
-        assert data_api_client.delete_brief.call_args_list == []
+        assert self.data_api_client.delete_brief.call_args_list == []
 
-    def test_404_if_brief_does_not_belong_to_user(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[api_stubs.lot(slug='digital-specialists', allows_brief=True)]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(user_id=234, status='live')
+    def test_404_if_brief_does_not_belong_to_user(self):
+        self.data_api_client.get_brief.return_value = api_stubs.brief(user_id=234, status='live')
 
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
@@ -1403,16 +1406,8 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
 
         assert res.status_code == 404
 
-    def test_404_if_brief_has_wrong_lot(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(status='live')
+    def test_404_if_brief_has_wrong_lot(self):
+        self.data_api_client.get_brief.return_value = api_stubs.brief(status='live')
 
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1234/withdraw",
