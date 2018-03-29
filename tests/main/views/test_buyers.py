@@ -943,18 +943,28 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
         assert not self.data_api_client.update_brief.called
 
 
-@mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestPublishBrief(BaseApplicationTest):
-    def test_publish_brief(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+
+    def setup_method(self, method):
+        super().setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_brief.return_value = api_stubs.brief()
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[
                 api_stubs.lot(slug='digital-specialists', allows_brief=True)
             ]
         )
+        self.login_as_buyer()
 
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
+
+    def test_publish_brief(self):
         brief_json = api_stubs.brief(status="draft")
         brief_questions = brief_json['briefs']
         brief_questions.update({
@@ -979,42 +989,25 @@ class TestPublishBrief(BaseApplicationTest):
             'workplaceAddress': 'address',
             'requirementsLength': '1 week'
         })
-        data_api_client.get_brief.return_value = brief_json
+        self.data_api_client.get_brief.return_value = brief_json
 
         res = self.client.post("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                                "digital-specialists/1234/publish")
         assert res.status_code == 302
-        assert data_api_client.publish_brief.called
+        assert self.data_api_client.publish_brief.called
         assert res.location == "http://localhost/buyers/frameworks/digital-outcomes-and-specialists/" \
                                "requirements/digital-specialists/1234?published=true"
 
-    def test_publish_brief_with_unanswered_required_questions(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-
-        data_api_client.get_brief.return_value = api_stubs.brief(status="draft")
+    def test_publish_brief_with_unanswered_required_questions(self):
+        self.data_api_client.get_brief.return_value = api_stubs.brief(status="draft")
 
         res = self.client.post("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                                "digital-specialists/1234/publish")
         assert res.status_code == 400
-        assert not data_api_client.publish_brief.called
+        assert not self.data_api_client.publish_brief.called
 
-    def test_404_if_brief_does_not_belong_to_user(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(user_id=234)
+    def test_404_if_brief_does_not_belong_to_user(self):
+        self.data_api_client.get_brief.return_value = api_stubs.brief(user_id=234)
 
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
@@ -1024,19 +1017,9 @@ class TestPublishBrief(BaseApplicationTest):
             })
 
         assert res.status_code == 404
-        assert not data_api_client.update_brief.called
+        assert not self.data_api_client.update_brief.called
 
-    def test_404_if_brief_has_wrong_lot(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief()
-
+    def test_404_if_brief_has_wrong_lot(self):
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
             "digital-outcomes/1234/edit/your-organisation",
@@ -1045,12 +1028,11 @@ class TestPublishBrief(BaseApplicationTest):
             })
 
         assert res.status_code == 404
-        assert not data_api_client.update_brief.called
+        assert not self.data_api_client.update_brief.called
 
-    def test_404_if_framework_status_is_not_live(self, data_api_client):
+    def test_404_if_framework_status_is_not_live(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill', 'expired']:
-            self.login_as_buyer()
-            data_api_client.get_framework.return_value = api_stubs.framework(
+            self.data_api_client.get_framework.return_value = api_stubs.framework(
                 slug='digital-outcomes-and-specialists',
                 status=framework_status,
                 lots=[
@@ -1082,22 +1064,14 @@ class TestPublishBrief(BaseApplicationTest):
                 'workplaceAddress': 'address',
                 'requirementsLength': '1 week'
             })
-            data_api_client.get_brief.return_value = brief_json
+            self.data_api_client.get_brief.return_value = brief_json
 
             res = self.client.post("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                                    "digital-specialists/1234/publish")
             assert res.status_code == 404
-            assert not data_api_client.publish_brief.called
+            assert not self.data_api_client.publish_brief.called
 
-    def test_publish_button_available_if_questions_answered(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
+    def test_publish_button_available_if_questions_answered(self):
         brief_json = api_stubs.brief(status="draft")
         brief_questions = brief_json['briefs']
         brief_questions.update({
@@ -1122,7 +1096,7 @@ class TestPublishBrief(BaseApplicationTest):
             'workplaceAddress': 'address',
             'requirementsLength': '1 week'
         })
-        data_api_client.get_brief.return_value = brief_json
+        self.data_api_client.get_brief.return_value = brief_json
 
         res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                               "digital-specialists/1234/publish")
@@ -1131,22 +1105,13 @@ class TestPublishBrief(BaseApplicationTest):
         assert res.status_code == 200
         assert 'Publish requirements' in page_html, page_html
 
-    def test_publish_button_unavailable_if_questions_not_answered(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-
+    def test_publish_button_unavailable_if_questions_not_answered(self):
         brief_json = api_stubs.brief(status="draft")
         brief_questions = brief_json['briefs']
         brief_questions.update({
             'requirementsLength': '1 week'
         })
-        data_api_client.get_brief.return_value = brief_json
+        self.data_api_client.get_brief.return_value = brief_json
 
         res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                               "digital-specialists/1234/publish")
@@ -1155,9 +1120,8 @@ class TestPublishBrief(BaseApplicationTest):
         assert res.status_code == 200
         assert 'Publish requirements' not in page_html
 
-    def test_warning_about_setting_requirement_length_is_not_displayed_if_not_specialist_brief(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+    def test_warning_about_setting_requirement_length_is_not_displayed_if_not_specialist_brief(self):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[
@@ -1165,7 +1129,7 @@ class TestPublishBrief(BaseApplicationTest):
             ]
         )
 
-        data_api_client.get_brief.return_value = api_stubs.brief(status="draft", lot_slug="digital-outcomes")
+        self.data_api_client.get_brief.return_value = api_stubs.brief(status="draft", lot_slug="digital-outcomes")
 
         res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                               "digital-outcomes/1234/publish")
@@ -1175,17 +1139,8 @@ class TestPublishBrief(BaseApplicationTest):
         assert 'This will show you what the supplier application deadline will be' not in page_html
         assert 'Your requirements will be open for 2 weeks' in page_html
 
-    def test_correct_content_is_displayed_if_no_requirementLength_is_set(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-
-        data_api_client.get_brief.return_value = api_stubs.brief(status="draft")
+    def test_correct_content_is_displayed_if_no_requirementLength_is_set(self):
+        self.data_api_client.get_brief.return_value = api_stubs.brief(status="draft")
 
         res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                               "digital-specialists/1234/publish")
@@ -1196,22 +1151,13 @@ class TestPublishBrief(BaseApplicationTest):
         assert 'This will show you what the supplier application deadline will be' in page_html
         assert 'Your requirements will be open for' not in page_html
 
-    def test_correct_content_is_displayed_if_requirementLength_is_1_week(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-
+    def test_correct_content_is_displayed_if_requirementLength_is_1_week(self):
         brief_json = api_stubs.brief(status="draft")
         brief_questions = brief_json['briefs']
         brief_questions.update({
             'requirementsLength': '1 week'
         })
-        data_api_client.get_brief.return_value = brief_json
+        self.data_api_client.get_brief.return_value = brief_json
 
         with freeze_time('2016-12-31 23:59:59'):
             res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
@@ -1225,22 +1171,13 @@ class TestPublishBrief(BaseApplicationTest):
         assert 'If you publish your requirements today (31 December)' in page_html
         assert 'suppliers will be able to apply until Saturday 7 January 2017 at 11:59pm GMT' in page_html
 
-    def test_correct_content_is_displayed_if_requirementLength_is_2_weeks(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-
+    def test_correct_content_is_displayed_if_requirementLength_is_2_weeks(self):
         brief_json = api_stubs.brief(status="draft")
         brief_questions = brief_json['briefs']
         brief_questions.update({
             'requirementsLength': '2 weeks'
         })
-        data_api_client.get_brief.return_value = brief_json
+        self.data_api_client.get_brief.return_value = brief_json
 
         with freeze_time('2017-07-17 23:59:59'):
             res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
@@ -1254,22 +1191,13 @@ class TestPublishBrief(BaseApplicationTest):
         assert 'If you publish your requirements today (17 July)' in page_html
         assert 'suppliers will be able to apply until Monday 31 July 2017 at 11:59pm GMT' in page_html
 
-    def test_correct_content_is_displayed_if_requirementLength_is_not_set(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-
+    def test_correct_content_is_displayed_if_requirementLength_is_not_set(self):
         brief_json = api_stubs.brief(status="draft")
         brief_questions = brief_json['briefs']
         brief_questions.update({
             'requirementsLength': None
         })
-        data_api_client.get_brief.return_value = brief_json
+        self.data_api_client.get_brief.return_value = brief_json
 
         res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                               "digital-specialists/1234/publish")
@@ -1282,16 +1210,7 @@ class TestPublishBrief(BaseApplicationTest):
         assert 'Your requirements will be open for 1 week' not in page_html
         assert not document.xpath('//a[contains(text(), "Set how long your requirements will be live for")]')
 
-    def test_heading_for_unanswered_questions_not_displayed_if_only_requirements_length_unset(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-
+    def test_heading_for_unanswered_questions_not_displayed_if_only_requirements_length_unset(self):
         brief_json = api_stubs.brief(status="draft")
         brief_questions = brief_json['briefs']
         brief_questions.update({
@@ -1315,7 +1234,7 @@ class TestPublishBrief(BaseApplicationTest):
             'workingArrangements': 'arrangements',
             'workplaceAddress': 'address'
         })
-        data_api_client.get_brief.return_value = brief_json
+        self.data_api_client.get_brief.return_value = brief_json
 
         res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                               "digital-specialists/1234/publish")
