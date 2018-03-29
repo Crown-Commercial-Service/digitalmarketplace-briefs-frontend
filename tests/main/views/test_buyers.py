@@ -2027,78 +2027,63 @@ class TestViewBriefResponsesPageForNewFlowBrief(AbstractViewBriefResponsesPage):
             "ODSdocument:Downloadsupplierresponsestothisrequirement"
 
 
-@mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestViewQuestionAndAnswerDates(BaseApplicationTest):
-    def test_show_question_and_answer_dates_for_published_brief(self, data_api_client):
+
+    def setup_method(self, method):
+        super().setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+        self.login_as_buyer()
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
+
+    def test_show_question_and_answer_dates_for_published_brief(self):
         for framework_status in ['live', 'expired']:
-            with self.app.app_context():
-                self.login_as_buyer()
-                data_api_client.get_framework.return_value = api_stubs.framework(
-                    slug='digital-outcomes-and-specialists',
-                    status=framework_status,
-                    lots=[
-                        api_stubs.lot(slug='digital-specialists', allows_brief=True),
-                    ]
-                )
-                brief_json = api_stubs.brief(status="live")
-                brief_json['briefs']['requirementsLength'] = '2 weeks'
-                brief_json['briefs']['publishedAt'] = u"2016-04-02T20:10:00.00000Z"
-                brief_json['briefs']['clarificationQuestionsClosedAt'] = u"2016-04-12T23:59:00.00000Z"
-                brief_json['briefs']['clarificationQuestionsPublishedBy'] = u"2016-04-14T23:59:00.00000Z"
-                brief_json['briefs']['applicationsClosedAt'] = u"2016-04-16T23:59:00.00000Z"
-                brief_json['briefs']['specialistRole'] = 'communicationsManager'
-                brief_json['briefs']["clarificationQuestionsAreClosed"] = True
-                data_api_client.get_brief.return_value = brief_json
+            self.data_api_client.get_framework.return_value = api_stubs.framework(
+                slug='digital-outcomes-and-specialists',
+                status=framework_status,
+                lots=[
+                    api_stubs.lot(slug='digital-specialists', allows_brief=True),
+                ]
+            )
+            brief_json = api_stubs.brief(status="live")
+            brief_json['briefs']['requirementsLength'] = '2 weeks'
+            brief_json['briefs']['publishedAt'] = u"2016-04-02T20:10:00.00000Z"
+            brief_json['briefs']['clarificationQuestionsClosedAt'] = u"2016-04-12T23:59:00.00000Z"
+            brief_json['briefs']['clarificationQuestionsPublishedBy'] = u"2016-04-14T23:59:00.00000Z"
+            brief_json['briefs']['applicationsClosedAt'] = u"2016-04-16T23:59:00.00000Z"
+            brief_json['briefs']['specialistRole'] = 'communicationsManager'
+            brief_json['briefs']["clarificationQuestionsAreClosed"] = True
+            self.data_api_client.get_brief.return_value = brief_json
 
-                res = self.client.get(
-                    "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/timeline"
-                )
+            res = self.client.get(
+                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/timeline"
+            )
 
-                assert res.status_code == 200
-                page_html = res.get_data(as_text=True)
-                document = html.fromstring(page_html)
+            assert res.status_code == 200
+            page_html = res.get_data(as_text=True)
+            document = html.fromstring(page_html)
 
-                assert (document.xpath('//h1')[0]).text_content().strip() == "Question and answer dates"
-                assert all(
-                    date in
-                    [e.text_content() for e in document.xpath('//main[@id="content"]//th/span')]
-                    for date in ['2 April', '8 April', '15 April', '16 April']
-                )
+            assert (document.xpath('//h1')[0]).text_content().strip() == "Question and answer dates"
+            assert all(
+                date in
+                [e.text_content() for e in document.xpath('//main[@id="content"]//th/span')]
+                for date in ['2 April', '8 April', '15 April', '16 April']
+            )
 
-    def test_404_if_framework_is_not_live_or_expired(self, data_api_client):
+    def test_404_if_framework_is_not_live_or_expired(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
-            with self.app.app_context():
-                self.login_as_buyer()
-                data_api_client.get_framework.return_value = api_stubs.framework(
-                    slug='digital-outcomes-and-specialists',
-                    status=framework_status,
-                    lots=[
-                        api_stubs.lot(slug='digital-specialists', allows_brief=True),
-                    ]
-                )
-                brief_json = api_stubs.brief(status="live")
-                data_api_client.get_brief.return_value = brief_json
-
-                res = self.client.get(
-                    "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/timeline"
-                )
-
-                assert res.status_code == 404
-
-    def test_do_not_show_question_and_answer_dates_for_draft_brief(self, data_api_client):
-        with self.app.app_context():
-            self.login_as_buyer()
-            data_api_client.get_framework.return_value = api_stubs.framework(
+            self.data_api_client.get_framework.return_value = api_stubs.framework(
                 slug='digital-outcomes-and-specialists',
-                status='live',
+                status=framework_status,
                 lots=[
                     api_stubs.lot(slug='digital-specialists', allows_brief=True),
                 ]
             )
-            brief_json = api_stubs.brief(status="draft")
-            brief_json['briefs']['specialistRole'] = 'communicationsManager'
-            brief_json['briefs']["clarificationQuestionsAreClosed"] = True
-            data_api_client.get_brief.return_value = brief_json
+            brief_json = api_stubs.brief(status="live")
+            self.data_api_client.get_brief.return_value = brief_json
 
             res = self.client.get(
                 "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/timeline"
@@ -2106,35 +2091,56 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
 
             assert res.status_code == 404
 
-    def test_do_not_show_question_and_answer_dates_for_closed_brief(self, data_api_client):
-        with self.app.app_context():
-            self.login_as_buyer()
-            data_api_client.get_framework.return_value = api_stubs.framework(
-                slug='digital-outcomes-and-specialists',
-                status='live',
-                lots=[
-                    api_stubs.lot(slug='digital-specialists', allows_brief=True),
-                ]
-            )
-            brief_json = api_stubs.brief(status="closed")
-            brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
-            brief_json['briefs']['specialistRole'] = 'communicationsManager'
-            brief_json['briefs']["clarificationQuestionsAreClosed"] = True
-            data_api_client.get_brief.return_value = brief_json
+    def test_do_not_show_question_and_answer_dates_for_draft_brief(self):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True),
+            ]
+        )
+        brief_json = api_stubs.brief(status="draft")
+        brief_json['briefs']['specialistRole'] = 'communicationsManager'
+        brief_json['briefs']["clarificationQuestionsAreClosed"] = True
+        self.data_api_client.get_brief.return_value = brief_json
 
-            res = self.client.get(
-                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/timeline"
-            )
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/timeline"
+        )
 
-            assert res.status_code == 404
+        assert res.status_code == 404
+
+    def test_do_not_show_question_and_answer_dates_for_closed_brief(self):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True),
+            ]
+        )
+        brief_json = api_stubs.brief(status="closed")
+        brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
+        brief_json['briefs']['specialistRole'] = 'communicationsManager'
+        brief_json['briefs']["clarificationQuestionsAreClosed"] = True
+        self.data_api_client.get_brief.return_value = brief_json
+
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/timeline"
+        )
+
+        assert res.status_code == 404
 
 
 class TestBuyerAccountOverview(BaseApplicationTest):
 
     def setup_method(self, method):
-        super(TestBuyerAccountOverview, self).setup_method(method)
+        super().setup_method(method)
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
 
     def test_buyer_account_overview_page_renders(self):
         self.data_api_client.find_briefs.return_value = find_briefs_mock()
