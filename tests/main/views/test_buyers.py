@@ -16,7 +16,6 @@ import functools
 po = functools.partial(mock.patch.object, autospec=True)
 
 
-@pytest.fixture()
 def find_briefs_mock():
     base_brief_values = {
         "createdAt": "2016-02-01T00:00:00.000000Z",
@@ -85,15 +84,20 @@ def find_briefs_mock():
     return find_briefs_response
 
 
-@mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestBuyerDashboard(BaseApplicationTest):
 
     def setup_method(self, method):
-        super(TestBuyerDashboard, self).setup_method(method)
+        super().setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+        self.data_api_client.find_briefs.return_value = find_briefs_mock()
         self.login_as_buyer()
 
-    def test_draft_briefs_section(self, data_api_client, find_briefs_mock):
-        data_api_client.find_briefs.return_value = find_briefs_mock
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
+
+    def test_draft_briefs_section(self):
         res = self.client.get(self.briefs_dashboard_url)
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
 
@@ -106,9 +110,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert tables[0].xpath('.//tbody/tr')[0].xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
         assert draft_row[1] == "Monday 1 February 2016"
 
-    def test_live_briefs_section(self, data_api_client, find_briefs_mock):
-        data_api_client.find_briefs.return_value = find_briefs_mock
-
+    def test_live_briefs_section(self):
         res = self.client.get(self.briefs_dashboard_url)
         tables = html.fromstring(res.get_data(as_text=True)).xpath('//table')
 
@@ -121,9 +123,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert tables[1].xpath('.//tbody/tr')[0].xpath('.//td')[0].xpath('.//a/@href')[0] == expected_link
         assert live_row[1] == "Thursday 4 February 2016"
 
-    def test_closed_briefs_section_with_closed_brief(self, data_api_client, find_briefs_mock):
-        data_api_client.find_briefs.return_value = find_briefs_mock
-
+    def test_closed_briefs_section_with_closed_brief(self):
         res = self.client.get(self.briefs_dashboard_url)
 
         assert res.status_code == 200
@@ -144,9 +144,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert closed_row_cells[2].xpath('.//a/@href')[1] == \
             '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-specialists/22/award'
 
-    def test_closed_briefs_section_with_withdrawn_brief(self, data_api_client, find_briefs_mock):
-        data_api_client.find_briefs.return_value = find_briefs_mock
-
+    def test_closed_briefs_section_with_withdrawn_brief(self):
         res = self.client.get(self.briefs_dashboard_url)
 
         assert res.status_code == 200
@@ -161,9 +159,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert "View responses" not in withdrawn_row_cells[2]
         assert "Let suppliers know the outcome" not in withdrawn_row_cells[2]
 
-    def test_closed_briefs_section_with_awarded_brief(self, data_api_client, find_briefs_mock):
-        data_api_client.find_briefs.return_value = find_briefs_mock
-
+    def test_closed_briefs_section_with_awarded_brief(self):
         res = self.client.get(self.briefs_dashboard_url)
 
         assert res.status_code == 200
@@ -178,9 +174,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert "View responses" not in awarded_row_cells[2]
         assert "Let suppliers know the outcome" not in awarded_row_cells[2]
 
-    def test_closed_briefs_section_with_cancelled_brief(self, data_api_client, find_briefs_mock):
-        data_api_client.find_briefs.return_value = find_briefs_mock
-
+    def test_closed_briefs_section_with_cancelled_brief(self):
         res = self.client.get(self.briefs_dashboard_url)
 
         assert res.status_code == 200
@@ -195,9 +189,7 @@ class TestBuyerDashboard(BaseApplicationTest):
         assert "View responses" not in cancelled_row_cells[2]
         assert "Let suppliers know the outcome" not in cancelled_row_cells[2]
 
-    def test_closed_briefs_section_with_unsuccessful_brief(self, data_api_client, find_briefs_mock):
-        data_api_client.find_briefs.return_value = find_briefs_mock
-
+    def test_closed_briefs_section_with_unsuccessful_brief(self):
         res = self.client.get(self.briefs_dashboard_url)
 
         assert res.status_code == 200
