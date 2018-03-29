@@ -303,11 +303,20 @@ class TestStartNewBrief(BaseApplicationTest):
         assert res.status_code == 404
 
 
-@mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestCreateNewBrief(BaseApplicationTest):
-    def test_create_new_digital_specialists_brief(self, data_api_client):
+
+    def setup_method(self, method):
+        super().setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
         self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
+
+    def test_create_new_digital_specialists_brief(self):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[
@@ -322,7 +331,7 @@ class TestCreateNewBrief(BaseApplicationTest):
             })
 
         assert res.status_code == 302
-        data_api_client.create_brief.assert_called_with(
+        self.data_api_client.create_brief.assert_called_with(
             'digital-outcomes-and-specialists',
             'digital-specialists',
             123,
@@ -331,9 +340,8 @@ class TestCreateNewBrief(BaseApplicationTest):
             updated_by='buyer@email.com'
         )
 
-    def test_create_new_digital_outcomes_brief(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+    def test_create_new_digital_outcomes_brief(self):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[
@@ -348,7 +356,7 @@ class TestCreateNewBrief(BaseApplicationTest):
             })
 
         assert res.status_code == 302
-        data_api_client.create_brief.assert_called_with(
+        self.data_api_client.create_brief.assert_called_with(
             'digital-outcomes-and-specialists',
             'digital-outcomes',
             123,
@@ -357,9 +365,8 @@ class TestCreateNewBrief(BaseApplicationTest):
             updated_by='buyer@email.com'
         )
 
-    def test_404_if_lot_does_not_allow_brief(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+    def test_404_if_lot_does_not_allow_brief(self):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='open',
             lots=[
@@ -374,11 +381,10 @@ class TestCreateNewBrief(BaseApplicationTest):
             })
 
         assert res.status_code == 404
-        assert not data_api_client.create_brief.called
+        assert not self.data_api_client.create_brief.called
 
-    def test_404_if_framework_status_is_not_live(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+    def test_404_if_framework_status_is_not_live(self):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='open',
             lots=[
@@ -393,11 +399,10 @@ class TestCreateNewBrief(BaseApplicationTest):
             })
 
         assert res.status_code == 404
-        assert not data_api_client.create_brief.called
+        assert not self.data_api_client.create_brief.called
 
-    def test_404_if_lot_does_not_exist(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+    def test_404_if_lot_does_not_exist(self):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='open',
             lots=[
@@ -412,18 +417,17 @@ class TestCreateNewBrief(BaseApplicationTest):
             })
 
         assert res.status_code == 404
-        assert not data_api_client.create_brief.called
+        assert not self.data_api_client.create_brief.called
 
-    def test_400_if_form_error(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+    def test_400_if_form_error(self):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[
                 api_stubs.lot(slug='digital-specialists', allows_brief=True)
             ]
         )
-        data_api_client.create_brief.side_effect = HTTPError(
+        self.data_api_client.create_brief.side_effect = HTTPError(
             mock.Mock(status_code=400),
             {"title": "answer_required"})
 
@@ -439,7 +443,7 @@ class TestCreateNewBrief(BaseApplicationTest):
 
         assert len(anchor) == 1
         assert "Title" in anchor[0].text_content().strip()
-        data_api_client.create_brief.assert_called_with(
+        self.data_api_client.create_brief.assert_called_with(
             'digital-outcomes-and-specialists',
             'digital-specialists',
             123,
@@ -452,7 +456,7 @@ class TestCreateNewBrief(BaseApplicationTest):
 class TestCopyBrief(BaseApplicationTest):
 
     def setup_method(self, method):
-        super(TestCopyBrief, self).setup_method(method)
+        super().setup_method(method)
         self.login_as_buyer()
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
@@ -465,7 +469,7 @@ class TestCopyBrief(BaseApplicationTest):
 
     def teardown_method(self, method):
         self.data_api_client_patch.stop()
-        super(TestCopyBrief, self).teardown_method(method)
+        super().teardown_method(method)
 
     def test_get_not_allowed(self):
         res = self.client.get(
