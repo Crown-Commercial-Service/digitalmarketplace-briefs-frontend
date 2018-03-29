@@ -1769,49 +1769,45 @@ class TestBriefSummaryPage(BaseApplicationTest):
             '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-4'
 
 
-@mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestViewBriefSectionSummaryPage(BaseApplicationTest):
 
+    def setup_method(self, method):
+        super().setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_brief.return_value = api_stubs.brief()
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True)
+            ]
+        )
+        self.login_as_buyer()
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
+
     @mock.patch('app.main.views.buyers.content_loader', autospec=True)
-    def test_get_view_section_summary(self, content_loader, data_api_client):
-        with self.app.app_context():
-            self.login_as_buyer()
-            data_api_client.get_framework.return_value = api_stubs.framework(
-                slug='digital-outcomes-and-specialists',
-                status='live',
-                lots=[
-                    api_stubs.lot(slug='digital-specialists', allows_brief=True),
-                ]
-            )
-            data_api_client.get_brief.return_value = api_stubs.brief()
+    def test_get_view_section_summary(self, content_loader):
+        content_fixture = ContentLoader('tests/fixtures/content')
+        content_fixture.load_manifest('dos', 'data', 'edit_brief')
+        content_loader.get_manifest.return_value = content_fixture.get_manifest('dos', 'edit_brief')
 
-            content_fixture = ContentLoader('tests/fixtures/content')
-            content_fixture.load_manifest('dos', 'data', 'edit_brief')
-            content_loader.get_manifest.return_value = content_fixture.get_manifest('dos', 'edit_brief')
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-1"
+        )
 
-            res = self.client.get(
-                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-1"
-            )
+        assert res.status_code == 200
 
-            assert res.status_code == 200
+    def test_wrong_lot_get_view_section_summary(self):
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1234/section-1"
+        )
 
-    def test_wrong_lot_get_view_section_summary(self, data_api_client):
-        with self.app.app_context():
-            self.login_as_buyer()
-            data_api_client.get_framework.return_value = api_stubs.framework(
-                slug='digital-outcomes-and-specialists',
-                status='live',
-                lots=[
-                    api_stubs.lot(slug='digital-specialists', allows_brief=True),
-                ]
-            )
-            data_api_client.get_brief.return_value = api_stubs.brief()
-
-            res = self.client.get(
-                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1234/section-1"
-            )
-
-            assert res.status_code == 404
+        assert res.status_code == 404
 
 
 class AbstractViewBriefResponsesPage(BaseApplicationTest):
