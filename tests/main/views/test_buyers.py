@@ -2150,7 +2150,3 @@ class TestBuyerAccountOverview(BaseApplicationTest):
         assert res.status_code == 200
         assert 'Cloud hosting, software and support' in res.get_data(as_text=True)
         assert 'Digital outcomes, specialists and user research' in res.get_data(as_text=True)
-
-    def teardown_method(self, method):
-        self.data_api_client_patch.stop()
-        super(TestBuyerAccountOverview, self).teardown_method(method)
