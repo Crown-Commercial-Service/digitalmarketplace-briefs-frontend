@@ -206,33 +206,39 @@ class TestBuyerDashboard(BaseApplicationTest):
 
 
 class TestBuyerRoleRequired(BaseApplicationTest):
+
+    def setup_method(self, method):
+        super().setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
+
     def test_login_required_for_buyer_pages(self):
-        with self.app.app_context():
-            res = self.client.get(self.briefs_dashboard_url)
-            assert res.status_code == 302
-            assert res.location == 'http://localhost/user/login?next={}'.format(
-                self.briefs_dashboard_url.replace('/', '%2F')
-            )
+        res = self.client.get(self.briefs_dashboard_url)
+        assert res.status_code == 302
+        assert res.location == 'http://localhost/user/login?next={}'.format(
+            self.briefs_dashboard_url.replace('/', '%2F')
+        )
 
     def test_supplier_cannot_access_buyer_pages(self):
-        with self.app.app_context():
-            self.login_as_supplier()
-            res = self.client.get(self.briefs_dashboard_url)
-            assert res.status_code == 302
-            assert res.location == 'http://localhost/user/login?next={}'.format(
-                self.briefs_dashboard_url.replace('/', '%2F')
-            )
-            self.assert_flashes('You must log in with a buyer account to see this page.', expected_category='error')
+        self.login_as_supplier()
+        res = self.client.get(self.briefs_dashboard_url)
+        assert res.status_code == 302
+        assert res.location == 'http://localhost/user/login?next={}'.format(
+            self.briefs_dashboard_url.replace('/', '%2F')
+        )
+        self.assert_flashes('You must log in with a buyer account to see this page.', expected_category='error')
 
-    @mock.patch('app.main.views.buyers.data_api_client')
-    def test_buyer_pages_ok_if_logged_in_as_buyer(self, data_api_client):
-        with self.app.app_context():
-            self.login_as_buyer()
-            res = self.client.get(self.briefs_dashboard_url)
-            page_text = res.get_data(as_text=True)
+    def test_buyer_pages_ok_if_logged_in_as_buyer(self):
+        self.login_as_buyer()
+        res = self.client.get(self.briefs_dashboard_url)
+        page_text = res.get_data(as_text=True)
 
-            assert res.status_code == 200
-            assert 'Your requirements' in page_text
+        assert res.status_code == 200
+        assert 'Your requirements' in page_text
 
 
 @mock.patch('app.main.views.buyers.data_api_client', autospec=True)
