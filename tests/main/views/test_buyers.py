@@ -547,8 +547,26 @@ class TestCopyBrief(BaseApplicationTest):
         self.data_api_client.copy_brief.assert_called_once_with('1234', 'buyer@email.com')
 
 
-@mock.patch('app.main.views.buyers.data_api_client', autospec=True)
 class TestEditBriefSubmission(BaseApplicationTest):
+
+    def setup_method(self, method):
+        super().setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_brief.return_value = api_stubs.brief()
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                api_stubs.lot(slug='digital-specialists', allows_brief=True)
+            ]
+        )
+        self.login_as_buyer()
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
 
     def _test_breadcrumbs_on_question_page(self, response, has_summary_page=False, section_name=None):
         extra_breadcrumbs = [
@@ -565,17 +583,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
 
         self.assert_breadcrumbs(response, extra_breadcrumbs)
 
-    def test_edit_brief_submission(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief()
-
+    def test_edit_brief_submission(self):
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists"
             "/1234/edit/description-of-work/organisation")
@@ -585,19 +593,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
         assert document.xpath('//h1')[0].text_content().strip() == "Organisation the work is for"
 
     @mock.patch("app.main.views.buyers.content_loader", autospec=True)
-    def test_edit_brief_submission_return_link_to_section_summary_if_section_has_description(
-            self, content_loader, data_api_client
-    ):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief()
-
+    def test_edit_brief_submission_return_link_to_section_summary_if_section_has_description(self, content_loader):
         content_fixture = ContentLoader('tests/fixtures/content')
         content_fixture.load_manifest('dos', 'data', 'edit_brief')
         content_loader.get_manifest.return_value = content_fixture.get_manifest('dos', 'edit_brief')
@@ -615,18 +611,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
         self._test_breadcrumbs_on_question_page(response=res, has_summary_page=True, section_name='Section 4')
 
     @mock.patch("app.main.views.buyers.content_loader", autospec=True)
-    def test_edit_brief_submission_return_link_to_section_summary_if_other_questions(self, content_loader,
-    data_api_client):  # noqa
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief()
-
+    def test_edit_brief_submission_return_link_to_section_summary_if_other_questions(self, content_loader):
         content_fixture = ContentLoader('tests/fixtures/content')
         content_fixture.load_manifest('dos', 'data', 'edit_brief')
         content_loader.get_manifest.return_value = content_fixture.get_manifest('dos', 'edit_brief')
@@ -644,18 +629,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
         self._test_breadcrumbs_on_question_page(response=res, has_summary_page=True, section_name='Section 1')
 
     @mock.patch("app.main.views.buyers.content_loader", autospec=True)
-    def test_edit_brief_submission_return_link_to_brief_overview_if_single_question(self, content_loader,
-    data_api_client):  # noqa
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief()
-
+    def test_edit_brief_submission_return_link_to_brief_overview_if_single_question(self, content_loader):
         content_fixture = ContentLoader('tests/fixtures/content')
         content_fixture.load_manifest('dos', 'data', 'edit_brief')
         content_loader.get_manifest.return_value = content_fixture.get_manifest('dos', 'edit_brief')
@@ -673,17 +647,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
         self._test_breadcrumbs_on_question_page(response=res, has_summary_page=False)
 
     @mock.patch("app.main.views.buyers.content_loader", autospec=True)
-    def test_edit_brief_submission_multiquestion(self, content_loader, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True),
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief()
-
+    def test_edit_brief_submission_multiquestion(self, content_loader):
         content_fixture = ContentLoader('tests/fixtures/content')
         content_fixture.load_manifest('dos', 'data', 'edit_brief')
         content_loader.get_manifest.return_value = content_fixture.get_manifest('dos', 'edit_brief')
@@ -702,16 +666,8 @@ class TestEditBriefSubmission(BaseApplicationTest):
             '//*[@id="required3_2"]//span[contains(@class, "question-heading")]'
         )[0].text_content().strip() == "Required 3_2"
 
-    def test_404_if_brief_does_not_belong_to_user(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(user_id=234)
+    def test_404_if_brief_does_not_belong_to_user(self):
+        self.data_api_client.get_brief.return_value = api_stubs.brief(user_id=234)
 
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists"
@@ -719,9 +675,8 @@ class TestEditBriefSubmission(BaseApplicationTest):
 
         assert res.status_code == 404
 
-    def test_404_if_lot_does_not_allow_brief(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+    def test_404_if_lot_does_not_allow_brief(self):
+        self.data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[
@@ -735,32 +690,14 @@ class TestEditBriefSubmission(BaseApplicationTest):
 
         assert res.status_code == 404
 
-    def test_404_if_lot_does_not_exist(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-
+    def test_404_if_lot_does_not_exist(self):
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-octopuses"
             "/1234/edit/description-of-work/organisation")
 
         assert res.status_code == 404
 
-    def test_404_if_post_brief_has_wrong_lot(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-
+    def test_404_if_post_brief_has_wrong_lot(self):
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-octopuses"
             "/1234/edit/description-of-work/organisation",
@@ -769,10 +706,9 @@ class TestEditBriefSubmission(BaseApplicationTest):
 
         assert res.status_code == 404
 
-    def test_404_if_framework_status_is_not_live(self, data_api_client):
+    def test_404_if_framework_status_is_not_live(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill', 'expired']:
-            self.login_as_buyer()
-            data_api_client.get_framework.return_value = api_stubs.framework(
+            self.data_api_client.get_framework.return_value = api_stubs.framework(
                 slug='digital-outcomes-and-specialists',
                 status=framework_status,
                 lots=[
@@ -786,16 +722,8 @@ class TestEditBriefSubmission(BaseApplicationTest):
 
             assert res.status_code == 404
 
-    def test_404_if_brief_has_published_status(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief(status='published')
+    def test_404_if_brief_has_published_status(self):
+        self.data_api_client.get_brief.return_value = api_stubs.brief(status='published')
 
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists"
@@ -803,34 +731,14 @@ class TestEditBriefSubmission(BaseApplicationTest):
 
         assert res.status_code == 404
 
-    def test_404_if_section_does_not_exist(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief()
-
+    def test_404_if_section_does_not_exist(self):
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists"
             "/1234/not-a-real-section")
 
         assert res.status_code == 404
 
-    def test_404_if_question_does_not_exist(self, data_api_client):
-        self.login_as_buyer()
-        data_api_client.get_framework.return_value = api_stubs.framework(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
-        )
-        data_api_client.get_brief.return_value = api_stubs.brief()
-
+    def test_404_if_question_does_not_exist(self):
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists"
             "/1234/edit/description-of-work/not-a-real-question")
