@@ -176,18 +176,19 @@ class BaseApplicationTest(object):
         response = self.client.get('/auto-supplier-login')
         assert response.status_code == 200
 
-    def login_as_buyer(self, user_researh_opted_in=True):
+    def login_as_buyer(self, user_research_opted_in=True):
         with patch('app.data_api_client') as login_api_client:
 
             login_api_client.authenticate_user.return_value = self.user(
-                123, "buyer@email.com", None, None, u'Ā Buyer', role='buyer', userResearchOptedIn=user_researh_opted_in)
+                123, "buyer@email.com", None, None, u'Ā Buyer', role='buyer', userResearchOptedIn=user_research_opted_in
+            )
 
             self.get_user_patch = patch.object(
                 data_api_client,
                 'get_user',
                 return_value=self.user(
                     123, "buyer@email.com", None, None, u'Ā Buyer', role='buyer',
-                    userResearchOptedIn=user_researh_opted_in)
+                    userResearchOptedIn=user_research_opted_in)
             )
             self.get_user_patch.start()
 

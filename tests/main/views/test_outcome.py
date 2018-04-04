@@ -7,11 +7,6 @@ import mock
 from lxml import html
 import pytest
 
-import functools
-
-
-po = functools.partial(mock.patch.object, autospec=True)
-
 
 class TestAwardBrief(BaseApplicationTest):
     brief_responses = {
@@ -167,30 +162,28 @@ class TestAwardBrief(BaseApplicationTest):
                 api_stubs.lot(slug='digital-outcomes', allows_brief=True)
             ]
         )
-        with self.app.app_context():
-            self.login_as_buyer()
-            res = self.client.post(self.url.format(brief_id=1234), data={'brief_response': 2})
 
-            assert self.data_api_client.update_brief_award_brief_response.call_args == mock.call(
-                u'1234', 2, "buyer@email.com"
-            )
-            assert res.status_code == 302
-            assert "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award/2/contract-details" in res.location  # noqa
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=1234), data={'brief_response': 2})
+
+        assert self.data_api_client.update_brief_award_brief_response.call_args == mock.call(
+            u'1234', 2, "buyer@email.com"
+        )
+        assert res.status_code == 302
+        assert "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award/2/contract-details" in res.location  # noqa
 
     def test_award_brief_post_raises_500_on_api_error_and_displays_generic_error_message(self):
         self.data_api_client.update_brief_award_brief_response.side_effect = HTTPError(
             mock.Mock(status_code=500),
             {"title": "BriefResponse cannot be awarded for this Brief"}
         )
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=1234), data={'brief_response': 2})
+        document = html.fromstring(res.get_data(as_text=True))
 
-        with self.app.app_context():
-            self.login_as_buyer()
-            res = self.client.post(self.url.format(brief_id=1234), data={'brief_response': 2})
-            document = html.fromstring(res.get_data(as_text=True))
-
-            assert res.status_code == 500
-            error_span = document.xpath('//h1')[0]
-            assert self._strip_whitespace(error_span.text_content()) == "Sorry,we'reexperiencingtechnicaldifficulties"
+        assert res.status_code == 500
+        error_span = document.xpath('//h1')[0]
+        assert self._strip_whitespace(error_span.text_content()) == "Sorry,we'reexperiencingtechnicaldifficulties"
 
 
 class TestAwardBriefDetails(BaseApplicationTest):
@@ -264,26 +257,25 @@ class TestAwardBriefDetails(BaseApplicationTest):
                 api_stubs.lot(slug='digital-outcomes', allows_brief=True)
             ]
         )
-        with self.app.app_context():
-            self.login_as_buyer()
-            res = self.client.post(
-                self.url.format(brief_id=1234, brief_response_id=5678),
-                data={
-                    "awardedContractStartDate-day": "31",
-                    "awardedContractStartDate-month": "12",
-                    "awardedContractStartDate-year": "2020",
-                    "awardedContractValue": "88.84"
-                }
-            )
+        self.login_as_buyer()
+        res = self.client.post(
+            self.url.format(brief_id=1234, brief_response_id=5678),
+            data={
+                "awardedContractStartDate-day": "31",
+                "awardedContractStartDate-month": "12",
+                "awardedContractStartDate-year": "2020",
+                "awardedContractValue": "88.84"
+            }
+        )
 
-            assert self.data_api_client.update_brief_award_details.call_args == mock.call(
-                '1234', '5678',
-                {'awardedContractStartDate': "2020-12-31", "awardedContractValue": "88.84"},
-                updated_by="buyer@email.com"
-            )
-            assert res.status_code == 302
-            assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-            self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", "message")
+        assert self.data_api_client.update_brief_award_details.call_args == mock.call(
+            '1234', '5678',
+            {'awardedContractStartDate': "2020-12-31", "awardedContractValue": "88.84"},
+            updated_by="buyer@email.com"
+        )
+        assert res.status_code == 302
+        assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
+        self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", "message")
 
     @mock.patch('app.main.views.outcome.is_brief_correct')
     def test_award_brief_details_raises_400_if_brief_not_correct(self, is_brief_correct):
@@ -322,55 +314,53 @@ class TestAwardBriefDetails(BaseApplicationTest):
         assert masthead_error_links[1].text_content() == "What's the value?"
 
     def test_award_brief_details_post_raises_400_if_required_fields_not_filled(self):
-        with self.app.app_context():
-            self._setup_api_error_response({
-                "awardedContractValue": "answer_required",
-                "awardedContractStartDate": "answer_required"
-            })
-            self.login_as_buyer()
-            res = self.client.post(self.url.format(brief_id=1234, brief_response_id=5678), data={})
-            document = html.fromstring(res.get_data(as_text=True))
+        self._setup_api_error_response({
+            "awardedContractValue": "answer_required",
+            "awardedContractStartDate": "answer_required"
+        })
+        self.login_as_buyer()
+        res = self.client.post(self.url.format(brief_id=1234, brief_response_id=5678), data={})
+        document = html.fromstring(res.get_data(as_text=True))
 
-            assert res.status_code == 400
-            self._assert_masthead(document)
-            error_spans = document.xpath('//span[@class="validation-message"]')
-            assert self._strip_whitespace(error_spans[0].text_content()) == "Youneedtoanswerthisquestion."
-            assert self._strip_whitespace(error_spans[1].text_content()) == "Youneedtoanswerthisquestion."
+        assert res.status_code == 400
+        self._assert_masthead(document)
+        error_spans = document.xpath('//span[@class="validation-message"]')
+        assert self._strip_whitespace(error_spans[0].text_content()) == "Youneedtoanswerthisquestion."
+        assert self._strip_whitespace(error_spans[1].text_content()) == "Youneedtoanswerthisquestion."
 
     def test_award_brief_details_post_raises_400_and_displays_error_messages_and_prefills_fields_if_invalid_data(self):
-        with self.app.app_context():
-            self._setup_api_error_response({
-                "awardedContractStartDate": "invalid_format",
-                "awardedContractValue": "not_money_format"
-            })
-            self.login_as_buyer()
+        self._setup_api_error_response({
+            "awardedContractStartDate": "invalid_format",
+            "awardedContractValue": "not_money_format"
+        })
+        self.login_as_buyer()
 
-            res = self.client.post(
-                self.url.format(brief_id=1234, brief_response_id=5678),
-                data={
-                    "awardedContractValue": "incorrect",
-                    "awardedContractStartDate-day": "x",
-                    "awardedContractStartDate-month": "y",
-                    "awardedContractStartDate-year": "z"
-                }
-            )
+        res = self.client.post(
+            self.url.format(brief_id=1234, brief_response_id=5678),
+            data={
+                "awardedContractValue": "incorrect",
+                "awardedContractStartDate-day": "x",
+                "awardedContractStartDate-month": "y",
+                "awardedContractStartDate-year": "z"
+            }
+        )
 
-            assert res.status_code == 400
-            document = html.fromstring(res.get_data(as_text=True))
+        assert res.status_code == 400
+        document = html.fromstring(res.get_data(as_text=True))
 
-            self._assert_masthead(document)
+        self._assert_masthead(document)
 
-            # Individual error messages
-            error_spans = document.xpath('//span[@class="validation-message"]')
-            assert self._strip_whitespace(error_spans[0].text_content()) == "Youranswermustbeavaliddate."
-            assert self._strip_whitespace(error_spans[1].text_content()) == \
-                "Enteryourvalueinpoundsandpenceusingnumbersanddecimalsonly,forexample9900.05for9900poundsand5pence."
+        # Individual error messages
+        error_spans = document.xpath('//span[@class="validation-message"]')
+        assert self._strip_whitespace(error_spans[0].text_content()) == "Youranswermustbeavaliddate."
+        assert self._strip_whitespace(error_spans[1].text_content()) == \
+            "Enteryourvalueinpoundsandpenceusingnumbersanddecimalsonly,forexample9900.05for9900poundsand5pence."
 
-            # Prefilled form input
-            assert document.xpath('//input[@id="input-awardedContractValue"]/@value')[0] == "incorrect"
-            assert document.xpath('//input[@id="input-awardedContractStartDate-day"]/@value')[0] == "x"
-            assert document.xpath('//input[@id="input-awardedContractStartDate-month"]/@value')[0] == "y"
-            assert document.xpath('//input[@id="input-awardedContractStartDate-year"]/@value')[0] == "z"
+        # Prefilled form input
+        assert document.xpath('//input[@id="input-awardedContractValue"]/@value')[0] == "incorrect"
+        assert document.xpath('//input[@id="input-awardedContractStartDate-day"]/@value')[0] == "x"
+        assert document.xpath('//input[@id="input-awardedContractStartDate-month"]/@value')[0] == "y"
+        assert document.xpath('//input[@id="input-awardedContractStartDate-year"]/@value')[0] == "z"
 
 
 class TestCancelBrief(BaseApplicationTest):
