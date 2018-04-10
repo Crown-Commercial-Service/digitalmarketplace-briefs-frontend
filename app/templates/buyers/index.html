@@ -38,17 +38,7 @@
 {% endblock %}
 
 {% block main_content %}
-{% with messages = get_flashed_messages(with_categories=true, category_filter=["error", "success"]) %}
-  {% for category, message in messages %}
-    {%
-      with
-      message = message,
-      type = "destructive" if category == 'error' else "success"
-    %}
-      {% include "toolkit/notification-banner.html" %}
-    {% endwith %}
-  {% endfor %}
-{% endwith %}
+{% include "toolkit/flash_messages.html" %}
 <div class="grid-row">
   <div class="column-two-thirds">
     {% with

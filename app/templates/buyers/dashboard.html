@@ -15,21 +15,7 @@
 
     <div class="grid-row">
         <div class="column-one-whole">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        {% if category == 'error' %}
-                            <div class="banner-destructive-without-action">
-                        {% else %}
-                            <div class="banner-success-without-action">
-                        {% endif %}
-                                <p class="banner-message">
-                                    {{ message }}
-                                </p>
-                            </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
+            {% include "toolkit/flash_messages.html" %}
         </div>
         <div class="column-two-thirds">
             {% with heading = "Your requirements" %}
