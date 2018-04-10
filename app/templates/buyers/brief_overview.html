@@ -55,19 +55,7 @@
         </div>
       {% endif %}
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            {%
-            with
-            message = message,
-            type = "destructive-without-action" if category == "error" else "success"
-            %}
-              {% include "toolkit/notification-banner.html" %}
-            {% endwith %}
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
+      {% include "toolkit/flash_messages.html" %}
     {% endblock %}
   </div>
 
