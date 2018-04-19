@@ -1,8 +1,8 @@
-from flask.ext.wtf import Form
+from flask.ext.wtf import FlaskForm
 from wtforms import RadioField, validators
 
 
-class AwardedBriefResponseForm(Form):
+class AwardedBriefResponseForm(FlaskForm):
     """Form for the buyer to tell us which BriefResponse was awarded a contract
     """
     # BriefResponse choices expected to be set at runtime

@@ -1,9 +1,9 @@
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Regexp
 from dmutils.forms import StripWhitespaceStringField
 
 
-class EmailAddressForm(Form):
+class EmailAddressForm(FlaskForm):
     email_address = StripWhitespaceStringField(
         'Email address', id="input_email_address",
         validators=[
