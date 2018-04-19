@@ -1,8 +1,8 @@
-from flask.ext.wtf import Form
+from flask.ext.wtf import FlaskForm
 from wtforms import RadioField, validators
 
 
-class AwardOrCancelBriefForm(Form):
+class AwardOrCancelBriefForm(FlaskForm):
     """Form for the buyer to tell us whether they want to award or cancel the requirements
     """
     choices = [
