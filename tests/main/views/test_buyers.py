@@ -2146,3 +2146,5 @@ class TestBuyerAccountOverview(BaseApplicationTest):
         assert res.status_code == 200
         assert 'Cloud hosting, software and support' in res.get_data(as_text=True)
         assert 'Digital outcomes, specialists and user research' in res.get_data(as_text=True)
+        assert "href=\"/user/change-password\"" in res.get_data(as_text=True)
+        assert "Change your password" in res.get_data(as_text=True)
