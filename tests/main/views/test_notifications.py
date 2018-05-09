@@ -1,5 +1,6 @@
 from ...helpers import BaseApplicationTest
 import mock
+from lxml import html
 
 
 class TestUserResearch(BaseApplicationTest):
@@ -16,7 +17,11 @@ class TestUserResearch(BaseApplicationTest):
         self.login_as_buyer(user_research_opted_in=False)
         res = self.client.get('/buyers')
         assert res.status_code == 200
-        assert 'Help us improve the Digital Marketplace' in res.get_data(as_text=True)
+        document = html.fromstring(res.get_data(as_text=True))
+        banner_heading = document.xpath(
+            "//strong[contains(@class, \'banner-heading\') and text() = \'Help us improve the Digital Marketplace\']"
+        )
+        assert len(banner_heading)
         assert 'Sign up to be a potential user research participant' in res.get_data(as_text=True)
         assert 'class="user-research-banner-close-btn"' in res.get_data(as_text=True)
         cookie_value = self.get_cookie_by_name(res, 'seen_user_research_message')
@@ -26,7 +31,11 @@ class TestUserResearch(BaseApplicationTest):
         self.login_as_buyer(user_research_opted_in=True)
         res = self.client.get('/buyers')
         assert res.status_code == 200
-        assert 'Help us improve the Digital Marketplace' not in res.get_data(as_text=True)
+        document = html.fromstring(res.get_data(as_text=True))
+        banner_heading = document.xpath(
+            "//strong[contains(@class, \'banner-heading\') and text() = \'Help us improve the Digital Marketplace\']"
+        )
+        assert len(banner_heading) == 0
         assert 'Sign up to be a potential user research participant' not in res.get_data(as_text=True)
         assert 'class="user-research-banner-close-btn"' not in res.get_data(as_text=True)
 
