@@ -16,7 +16,6 @@ class TestUserResearch(BaseApplicationTest):
         self.login_as_buyer(user_research_opted_in=False)
         res = self.client.get('/buyers')
         assert res.status_code == 200
-        assert 'Help us improve the Digital Marketplace' in res.get_data(as_text=True)
         assert 'Sign up to be a potential user research participant' in res.get_data(as_text=True)
         assert 'class="user-research-banner-close-btn"' in res.get_data(as_text=True)
         cookie_value = self.get_cookie_by_name(res, 'seen_user_research_message')
@@ -26,7 +25,6 @@ class TestUserResearch(BaseApplicationTest):
         self.login_as_buyer(user_research_opted_in=True)
         res = self.client.get('/buyers')
         assert res.status_code == 200
-        assert 'Help us improve the Digital Marketplace' not in res.get_data(as_text=True)
         assert 'Sign up to be a potential user research participant' not in res.get_data(as_text=True)
         assert 'class="user-research-banner-close-btn"' not in res.get_data(as_text=True)
 
