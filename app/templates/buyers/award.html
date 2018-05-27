@@ -11,6 +11,7 @@
 {% endblock %}
 
 {% block main_content %}
+{% include 'toolkit/forms/validation.html' %}
 <div class="grid-row">
     <div class="column-two-thirds">
           <div class="single-question-page">
@@ -37,7 +38,7 @@
                       type = "radio",
                       options = form.brief_response.toolkit_macro_options,
                       value = form.brief_response.data,
-                      error = form.brief_response.errors[0]
+                      error = errors.get('brief_response', {}).get('message', None)
                     %}
                       {% include "toolkit/forms/selection-buttons.html" %}
                     {% endwith %}
