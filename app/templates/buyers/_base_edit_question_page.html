@@ -22,11 +22,7 @@
     </div>
   </div>
 
-  {% if errors %}
-    {% with errors = errors.values() %}
-      {% include 'toolkit/forms/validation.html' %}
-    {% endwith %}
-  {% endif %}
+  {% include 'toolkit/forms/validation.html' %}
 
   <form method="post" enctype="multipart/form-data" action="{{ request.path }}">
 

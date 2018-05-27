@@ -14,6 +14,7 @@ from ..forms.cancel import CancelBriefForm
 from ..forms.award_or_cancel import AwardOrCancelBriefForm
 
 from dmapiclient import HTTPError
+from dmutils.forms import get_errors_from_wtform
 
 BRIEF_UPDATED_MESSAGE = "You’ve updated ‘{brief[title]}’"
 
@@ -55,10 +56,7 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
         if request.method == "POST":
             form = AwardOrCancelBriefForm(brief, request.form)
             if not form.validate_on_submit():
-                errors = {
-                    key: {'question': form[key].label.text, 'input_name': key, 'message': form[key].errors[0]}
-                    for key, value in form.errors.items()
-                }
+                errors = get_errors_from_wtform(form)
             else:
                 answer = form.data.get('award_or_cancel_decision')
                 if answer == 'back':
@@ -127,12 +125,11 @@ def award_brief(framework_slug, lot_slug, brief_id):
     if request.method == "POST":
         form = AwardedBriefResponseForm(brief_responses, request.form)
         if not form.validate_on_submit():
-            form_errors = [{'question': form[key].label.text, 'input_name': key} for key in form.errors]
             return render_template(
                 "buyers/award.html",
                 brief=brief,
                 form=form,
-                form_errors=form_errors,
+                errors=get_errors_from_wtform(form),
                 breadcrumbs=breadcrumbs,
             ), 400
 
@@ -164,6 +161,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
         "buyers/award.html",
         brief=brief,
         form=form,
+        errors=get_errors_from_wtform(form),
         breadcrumbs=breadcrumbs,
     ), 200
 
@@ -213,10 +211,7 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
     if request.method == "POST":
         form = CancelBriefForm(brief, label_text, request.form)
         if not form.validate_on_submit():
-            errors = {
-                key: {'question': form[key].label.text, 'input_name': key, 'message': form[key].errors[0]}
-                for key, value in form.errors.items()
-            }
+            errors = get_errors_from_wtform(form)
         else:
             new_status = form.data.get('cancel_reason')
             try:
