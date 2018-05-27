@@ -462,7 +462,7 @@ class TestCancelBrief(BaseApplicationTest):
 
         document = html.fromstring(res.get_data(as_text=True))
         page_title = document.xpath('//h1')[0].text_content()
-        assert "Why didn't you award a contract for {}?".format(self.brief.get('title')) in page_title
+        assert "Why didn’t you award a contract for {}?".format(self.brief.get('title')) in page_title
 
         submit_button = document.xpath('//input[@class="button-save" and @value="Update requirements"]')
         assert len(submit_button) == 1

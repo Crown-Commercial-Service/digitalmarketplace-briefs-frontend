@@ -192,7 +192,7 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
         abort(404)
 
     if award_flow:
-        label_text = "Why didn't you award a contract for {}?"
+        label_text = "Why didn’t you award a contract for {}?"
         previous_page_url = url_for(
             '.award_or_cancel_brief',
             framework_slug=brief['frameworkSlug'],
