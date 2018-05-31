@@ -2,6 +2,7 @@ from flask import current_app, render_template, url_for, redirect, session, Blue
 
 from dmapiclient.audit import AuditTypes
 from dmutils.email import send_user_account_email
+from dmutils.forms import get_errors_from_wtform
 
 from app import data_api_client
 
@@ -47,6 +48,7 @@ def submit_create_buyer_account():
         return render_template(
             "create_buyer/create_buyer_account.html",
             form=form,
+            errors=get_errors_from_wtform(form),
             email_address=form.email_address.data
         ), 400
 

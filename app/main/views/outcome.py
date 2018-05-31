@@ -21,8 +21,6 @@ BRIEF_UPDATED_MESSAGE = "You’ve updated ‘{brief[title]}’"
 
 @main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award', methods=['GET', 'POST'])
 def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
-    form = None
-    errors = {}
     get_framework_and_lot(
         framework_slug,
         lot_slug,
@@ -48,36 +46,32 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
         )
     }])
 
-    if brief['status'] in ["awarded", "cancelled", "unsuccessful"]:
-        already_awarded = True
-    else:
-        already_awarded = False
+    form = AwardOrCancelBriefForm(brief)
+    already_awarded = brief['status'] in ["awarded", "cancelled", "unsuccessful"]
 
-        if request.method == "POST":
-            form = AwardOrCancelBriefForm(brief, request.form)
-            if not form.validate_on_submit():
-                errors = get_errors_from_wtform(form)
-            else:
-                answer = form.data.get('award_or_cancel_decision')
-                if answer == 'back':
-                    flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
-                    return redirect(url_for('.buyer_dos_requirements'))
-                elif answer == 'yes':
-                    return redirect(
-                        url_for('.award_brief', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
-                    )
-                elif answer == 'no':
-                    return redirect(url_for(
-                        '.cancel_award_brief', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
-                    )
-                else:
-                    # We should never get here as the form validates the answers against the available choices.
-                    abort(500, "Unexpected answer to award or cancel brief")
+    if already_awarded is False and form.validate_on_submit():
+        answer = form.data.get('award_or_cancel_decision')
+        if answer == 'back':
+            flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
+            return redirect(url_for('.buyer_dos_requirements'))
+        elif answer == 'yes':
+            return redirect(
+                url_for('.award_brief', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
+            )
+        elif answer == 'no':
+            return redirect(url_for(
+                '.cancel_award_brief', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
+            )
+        else:
+            # We should never get here as the form validates the answers against the available choices.
+            abort(500, "Unexpected answer to award or cancel brief")
+
+    errors = get_errors_from_wtform(form)
 
     return render_template(
         "buyers/award_or_cancel_brief.html",
         brief=brief,
-        form=form or AwardOrCancelBriefForm(brief),
+        form=form,
         errors=errors,
         breadcrumbs=breadcrumbs,
         already_awarded=already_awarded,
