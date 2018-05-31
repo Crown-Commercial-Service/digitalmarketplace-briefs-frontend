@@ -14,14 +14,13 @@ from ..forms.cancel import CancelBriefForm
 from ..forms.award_or_cancel import AwardOrCancelBriefForm
 
 from dmapiclient import HTTPError
+from dmutils.forms import get_errors_from_wtform
 
 BRIEF_UPDATED_MESSAGE = "You’ve updated ‘{brief[title]}’"
 
 
 @main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/award', methods=['GET', 'POST'])
 def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
-    form = None
-    errors = {}
     get_framework_and_lot(
         framework_slug,
         lot_slug,
@@ -47,39 +46,32 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
         )
     }])
 
-    if brief['status'] in ["awarded", "cancelled", "unsuccessful"]:
-        already_awarded = True
-    else:
-        already_awarded = False
+    form = AwardOrCancelBriefForm(brief)
+    already_awarded = brief['status'] in ["awarded", "cancelled", "unsuccessful"]
 
-        if request.method == "POST":
-            form = AwardOrCancelBriefForm(brief, request.form)
-            if not form.validate_on_submit():
-                errors = {
-                    key: {'question': form[key].label.text, 'input_name': key, 'message': form[key].errors[0]}
-                    for key, value in form.errors.items()
-                }
-            else:
-                answer = form.data.get('award_or_cancel_decision')
-                if answer == 'back':
-                    flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
-                    return redirect(url_for('.buyer_dos_requirements'))
-                elif answer == 'yes':
-                    return redirect(
-                        url_for('.award_brief', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
-                    )
-                elif answer == 'no':
-                    return redirect(url_for(
-                        '.cancel_award_brief', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
-                    )
-                else:
-                    # We should never get here as the form validates the answers against the available choices.
-                    abort(500, "Unexpected answer to award or cancel brief")
+    if already_awarded is False and form.validate_on_submit():
+        answer = form.data.get('award_or_cancel_decision')
+        if answer == 'back':
+            flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
+            return redirect(url_for('.buyer_dos_requirements'))
+        elif answer == 'yes':
+            return redirect(
+                url_for('.award_brief', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
+            )
+        elif answer == 'no':
+            return redirect(url_for(
+                '.cancel_award_brief', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
+            )
+        else:
+            # We should never get here as the form validates the answers against the available choices.
+            abort(500, "Unexpected answer to award or cancel brief")
+
+    errors = get_errors_from_wtform(form)
 
     return render_template(
         "buyers/award_or_cancel_brief.html",
         brief=brief,
-        form=form or AwardOrCancelBriefForm(brief),
+        form=form,
         errors=errors,
         breadcrumbs=breadcrumbs,
         already_awarded=already_awarded,
@@ -124,48 +116,39 @@ def award_brief(framework_slug, lot_slug, brief_id):
             )
         )
 
-    if request.method == "POST":
-        form = AwardedBriefResponseForm(brief_responses, request.form)
-        if not form.validate_on_submit():
-            form_errors = [{'question': form[key].label.text, 'input_name': key} for key in form.errors]
-            return render_template(
-                "buyers/award.html",
-                brief=brief,
-                form=form,
-                form_errors=form_errors,
-                breadcrumbs=breadcrumbs,
-            ), 400
-
-        if form.data:
-            try:
-                data_api_client.update_brief_award_brief_response(
-                    brief_id,
-                    form.data['brief_response'],
-                    current_user.email_address
-                )
-            except HTTPError as e:
-                abort(500, "Unexpected API error when awarding brief response")
-
-            return redirect(
-                url_for(
-                    ".award_brief_details",
-                    framework_slug=brief['frameworkSlug'],
-                    lot_slug=brief['lotSlug'],
-                    brief_id=brief['id'],
-                    brief_response_id=form.data['brief_response']
-                )
-            )
-
     form = AwardedBriefResponseForm(brief_responses)
+
+    if form.validate_on_submit():
+        try:
+            data_api_client.update_brief_award_brief_response(
+                brief_id,
+                form.data['brief_response'],
+                current_user.email_address
+            )
+        except HTTPError as e:
+            abort(500, "Unexpected API error when awarding brief response")
+
+        return redirect(
+            url_for(
+                ".award_brief_details",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id'],
+                brief_response_id=form.data['brief_response']
+            )
+        )
+
     pending_brief_responses = list(filter(lambda x: x.get('awardDetails', {}).get('pending'), brief_responses))
     form['brief_response'].data = pending_brief_responses[0]["id"] if pending_brief_responses else None
+    errors = get_errors_from_wtform(form)
 
     return render_template(
         "buyers/award.html",
         brief=brief,
         form=form,
+        errors=errors,
         breadcrumbs=breadcrumbs,
-    ), 200
+    ), 200 if not errors else 400
 
 
 @main.route(
@@ -178,8 +161,6 @@ def award_brief(framework_slug, lot_slug, brief_id):
     endpoint="cancel_award_brief"
 )
 def cancel_brief(framework_slug, lot_slug, brief_id):
-    form = None
-    errors = {}
     award_flow = request.endpoint.strip(request.blueprint + '.') == 'cancel_award_brief'
 
     get_framework_and_lot(
@@ -194,7 +175,7 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
         abort(404)
 
     if award_flow:
-        label_text = "Why didn't you award a contract for {}?"
+        label_text = "Why didn’t you award a contract for {}?"
         previous_page_url = url_for(
             '.award_or_cancel_brief',
             framework_slug=brief['frameworkSlug'],
@@ -210,34 +191,30 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
             lot_slug=brief['lotSlug'],
             brief_id=brief['id']
         )
-    if request.method == "POST":
-        form = CancelBriefForm(brief, label_text, request.form)
-        if not form.validate_on_submit():
-            errors = {
-                key: {'question': form[key].label.text, 'input_name': key, 'message': form[key].errors[0]}
-                for key, value in form.errors.items()
-            }
-        else:
-            new_status = form.data.get('cancel_reason')
-            try:
-                if new_status == 'cancel':
-                    data_api_client.cancel_brief(
-                        brief_id,
-                        user=current_user.email_address
-                    )
-                elif new_status == 'unsuccessful':
-                    data_api_client.update_brief_as_unsuccessful(
-                        brief_id,
-                        user=current_user.email_address
-                    )
-                else:
-                    abort(400, "Unrecognized status '{}'".format(new_status))
-                flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
-                return redirect(
-                    url_for('.view_brief_overview', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
+
+    form = CancelBriefForm(brief, label_text)
+
+    if form.validate_on_submit():
+        new_status = form.data.get('cancel_reason')
+        try:
+            if new_status == 'cancel':
+                data_api_client.cancel_brief(
+                    brief_id,
+                    user=current_user.email_address
                 )
-            except HTTPError as e:
-                abort(500, "Unexpected API error when cancelling brief")
+            elif new_status == 'unsuccessful':
+                data_api_client.update_brief_as_unsuccessful(
+                    brief_id,
+                    user=current_user.email_address
+                )
+            else:
+                abort(400, "Unrecognized status '{}'".format(new_status))
+            flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
+            return redirect(
+                url_for('.view_brief_overview', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
+            )
+        except HTTPError as e:
+            abort(500, "Unexpected API error when cancelling brief")
 
     breadcrumbs = get_briefs_breadcrumbs([
         {
@@ -250,10 +227,12 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
         }
     ])
 
+    errors = get_errors_from_wtform(form)
+
     return render_template(
         "buyers/cancel_brief.html",
         brief=brief,
-        form=form or CancelBriefForm(brief, label_text),
+        form=form,
         errors=errors,
         breadcrumbs=breadcrumbs,
         previous_page_url=previous_page_url

@@ -141,6 +141,10 @@ class TestAwardBrief(BaseApplicationTest):
         document = html.fromstring(res.get_data(as_text=True))
 
         assert res.status_code == 400
+
+        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
+        assert validation_message.strip() == "You need to answer this question."
+
         error_span = document.xpath('//span[@id="error-brief_response"]')[0]
         assert self._strip_whitespace(error_span.text_content()) == "Youneedtoanswerthisquestion."
 
@@ -151,6 +155,10 @@ class TestAwardBrief(BaseApplicationTest):
         document = html.fromstring(res.get_data(as_text=True))
 
         assert res.status_code == 400
+
+        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
+        assert validation_message.strip() == "Not a valid choice"
+
         error_span = document.xpath('//span[@id="error-brief_response"]')[0]
         assert self._strip_whitespace(error_span.text_content()) == "Notavalidchoice"
 
@@ -454,7 +462,7 @@ class TestCancelBrief(BaseApplicationTest):
 
         document = html.fromstring(res.get_data(as_text=True))
         page_title = document.xpath('//h1')[0].text_content()
-        assert "Why didn't you award a contract for {}?".format(self.brief.get('title')) in page_title
+        assert "Why didn’t you award a contract for {}?".format(self.brief.get('title')) in page_title
 
         submit_button = document.xpath('//input[@class="button-save" and @value="Update requirements"]')
         assert len(submit_button) == 1
