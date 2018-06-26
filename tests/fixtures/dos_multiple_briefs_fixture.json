@@ -15,7 +15,7 @@
       "evaluationType": [
         "Interview"
       ],
-      "frameworkFramework":"digital-outcomes-and-specialists",
+      "frameworkFamily":"digital-outcomes-and-specialists",
       "frameworkName":"Digital Outcomes and Specialists",
       "frameworkSlug":"digital-outcomes-and-specialists",
       "frameworkStatus":"live",
@@ -70,7 +70,7 @@
         "provide a case study or evidence of previous work",
         "presentation"
       ],
-      "frameworkFramework":"digital-outcomes-and-specialists",
+      "frameworkFamily":"digital-outcomes-and-specialists",
       "frameworkName":"Digital Outcomes and Specialists 2",
       "frameworkSlug":"digital-outcomes-and-specialists-2",
       "frameworkStatus":"live",

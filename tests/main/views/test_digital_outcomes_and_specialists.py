@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from ...helpers import BaseApplicationTest
-from dmapiclient import api_stubs
+from dmutils import api_stubs
 import mock
 from lxml import html
 

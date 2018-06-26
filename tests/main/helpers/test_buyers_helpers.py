@@ -5,7 +5,7 @@ from werkzeug.exceptions import NotFound
 import app.main.helpers as helpers
 from dmcontent.content_loader import ContentLoader
 
-from dmapiclient import api_stubs
+from dmutils import api_stubs
 
 content_loader = ContentLoader('tests/fixtures/content')
 content_loader.load_manifest('dos', 'data', 'edit_brief')
@@ -14,13 +14,12 @@ questions_builder = content_loader.get_manifest('dos', 'edit_brief')
 
 class TestBuyersHelpers(object):
     def test_get_framework_and_lot(self):
+        provided_lot = api_stubs.lot(slug='digital-specialists', allows_brief=True)
         data_api_client = mock.Mock()
         data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
-            lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
-            ]
+            lots=[provided_lot],
         )
 
         framework, lot = helpers.buyers_helpers.get_framework_and_lot('digital-outcomes-and-specialists',
@@ -31,12 +30,7 @@ class TestBuyersHelpers(object):
         assert framework['name'] == 'Digital Outcomes and Specialists'
         assert framework['slug'] == 'digital-outcomes-and-specialists'
         assert framework['clarificationQuestionsOpen'] is True
-        assert lot == {'slug': 'digital-specialists',
-                       'oneServiceLimit': False,
-                       'allowsBrief': True,
-                       'id': 1,
-                       'name': 'Digital Specialists',
-                       }
+        assert lot == provided_lot
 
     def test_get_framework_and_lot_404s_for_wrong_framework_status(self):
         data_api_client = mock.Mock()
