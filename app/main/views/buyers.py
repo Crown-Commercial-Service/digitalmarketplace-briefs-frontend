@@ -28,13 +28,22 @@ BRIEF_WITHDRAWN_MESSAGE = "You’ve withdrawn your requirements for ‘{brief[ti
 
 @main.route('')
 def buyer_dashboard():
-    user_briefs_total = len(data_api_client.find_briefs(current_user.id).get('briefs', []))
-    user_projects_total = len(data_api_client.find_direct_award_projects(current_user.id).get('projects', []))
+    user_projects_awaiting_outcomes_total = data_api_client.find_direct_award_projects(
+        current_user.id,
+        locked=True,
+        having_outcome=False,
+    )["meta"]["total"]
 
     return render_template(
         'buyers/index.html',
-        user_briefs_total=user_briefs_total,
-        user_projects_total=user_projects_total
+        user_briefs_total=data_api_client.find_briefs(current_user.id)["meta"]["total"],
+        user_projects_awaiting_outcomes_total=user_projects_awaiting_outcomes_total,
+        # calculating it this way allows us to avoid the extra api call if we already know the user has projects
+        # from user_projects_awaiting_outcomes_total
+        user_has_projects=bool(
+            user_projects_awaiting_outcomes_total
+            or data_api_client.find_direct_award_projects(current_user.id)["meta"]["total"]
+        ),
     )
 
 

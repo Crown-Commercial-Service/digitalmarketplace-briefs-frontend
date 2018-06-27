@@ -2,7 +2,8 @@
 from __future__ import unicode_literals
 
 from ...helpers import BaseApplicationTest
-from dmapiclient import api_stubs, HTTPError
+from dmapiclient import HTTPError
+from dmutils import api_stubs
 import mock
 from lxml import html
 import pytest

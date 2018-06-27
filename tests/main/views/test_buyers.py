@@ -2,7 +2,8 @@
 from __future__ import unicode_literals
 
 from ...helpers import BaseApplicationTest
-from dmapiclient import api_stubs, HTTPError
+from dmapiclient import HTTPError
+from dmutils import api_stubs
 from dmcontent.content_loader import ContentLoader
 import mock
 from lxml import html
@@ -71,11 +72,19 @@ def find_briefs_mock():
                 "publishedAt": "2016-02-04T12:00:00.000000Z",
                 "applicationsClosedAt": "2016-02-16T12:00:00.000000Z"
             },
-        ]
+        ],
+        "meta": {
+            # let's imagine that this was just the first page of a bigger response
+            "total": 44,
+        },
     }
 
     for brief in find_briefs_response['briefs']:
         brief.update(base_brief_values)
+
+    find_briefs_response["meta"] = {
+        "total": len(find_briefs_response["briefs"]),
+    }
 
     return find_briefs_response
 
@@ -2128,7 +2137,6 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
 
 
 class TestBuyerAccountOverview(BaseApplicationTest):
-
     def setup_method(self, method):
         super().setup_method(method)
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
@@ -2138,13 +2146,117 @@ class TestBuyerAccountOverview(BaseApplicationTest):
         self.data_api_client_patch.stop()
         super().teardown_method(method)
 
-    def test_buyer_account_overview_page_renders(self):
-        self.data_api_client.find_briefs.return_value = find_briefs_mock()
-        self.data_api_client.find_direct_award_projects.return_value = {"projects": []}
+    @pytest.mark.parametrize("has_briefs", (False, True,))
+    @pytest.mark.parametrize(
+        ("projects_awaiting_outcomes", "all_projects"),
+        (
+            (0, 0),
+            (0, 3),
+            (24, 30),
+        ),
+    )
+    def test_buyer_account_overview(self, has_briefs, projects_awaiting_outcomes, all_projects):
+        def _find_direct_award_projects_mock_impl(
+            user_id=None,
+            having_outcome=None,
+            locked=None,
+            page=None,
+            latest_first=None,
+            with_users=False,
+        ):
+            assert user_id == 123
+            if locked is True and having_outcome is False:
+                return {
+                    "projects": [
+                        {
+                            "id": project_id,
+                            "name": "Poldy",
+                            "lockedAt": "2010-11-12T13:14:15.12345Z",
+                            "outcome": None,
+                        } for project_id in range(321, 321 + min(projects_awaiting_outcomes, 5))
+                        # limited to listing of 5 to simulate it being the first of a multi-page response
+                    ],
+                    "meta": {
+                        "total": projects_awaiting_outcomes,
+                    },
+                }
+            elif locked is None and having_outcome is None:
+                return {
+                    "projects": [
+                        {
+                            "id": project_id,
+                            "name": "Poldy",
+                            "lockedAt": "2010-11-12T13:14:15.12345Z" if project_id % 2 else None,
+                            "outcome": {"id": project_id * 2} if project_id % 6 else None,
+                        } for project_id in range(321, 321 + min(all_projects, 5))
+                        # limited to listing of 5 to simulate it being the first of a multi-page response
+                    ],
+                    "meta": {
+                        "total": all_projects,
+                    },
+                }
+            raise AssertionError("unexpected argument combination")
+
+        self.data_api_client.find_direct_award_projects.side_effect = _find_direct_award_projects_mock_impl
+        self.data_api_client.find_briefs.return_value = find_briefs_mock() if has_briefs else {
+            "briefs": [],
+            "meta": {
+                "total": 0,
+            },
+        }
         self.login_as_buyer()
+
         res = self.client.get('/buyers')
         assert res.status_code == 200
-        assert 'Cloud hosting, software and support' in res.get_data(as_text=True)
-        assert 'Digital outcomes, specialists and user research' in res.get_data(as_text=True)
-        assert "href=\"/user/change-password\"" in res.get_data(as_text=True)
-        assert "Change your password" in res.get_data(as_text=True)
+
+        document = html.fromstring(res.get_data())
+        assert document.xpath("//h2[normalize-space(string())=$t]", t="Cloud hosting, software and support")
+        assert document.xpath(
+            "//h2[normalize-space(string())=$t]",
+            t="Digital outcomes, specialists and user research participants",
+        )
+        assert document.xpath(
+            "//a[@href=$u][normalize-space(string())=$t]",
+            u="/user/change-password",
+            t="Change your password",
+        )
+
+        assert bool(document.xpath(
+            "//a[@href=$u][normalize-space(string())=$t]",
+            t="View your requirements",
+            u="/buyers/requirements/digital-outcomes-and-specialists",
+        )) == has_briefs
+        # but now also a broader assertion mainly aimed at the negative case
+        assert bool(document.xpath(
+            "/*[contains(normalize-space(string()), $t)]",
+            t="View your requirements",
+        )) == has_briefs
+        assert bool(document.xpath(
+            "/*[contains(normalize-space(string()), $t)]",
+            t="You don't have any requirements.",
+        )) == (not has_briefs)
+
+        assert bool(document.xpath(
+            "/*[contains(normalize-space(string()), $t)]",
+            t="tell us the outcome",
+        )) == bool(projects_awaiting_outcomes)
+        assert bool(document.xpath(
+            "/*[contains(normalize-space(string()), $t)]",
+            t=f"outcome for {projects_awaiting_outcomes} saved search",
+        )) == bool(projects_awaiting_outcomes)
+        assert bool(document.xpath(
+            "//a[@href=$u][normalize-space(string())=$t]",
+            t="View your saved searches",
+            u="/buyers/direct-award/g-cloud",
+        )) == bool(all_projects)
+        # but now also a broader assertion mainly aimed at the negative case
+        assert bool(document.xpath(
+            "/*[contains(normalize-space(string()), $t)]",
+            t="View your saved searches",
+        )) == bool(all_projects)
+        assert bool(document.xpath(
+            "//*[normalize-space(string())=$t]",
+            t="You don't have any saved searches."
+        )) == (not all_projects)
+
+        assert self.data_api_client.find_direct_award_projects.called is True

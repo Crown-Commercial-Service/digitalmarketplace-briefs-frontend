@@ -31,10 +31,14 @@
     <div class="dmspeak">
       <h2 class="heading-xmedium">Cloud hosting, software and support</h2>
       <p>
-        {% if user_projects_total %}
+        {% if user_has_projects %}
+          {% if user_projects_awaiting_outcomes_total %}
+            You need to tell us the outcome for {{ user_projects_awaiting_outcomes_total }}
+            {{ pluralize(user_projects_awaiting_outcomes_total, "saved search", "saved searches") }}.<br>
+          {% endif %}
           <a href="/buyers/direct-award/g-cloud">View your saved searches</a><br>
         {% else %}
-          You don't have any saved searches
+          You don't have any saved searches.
         {% endif %}
       </p>
     
@@ -43,7 +47,7 @@
         {% if user_briefs_total %}
           <a href="{{ url_for('buyers.buyer_dos_requirements') }}">View your requirements</a><br>  
         {% else %}   
-          You don't have any requirements
+          You don't have any requirements.
         {% endif %}
       </p>
     </div>
