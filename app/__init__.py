@@ -4,8 +4,6 @@ from flask_wtf.csrf import CSRFProtect, CSRFError
 
 import dmapiclient
 from dmutils import init_app, flask_featureflags
-from dmcontent.utils import try_load_manifest
-from dmcontent.content_loader import ContentLoader
 from dmutils.user import User
 
 from config import configs
@@ -15,8 +13,6 @@ login_manager = LoginManager()
 data_api_client = dmapiclient.DataAPIClient()
 feature_flags = flask_featureflags.FeatureFlag()
 csrf = CSRFProtect()
-
-content_loader = ContentLoader('app/content')
 
 
 def create_app(config_name):
@@ -31,17 +27,6 @@ def create_app(config_name):
         feature_flags=feature_flags,
         login_manager=login_manager,
     )
-
-    for framework_data in data_api_client.find_frameworks().get('frameworks'):
-        if not framework_data['slug'] in application.config.get('DM_FRAMEWORK_CONTENT_MAP', {}):
-            if framework_data['framework'] == 'g-cloud':
-                if framework_data['status'] != 'expired':
-                    try_load_manifest(content_loader, application, framework_data, 'services',
-                                      'services_search_filters')
-
-                try_load_manifest(content_loader, application, framework_data, 'services', 'display_service')
-            elif framework_data['framework'] == 'digital-outcomes-and-specialists':
-                try_load_manifest(content_loader, application, framework_data, 'briefs', 'display_brief')
 
     from .create_buyer.views.create_buyer import create_buyer as create_buyer_blueprint
     from .main import dos as dos_blueprint
