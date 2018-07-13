@@ -19,6 +19,11 @@ content_loader.load_manifest('digital-outcomes-and-specialists-2', 'brief-respon
 content_loader.load_manifest('digital-outcomes-and-specialists-2', 'clarification_question', 'clarification_question')
 content_loader.load_manifest('digital-outcomes-and-specialists-2', 'briefs', 'award_brief')
 
+content_loader.load_manifest('digital-outcomes-and-specialists-3', 'briefs', 'edit_brief')
+content_loader.load_manifest('digital-outcomes-and-specialists-3', 'brief-responses', 'output_brief_response')
+content_loader.load_manifest('digital-outcomes-and-specialists-3', 'clarification_question', 'clarification_question')
+content_loader.load_manifest('digital-outcomes-and-specialists-3', 'briefs', 'award_brief')
+
 
 main.before_request(partial(require_login, role='buyer'))
 
