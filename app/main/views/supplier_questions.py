@@ -1,7 +1,7 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from flask import abort, render_template, request, redirect, url_for
+from flask import abort, request, redirect, url_for
 from flask_login import current_user
 
 from app import data_api_client
@@ -9,6 +9,7 @@ from .. import main, content_loader
 from ..helpers.buyers_helpers import get_framework_and_lot, is_brief_correct, get_briefs_breadcrumbs
 
 from dmapiclient import HTTPError
+from dmutils.flask import timed_render_template as render_template
 
 
 @main.route(

@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from app import data_api_client
 
-from flask import render_template
+from dmutils.flask import timed_render_template as render_template
 
 from .. import dos
 from ..helpers.buyers_helpers import get_framework_and_lot
