@@ -1,7 +1,7 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from flask import abort, render_template, request, redirect, url_for, flash, current_app
+from flask import abort, request, redirect, url_for, flash, current_app
 from flask_login import current_user
 
 from app import data_api_client
@@ -14,6 +14,7 @@ from ..helpers.buyers_helpers import (
 
 from dmapiclient import HTTPError
 from dmutils.dates import get_publishing_dates
+from dmutils.flask import timed_render_template as render_template
 from dmutils.formats import DATETIME_FORMAT
 from datetime import datetime
 

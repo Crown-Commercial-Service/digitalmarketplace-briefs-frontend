@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 
-from flask import abort, render_template, request, redirect, url_for, flash
+from flask import abort, request, redirect, url_for, flash
 from flask_login import current_user
 
 from app import data_api_client
@@ -14,6 +14,7 @@ from ..forms.cancel import CancelBriefForm
 from ..forms.award_or_cancel import AwardOrCancelBriefForm
 
 from dmapiclient import HTTPError
+from dmutils.flask import timed_render_template as render_template
 from dmutils.forms import get_errors_from_wtform
 
 BRIEF_UPDATED_MESSAGE = "You’ve updated ‘{brief[title]}’"
