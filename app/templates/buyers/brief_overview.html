@@ -115,7 +115,7 @@
                   'allowed_statuses': ['live']
                 },
                 {
-                  'href': url_for("external.get_brief_by_id", framework_family=brief.frameworkFramework, brief_id=brief.id),
+                  'href': url_for("external.get_brief_by_id", framework_family=brief.framework.family, brief_id=brief.id),
                   'text': 'View your published requirements',
                   'allowed_statuses': ['live', 'closed', 'awarded', 'cancelled', 'unsuccessful']
                 }

@@ -16,8 +16,13 @@ from freezegun import freeze_time
 def find_briefs_mock():
     base_brief_values = {
         "createdAt": "2016-02-01T00:00:00.000000Z",
+        "framework": {
+            "slug": "digital-outcomes-and-specialists-2",
+            "family": "digital-outcomes-and-specialists",
+            "status": "live",
+            "name": "Digital Outcomes and Specialists 2"
+        },
         "frameworkSlug": "digital-outcomes-and-specialists-2",
-        "frameworkFramework": "digital-outcomes-and-specialists",
         "lot": "digital-specialists"
     }
 

@@ -106,7 +106,7 @@
             </form>
           {% endcall %}
         {% elif item.status == "withdrawn" %}
-          {{ summary.service_link(item.title, url_for("external.get_brief_by_id", framework_family=item.frameworkFramework, brief_id=item.id)) }}
+          {{ summary.service_link(item.title, url_for("external.get_brief_by_id", framework_family=item.framework.family, brief_id=item.id)) }}
           {{ summary.text("Withdrawn") }}
           {{ summary.button(text="Make a copy", action=url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
         {% elif item.status in ["awarded", "cancelled", "unsuccessful"] %}
