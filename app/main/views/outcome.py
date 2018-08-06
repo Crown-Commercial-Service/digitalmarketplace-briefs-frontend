@@ -15,7 +15,7 @@ from ..forms.award_or_cancel import AwardOrCancelBriefForm
 
 from dmapiclient import HTTPError
 from dmutils.flask import timed_render_template as render_template
-from dmutils.forms import get_errors_from_wtform
+from dmutils.forms.helpers import get_errors_from_wtform
 
 BRIEF_UPDATED_MESSAGE = "You’ve updated ‘{brief[title]}’"
 

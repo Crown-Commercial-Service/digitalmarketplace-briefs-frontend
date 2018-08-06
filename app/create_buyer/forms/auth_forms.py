@@ -1,10 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Regexp
-from dmutils.forms import StripWhitespaceStringField
+from dmutils.forms.fields import DMStripWhitespaceStringField
 
 
 class EmailAddressForm(FlaskForm):
-    email_address = StripWhitespaceStringField(
+    email_address = DMStripWhitespaceStringField(
         'Email address', id="input_email_address",
         validators=[
             DataRequired(message="You must provide an email address"),
