@@ -50,7 +50,6 @@ def submit_create_buyer_account():
             "create_buyer/create_buyer_account.html",
             form=form,
             errors=get_errors_from_wtform(form),
-            email_address=form.email_address.data
         ), 400
 
 
