@@ -519,9 +519,9 @@ detect-file@^1.0.0:
   version "13.2.0"
   resolved "https://github.com/alphagov/digitalmarketplace-frameworks.git#6c3cd8d90b9cc2641ee6d99c26c3f814686c840a"
 
-"digitalmarketplace-frontend-toolkit@https://github.com/alphagov/digitalmarketplace-frontend-toolkit.git#v31.0.1":
-  version "31.0.1"
-  resolved "https://github.com/alphagov/digitalmarketplace-frontend-toolkit.git#b34e87bf0c1910f6c8d4ef86f1db9b6533423902"
+"digitalmarketplace-frontend-toolkit@https://github.com/alphagov/digitalmarketplace-frontend-toolkit.git#v31.7.0":
+  version "31.7.0"
+  resolved "https://github.com/alphagov/digitalmarketplace-frontend-toolkit.git#74459b8b9a5e8da35e967509ace77ceeedfd8e4a"
   dependencies:
     del "^2.2.2"
     govuk-elements-sass "3.0.3"
