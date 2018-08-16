@@ -192,7 +192,7 @@ class TestAwardBrief(BaseApplicationTest):
 
         assert res.status_code == 500
         error_span = document.xpath('//h1')[0]
-        assert self._strip_whitespace(error_span.text_content()) == "Sorry,we'reexperiencingtechnicaldifficulties"
+        assert self._strip_whitespace(error_span.text_content()) == "Sorry,we’reexperiencingtechnicaldifficulties"
 
 
 class TestAwardBriefDetails(BaseApplicationTest):
