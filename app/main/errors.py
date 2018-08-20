@@ -13,4 +13,4 @@ def api_error_handler(e):
 
 @main.app_errorhandler(QuestionNotFoundError)
 def content_loader_error_handler(e):
-    return render_error_page(400)
+    return render_error_page(status_code=400)
