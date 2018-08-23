@@ -1826,16 +1826,20 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        framework = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[
                 api_stubs.lot(slug='digital-outcomes', allows_brief=True),
             ]
         )
+        self.data_api_client.get_framework.return_value = framework
 
         brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='closed')
-        brief_stub['briefs'].update({'publishedAt': self.brief_publishing_date})
+        brief_stub['briefs'].update({
+            "framework": framework["frameworks"],
+            "publishedAt": self.brief_publishing_date,
+        })
         self.data_api_client.get_brief.return_value = brief_stub
 
         self.data_api_client.find_brief_responses.return_value = self.brief_responses
@@ -2020,7 +2024,10 @@ class TestViewBriefResponsesPageForNewFlowBrief(AbstractViewBriefResponsesPage):
 
     def test_page_shows_ods_download_link(self):
         brief_stub = api_stubs.brief(lot_slug="digital-outcomes", status='closed')
-        brief_stub['briefs'].update({'publishedAt': self.brief_publishing_date})
+        brief_stub['briefs'].update({
+            "framework": self.data_api_client.get_framework.return_value["frameworks"],
+            "publishedAt": self.brief_publishing_date,
+        })
         self.data_api_client.get_brief.return_value = brief_stub
 
         self.login_as_buyer()

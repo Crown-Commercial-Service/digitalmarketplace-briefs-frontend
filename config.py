@@ -1,7 +1,7 @@
 import os
 import hashlib
 import jinja2
-from dmutils.status import enabled_since, get_version_label
+from dmutils.status import get_version_label
 from dmutils.asset_fingerprint import AssetFingerprinter
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -57,7 +57,6 @@ class Config(object):
 
     # Feature Flags
     RAISE_ERROR_ON_MISSING_FEATURES = True
-    FEATURE_FLAGS_NEW_SUPPLIER_FLOW = False
 
     # LOGGING
     DM_LOG_LEVEL = 'DEBUG'
@@ -88,8 +87,6 @@ class Test(Config):
     SHARED_EMAIL_KEY = "KEY"
     SECRET_KEY = "KEY"
 
-    FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2016-11-29')
-
 
 class Development(Config):
     DEBUG = True
@@ -102,8 +99,6 @@ class Development(Config):
     DM_NOTIFY_API_KEY = "not_a_real_key-00000000-fake-uuid-0000-000000000000"
     SECRET_KEY = "verySecretKey"
     SHARED_EMAIL_KEY = "very_secret"
-
-    FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2016-11-29')
 
 
 class Live(Config):
@@ -121,12 +116,10 @@ class Live(Config):
 
 
 class Preview(Live):
-    FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2017-02-06')
+    pass
 
 
 class Staging(Live):
-    FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2017-02-07')
-
     NOTIFY_TEMPLATES = {
         'create_user_account': '84f5d812-df9d-4ab8-804a-06f64f5abd30',
     }
@@ -136,8 +129,6 @@ class Staging(Live):
 
 
 class Production(Live):
-    FEATURE_FLAGS_NEW_SUPPLIER_FLOW = enabled_since('2017-02-08')
-
     NOTIFY_TEMPLATES = Staging.NOTIFY_TEMPLATES
 
 

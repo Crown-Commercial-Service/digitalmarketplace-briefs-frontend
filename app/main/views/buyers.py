@@ -1,15 +1,20 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from flask import abort, request, redirect, url_for, flash, current_app
+from flask import abort, request, redirect, url_for, flash
 from flask_login import current_user
 
 from app import data_api_client
 from .. import main, content_loader
 from ..helpers.buyers_helpers import (
-    get_framework_and_lot, count_unanswered_questions,
-    brief_can_be_edited, add_unanswered_counts_to_briefs, is_brief_correct,
-    section_has_at_least_one_required_question, get_briefs_breadcrumbs
+    add_unanswered_counts_to_briefs,
+    brief_can_be_edited,
+    count_unanswered_questions,
+    get_briefs_breadcrumbs,
+    get_framework_and_lot,
+    is_brief_correct,
+    is_legacy_brief_response,
+    section_has_at_least_one_required_question,
 )
 
 from dmapiclient import HTTPError
@@ -414,9 +419,10 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
 
     brief_responses = data_api_client.find_brief_responses(brief_id)['briefResponses']
 
-    brief_responses_require_evidence = (
-        datetime.strptime(current_app.config['FEATURE_FLAGS_NEW_SUPPLIER_FLOW'], "%Y-%m-%d")
-        <= datetime.strptime(brief['publishedAt'][0:10], "%Y-%m-%d")
+    brief_responses_required_evidence = (
+        None
+        if not brief_responses else
+        not is_legacy_brief_response(brief_responses[0], brief=brief)
     )
 
     counter = Counter()
@@ -438,7 +444,7 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
     return render_template(
         "buyers/brief_responses.html",
         response_counts={"failed": counter[False], "eligible": counter[True]},
-        brief_responses_require_evidence=brief_responses_require_evidence,
+        brief_responses_required_evidence=brief_responses_required_evidence,
         brief=brief,
         breadcrumbs=breadcrumbs
     ), 200
