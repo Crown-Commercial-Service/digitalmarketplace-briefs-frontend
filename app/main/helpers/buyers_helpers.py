@@ -101,3 +101,18 @@ def get_briefs_breadcrumbs(additional_breadcrumbs=[]):
         breadcrumbs += additional_breadcrumbs
 
     return breadcrumbs
+
+
+def is_legacy_brief_response(brief_response, brief=None):
+    """
+    In the legacy flow (DOS 1 only), the essentialRequirements answers were evaluated at the end of the application
+    (giving the supplier a pass or fail).
+    In the current flow, the supplier can't proceed past the essentialRequirements question unless they meet the
+    criteria - it's done with form validation on that page, rather than evaluating the answers at the end of the flow.
+
+    :param brief: allows brief to be specified manually (for cases where brief can't automatically be extracted from
+        the brief_response.
+    """
+    return ((brief or brief_response['brief'])['framework']['slug'] == 'digital-outcomes-and-specialists') and \
+        'essentialRequirements' in brief_response and \
+        'essentialRequirementsMet' not in brief_response
