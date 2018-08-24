@@ -55,9 +55,6 @@ class Config(object):
         'asset_fingerprinter': AssetFingerprinter(asset_root=ASSET_PATH)
     }
 
-    # Feature Flags
-    RAISE_ERROR_ON_MISSING_FEATURES = True
-
     # LOGGING
     DM_LOG_LEVEL = 'DEBUG'
     DM_PLAIN_TEXT_LOGS = False
