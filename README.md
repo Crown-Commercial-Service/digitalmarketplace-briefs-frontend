@@ -9,23 +9,12 @@ Frontend briefs application for the digital marketplace.
 
 ## Quickstart
 
-Install [Virtualenv](https://virtualenv.pypa.io/en/latest/)
-```
-sudo easy_install virtualenv
-```
-
 Install dependencies, run migrations and run the app
 ```
 make run-all
 ````
 
 ## Setup
-
-Install [Virtualenv](https://virtualenv.pypa.io/en/latest/)
-
-```
-sudo easy_install virtualenv
-```
 
 The briefs frontend app requires access to the API. The location and access tokens for 
 the API is set with environment variables.
@@ -46,7 +35,7 @@ instance pointed to by `DM_API_URL`.
 ### Create and activate the virtual environment
 
 ```
-virtualenv -p python3 ./venv
+python3 -m venv ./venv
 source ./venv/bin/activate
 ```
 
