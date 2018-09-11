@@ -35,7 +35,7 @@ class Config(object):
     DM_NOTIFY_API_KEY = None
 
     NOTIFY_TEMPLATES = {
-        'create_user_account': '1d1e38a6-744a-4d5a-84af-aefccde70a6c',
+        "create_user_account": "84f5d812-df9d-4ab8-804a-06f64f5abd30",
     }
 
     # This is just a placeholder
@@ -117,16 +117,11 @@ class Preview(Live):
 
 
 class Staging(Live):
-    NOTIFY_TEMPLATES = {
-        'create_user_account': '84f5d812-df9d-4ab8-804a-06f64f5abd30',
-    }
-
-    # Check we didn't forget any live template IDs
-    assert NOTIFY_TEMPLATES.keys() == Config.NOTIFY_TEMPLATES.keys()
+    pass
 
 
 class Production(Live):
-    NOTIFY_TEMPLATES = Staging.NOTIFY_TEMPLATES
+    pass
 
 
 configs = {
