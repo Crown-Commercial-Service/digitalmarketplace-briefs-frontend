@@ -11,10 +11,13 @@ from ..helpers.buyers_helpers import get_framework_and_lot
 @dos.route('/frameworks/<framework_slug>/requirements/user-research-studios', methods=['GET'])
 def studios_start_page(framework_slug):
     # Check framework is live and has the user-research-studios lot
-    get_framework_and_lot(framework_slug, 'user-research-studios', data_api_client, allowed_statuses=['live'])
+    framework, lot = get_framework_and_lot(
+        framework_slug, 'user-research-studios', data_api_client, allowed_statuses=['live']
+    )
 
     return render_template(
-        "buyers/studios_start_page.html"
+        "buyers/studios_start_page.html",
+        framework=framework,
     ), 200
 
 
