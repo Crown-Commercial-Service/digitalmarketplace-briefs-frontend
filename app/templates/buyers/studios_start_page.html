@@ -75,7 +75,7 @@ Find a user research lab - Digital Marketplace
         <div class="marketplace-paragraph">
             <p>Read more about <a href="https://www.gov.uk/guidance/how-to-hire-user-research-labs-on-the-digital-marketplace">how to hire user research labs</a>.</p>
         </div>
-        
+
         <h2>Download the list of labs</h2>
 
         {%
@@ -83,7 +83,7 @@ Find a user research lab - Digital Marketplace
             items = [
             {
             "title": "List of labs",
-            "link": "https://assets.digitalmarketplace.service.gov.uk/digital-outcomes-and-specialists/communications/catalogues/user-research-studios.csv",
+            "link": "https://assets.digitalmarketplace.service.gov.uk/{}/communications/catalogues/user-research-studios.csv".format(framework.slug),
             "file_type": "csv"
             }
             ]
@@ -92,7 +92,7 @@ Find a user research lab - Digital Marketplace
         {% endwith %}
 
         <p>Get help filtering the list at <a href="mailto:enquiries@digitalmarketplace.service.gov.uk">enquiries@digitalmarketplace.service.gov.uk</a></p>
-        
+
     </div>
 </div>
 
