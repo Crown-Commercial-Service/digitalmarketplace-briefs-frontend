@@ -85,7 +85,7 @@ The app runs on port 5005 by default. Use the app at [http://127.0.0.1:5005/](ht
 ### Updating application dependencies
 
 `requirements.txt` file is generated from the `requirements-app.txt` in order to pin
-versions of all nested dependecies. If `requirements-app.txt` has been changed (or
+versions of all nested dependencies. If `requirements-app.txt` has been changed (or
 we want to update the unpinned nested dependencies) `requirements.txt` should be
 regenerated with
 
