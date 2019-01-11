@@ -3,7 +3,7 @@ import mock
 
 import pytest
 from lxml import html
-from dmutils import api_stubs
+from dmtestutils.api_model_stubs import FrameworkStub, LotStub
 
 from ...helpers import BaseApplicationTest
 
@@ -22,13 +22,13 @@ class TestStartBriefInfoPage(BaseApplicationTest):
         super().teardown_method(method)
 
     def test_show_start_brief_info_page(self):
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        self.data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True),
+                LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
-        )
+        ).single_result_response()
 
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists")
@@ -51,13 +51,13 @@ class TestStartBriefInfoPage(BaseApplicationTest):
         )
     )
     def test_has_correct_link_to_supplier_csv(self, slug_suffix, lot_slug):
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        self.data_api_client.get_framework.return_value = FrameworkStub(
             slug=f'digital-outcomes-and-specialists{slug_suffix}',
             status='live',
             lots=[
-                api_stubs.lot(slug=lot_slug, allows_brief=True),
+                LotStub(slug=lot_slug, allows_brief=True).response(),
             ]
-        )
+        ).single_result_response()
         res = self.client.get(
             f"/buyers/frameworks/digital-outcomes-and-specialists{slug_suffix}/requirements/{lot_slug}"
         )
@@ -70,26 +70,26 @@ class TestStartBriefInfoPage(BaseApplicationTest):
         )
 
     def test_404_if_lot_does_not_allow_brief(self):
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        self.data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=False)
+                LotStub(slug='digital-specialists', allows_brief=False).response()
             ]
-        )
+        ).single_result_response()
 
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists")
         assert res.status_code == 404
 
     def test_404_if_framework_status_is_not_live(self):
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        self.data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists',
             status='open',
             lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True),
+                LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
-        )
+        ).single_result_response()
 
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists")
@@ -110,13 +110,13 @@ class TestStartStudiosInfoPage(BaseApplicationTest):
         super().teardown_method(method)
 
     def test_show_start_studios_info_page(self):
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        self.data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[
-                api_stubs.lot(slug='user-research-studios'),
+                LotStub(slug='user-research-studios').response(),
             ]
-        )
+        ).single_result_response()
 
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/user-research-studios")
@@ -126,13 +126,13 @@ class TestStartStudiosInfoPage(BaseApplicationTest):
 
     @pytest.mark.parametrize(('slug_suffix'), ('', '-2', '-3'))
     def test_has_correct_link_to_supplier_csv(self, slug_suffix):
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        self.data_api_client.get_framework.return_value = FrameworkStub(
             slug=f'digital-outcomes-and-specialists{slug_suffix}',
             status='live',
             lots=[
-                api_stubs.lot(slug='user-research-studios', allows_brief=True),
+                LotStub(slug='user-research-studios', allows_brief=True).response(),
             ]
-        )
+        ).single_result_response()
         res = self.client.get(
             f"/buyers/frameworks/digital-outcomes-and-specialists{slug_suffix}/requirements/user-research-studios"
         )
@@ -146,13 +146,13 @@ class TestStartStudiosInfoPage(BaseApplicationTest):
         )
 
     def test_404_if_framework_status_is_not_live(self):
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        self.data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists',
             status='open',
             lots=[
-                api_stubs.lot(slug='user-research-studios'),
+                LotStub(slug='user-research-studios').response(),
             ]
-        )
+        ).single_result_response()
 
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/user-research-studios")

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from ...helpers import BaseApplicationTest
 from dmapiclient import HTTPError
-from dmutils import api_stubs
+from dmtestutils.api_model_stubs import BriefStub, FrameworkStub, LotStub
 import mock
 from lxml import html
 import pytest
@@ -26,17 +26,17 @@ class TestAwardBrief(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.outcome.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
 
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        self.data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists-2',
             status='live',
             lots=[
-                api_stubs.lot(slug='digital-outcomes', allows_brief=True),
+                LotStub(slug='digital-outcomes', allows_brief=True).response(),
             ]
-        )
+        ).single_result_response()
 
-        brief_stub = api_stubs.brief(
+        brief_stub = BriefStub(
             framework_slug="digital-outcomes-and-specialists-2", lot_slug="digital-outcomes", status='closed'
-        )
+        ).single_result_response()
         self.data_api_client.get_brief.return_value = brief_stub
 
         self.data_api_client.find_brief_responses.return_value = self.brief_responses
@@ -164,11 +164,11 @@ class TestAwardBrief(BaseApplicationTest):
         assert self._strip_whitespace(error_span.text_content()) == "Notavalidchoice"
 
     def test_award_brief_post_valid_form_calls_api_and_redirects_to_next_question(self):
-        self.data_api_client.update_brief_award_brief_response.return_value = api_stubs.framework(
+        self.data_api_client.update_brief_award_brief_response.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists-2',
             status='closed',
             lots=[
-                api_stubs.lot(slug='digital-outcomes', allows_brief=True)
+                LotStub(slug='digital-outcomes', allows_brief=True).response()
             ]
         )
 
@@ -204,17 +204,17 @@ class TestAwardBriefDetails(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.outcome.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
 
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        self.data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists-2',
             status='live',
             lots=[
-                api_stubs.lot(slug='digital-outcomes', allows_brief=True),
+                LotStub(slug='digital-outcomes', allows_brief=True).response(),
             ]
-        )
+        ).single_result_response()
 
-        self.data_api_client.get_brief.return_value = api_stubs.brief(
+        self.data_api_client.get_brief.return_value = BriefStub(
             framework_slug='digital-outcomes-and-specialists-2', lot_slug="digital-outcomes", status='closed'
-        )
+        ).single_result_response()
         self.data_api_client.get_brief_response.return_value = {
             "briefResponses": {
                 "id": 5678,
@@ -259,13 +259,13 @@ class TestAwardBriefDetails(BaseApplicationTest):
             '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award-contract'
 
     def test_award_brief_details_post_valid_form_calls_api_and_redirects(self):
-        self.data_api_client.update_brief_award_details.return_value = api_stubs.framework(
+        self.data_api_client.update_brief_award_details.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists-2',
             status='awarded',
             lots=[
-                api_stubs.lot(slug='digital-outcomes', allows_brief=True)
+                LotStub(slug='digital-outcomes', allows_brief=True).response()
             ]
-        )
+        ).single_result_response()
         self.login_as_buyer()
         res = self.client.post(
             self.url.format(brief_id=1234, brief_response_id=5678),
@@ -381,19 +381,19 @@ class TestCancelBrief(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.outcome.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
 
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        self.data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists-2',
             status='live',
             lots=[
-                api_stubs.lot(slug='digital-outcomes', allows_brief=True),
+                LotStub(slug='digital-outcomes', allows_brief=True).response(),
             ]
-        )
-        self.brief = api_stubs.brief(
+        ).single_result_response()
+        self.brief = BriefStub(
             user_id=123,
             framework_slug='digital-outcomes-and-specialists-2',
             lot_slug="digital-outcomes",
             status='closed'
-        )['briefs']
+        ).response()
         self.data_api_client.get_brief.return_value = {"briefs": self.brief}
         self.login_as_buyer()
 
@@ -588,19 +588,19 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.outcome.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
 
-        self.data_api_client.get_framework.return_value = api_stubs.framework(
+        self.data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists-2',
             status='live',
             lots=[
-                api_stubs.lot(slug='digital-outcomes', allows_brief=True),
+                LotStub(slug='digital-outcomes', allows_brief=True).response(),
             ]
-        )
-        self.brief = api_stubs.brief(
+        ).single_result_response()
+        self.brief = BriefStub(
             user_id=123,
             framework_slug='digital-outcomes-and-specialists-2',
             lot_slug="digital-outcomes",
             status='closed'
-        )['briefs']
+        ).response()
 
         self.data_api_client.get_brief.return_value = {"briefs": self.brief}
         self.login_as_buyer()

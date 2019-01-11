@@ -5,7 +5,7 @@ from werkzeug.exceptions import NotFound
 import app.main.helpers as helpers
 from dmcontent.content_loader import ContentLoader
 
-from dmutils import api_stubs
+from dmtestutils.api_model_stubs import BriefStub, FrameworkStub, LotStub
 
 content_loader = ContentLoader('tests/fixtures/content')
 content_loader.load_manifest('dos', 'data', 'edit_brief')
@@ -14,13 +14,13 @@ questions_builder = content_loader.get_manifest('dos', 'edit_brief')
 
 class TestBuyersHelpers(object):
     def test_get_framework_and_lot(self):
-        provided_lot = api_stubs.lot(slug='digital-specialists', allows_brief=True)
+        provided_lot = LotStub(slug='digital-specialists', allows_brief=True).response()
         data_api_client = mock.Mock()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+        data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[provided_lot],
-        )
+        ).single_result_response()
 
         framework, lot = helpers.buyers_helpers.get_framework_and_lot('digital-outcomes-and-specialists',
                                                                       'digital-specialists',
@@ -34,13 +34,13 @@ class TestBuyersHelpers(object):
 
     def test_get_framework_and_lot_404s_for_wrong_framework_status(self):
         data_api_client = mock.Mock()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+        data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists',
             status='open',
             lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=True)
+                LotStub(slug='digital-specialists', allows_brief=True).response()
             ]
-        )
+        ).single_result_response()
 
         with pytest.raises(NotFound):
             helpers.buyers_helpers.get_framework_and_lot(
@@ -52,13 +52,13 @@ class TestBuyersHelpers(object):
 
     def test_get_framework_and_lot_404s_if_allows_brief_required(self):
         data_api_client = mock.Mock()
-        data_api_client.get_framework.return_value = api_stubs.framework(
+        data_api_client.get_framework.return_value = FrameworkStub(
             slug='digital-outcomes-and-specialists',
             status='live',
             lots=[
-                api_stubs.lot(slug='digital-specialists', allows_brief=False)
+                LotStub(slug='digital-specialists', allows_brief=False).response()
             ]
-        )
+        ).single_result_response()
 
         with pytest.raises(NotFound):
             helpers.buyers_helpers.get_framework_and_lot(
@@ -78,7 +78,7 @@ class TestBuyersHelpers(object):
         ]
     )
     def test_is_brief_correct(self, framework, lot, user, result):
-        brief = api_stubs.brief(user_id=123, status='live')['briefs']
+        brief = BriefStub(user_id=123, status='live').response()
 
         assert helpers.buyers_helpers.is_brief_correct(brief, framework, lot, user) is result
 
@@ -92,7 +92,7 @@ class TestBuyersHelpers(object):
         ]
     )
     def test_if_brief_correct_allow_withdrawn(self, status, allow_withdrawn, result):
-        brief = api_stubs.brief(user_id=123, status=status)['briefs']
+        brief = BriefStub(user_id=123, status=status).response()
         assert helpers.buyers_helpers.is_brief_correct(
             brief, 'digital-outcomes-and-specialists', 'digital-specialists', 123, allow_withdrawn=allow_withdrawn
         ) is result
@@ -104,23 +104,23 @@ class TestBuyersHelpers(object):
         ]
     )
     def test_is_brief_correct_allowed_statuses(self, allowed_statuses, result):
-        brief = api_stubs.brief(user_id=123, status='live')['briefs']
+        brief = BriefStub(user_id=123, status='live').response()
         assert helpers.buyers_helpers.is_brief_correct(
             brief, 'digital-outcomes-and-specialists', 'digital-specialists', 123, allowed_statuses=allowed_statuses
         ) is result
 
     def test_is_brief_associated_with_user(self):
-        brief = api_stubs.brief(user_id=123)['briefs']
+        brief = BriefStub(user_id=123).response()
         assert helpers.buyers_helpers.is_brief_associated_with_user(brief, 123) is True
         assert helpers.buyers_helpers.is_brief_associated_with_user(brief, 234) is False
 
     def test_brief_can_be_edited(self):
-        assert helpers.buyers_helpers.brief_can_be_edited(api_stubs.brief(status='draft')['briefs']) is True
-        assert helpers.buyers_helpers.brief_can_be_edited(api_stubs.brief(status='live')['briefs']) is False
+        assert helpers.buyers_helpers.brief_can_be_edited(BriefStub(status='draft').response()) is True
+        assert helpers.buyers_helpers.brief_can_be_edited(BriefStub(status='live').response()) is False
 
     def test_brief_is_withdrawn(self):
-        assert helpers.buyers_helpers.brief_is_withdrawn(api_stubs.brief(status='withdrawn')['briefs']) is True
-        assert helpers.buyers_helpers.brief_is_withdrawn(api_stubs.brief(status='live')['briefs']) is False
+        assert helpers.buyers_helpers.brief_is_withdrawn(BriefStub(status='withdrawn').response()) is True
+        assert helpers.buyers_helpers.brief_is_withdrawn(BriefStub(status='live').response()) is False
 
     def test_section_has_at_least_one_required_question(self):
         content = content_loader.get_manifest('dos', 'edit_brief').filter(
