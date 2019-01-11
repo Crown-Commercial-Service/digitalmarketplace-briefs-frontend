@@ -3,7 +3,7 @@
 #Required for testing
 pytest==4.1.0
 mock==2.0.0
-lxml==3.8.0
+lxml==4.3.0
 cssselect==0.9.1
 watchdog==0.8.3
 freezegun==0.3.4
