@@ -4,7 +4,7 @@
 pytest==4.1.0
 mock==2.0.0
 lxml==4.3.0
-cssselect==0.9.1
+cssselect==1.0.3
 watchdog==0.8.3
 freezegun==0.3.4
 
