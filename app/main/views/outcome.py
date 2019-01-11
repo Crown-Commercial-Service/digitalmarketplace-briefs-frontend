@@ -126,7 +126,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
                 form.data['brief_response'],
                 current_user.email_address
             )
-        except HTTPError as e:
+        except HTTPError:
             abort(500, "Unexpected API error when awarding brief response")
 
         return redirect(
@@ -214,7 +214,7 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
             return redirect(
                 url_for('.view_brief_overview', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
             )
-        except HTTPError as e:
+        except HTTPError:
             abort(500, "Unexpected API error when cancelling brief")
 
     breadcrumbs = get_briefs_breadcrumbs([
