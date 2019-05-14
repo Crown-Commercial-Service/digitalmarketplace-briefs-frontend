@@ -26,12 +26,14 @@ def create_app(config_name):
         login_manager=login_manager,
     )
 
+    from .metrics import metrics as metrics_blueprint, gds_metrics
     from .create_buyer.views.create_buyer import create_buyer as create_buyer_blueprint
     from .main import dos as dos_blueprint
     from dmutils.external import external as external_blueprint
     from .main import main as main_blueprint
     from .status import status as status_blueprint
 
+    application.register_blueprint(metrics_blueprint, url_prefix='/buyers')
     application.register_blueprint(create_buyer_blueprint, url_prefix='/buyers')
     application.register_blueprint(dos_blueprint, url_prefix='/buyers')
     application.register_blueprint(main_blueprint, url_prefix='/buyers')
@@ -43,6 +45,7 @@ def create_app(config_name):
 
     login_manager.login_view = 'external.render_login'
     login_manager.login_message_category = "must_login"
+    gds_metrics.init_app(application)
     csrf.init_app(application)
 
     @application.before_request
