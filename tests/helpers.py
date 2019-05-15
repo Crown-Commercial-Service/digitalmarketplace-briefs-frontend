@@ -17,6 +17,7 @@ from dmtestutils.login import login_for_tests
 
 
 class BaseApplicationTest(object):
+
     def setup_method(self, method):
         # We need to mock the API client in create_app, however we can't use patch the constructor,
         # as the DataAPIClient instance has already been created; nor can we temporarily replace app.data_api_client
@@ -24,6 +25,9 @@ class BaseApplicationTest(object):
         # just mock the one function that would make an API call in this case.
         data_api_client.find_frameworks = mock.Mock()
         data_api_client.find_frameworks.return_value = self._get_frameworks_list_fixture_data()
+        self.app_env_var_mock = mock.patch.dict('gds_metrics.os.environ', {'PROMETHEUS_METRICS_PATH': '/_metrics'})
+        self.app_env_var_mock.start()
+
         self.app = create_app('test')
         self.app.register_blueprint(login_for_tests)
         self.client = self.app.test_client()
@@ -33,6 +37,7 @@ class BaseApplicationTest(object):
 
     def teardown_method(self, method):
         self.teardown_login()
+        self.app_env_var_mock.stop()
 
     @staticmethod
     def user(id, email_address, supplier_id, supplier_name, name,
