@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from app import data_api_client
+from flask import current_app
 
 from dmutils.flask import timed_render_template as render_template
 
@@ -18,6 +19,7 @@ def studios_start_page(framework_slug):
     return render_template(
         "buyers/studios_start_page.html",
         framework=framework,
+        support_email_address=current_app.config['SUPPORT_EMAIL_ADDRESS']
     ), 200
 
 
