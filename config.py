@@ -37,6 +37,7 @@ class Config(object):
     NOTIFY_TEMPLATES = {
         "create_user_account": "84f5d812-df9d-4ab8-804a-06f64f5abd30",
     }
+    SUPPORT_EMAIL_ADDRESS = "cloud_digital@crowncommercial.gov.uk"
 
     # This is just a placeholder
     ES_ENABLED = True

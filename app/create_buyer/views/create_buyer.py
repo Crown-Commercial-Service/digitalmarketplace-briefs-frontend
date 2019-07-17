@@ -31,6 +31,7 @@ def submit_create_buyer_account():
         if not data_api_client.is_email_address_with_valid_buyer_domain(email_address):
             return render_template(
                 "create_buyer/create_buyer_user_error.html",
+                support_email_address=current_app.config['SUPPORT_EMAIL_ADDRESS'],
                 error='invalid_buyer_domain'), 400
         else:
             send_user_account_email(
