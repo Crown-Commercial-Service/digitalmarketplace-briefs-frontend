@@ -814,9 +814,9 @@ detect-libc@^1.0.2:
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
   integrity sha1-+hN8S9aY7fVc1c0CrFWfkaTEups=
 
-"digitalmarketplace-frameworks@https://github.com/alphagov/digitalmarketplace-frameworks.git#16.1.0":
-  version "16.1.0"
-  resolved "https://github.com/alphagov/digitalmarketplace-frameworks.git#83c5ccce9884ca354ffc4899aff96f0c3e93e07a"
+"digitalmarketplace-frameworks@https://github.com/alphagov/digitalmarketplace-frameworks.git#16.1.1":
+  version "16.1.1"
+  resolved "https://github.com/alphagov/digitalmarketplace-frameworks.git#853bca9578705000e0129e3dc0b84c5eb18a1aa3"
 
 "digitalmarketplace-frontend-toolkit@https://github.com/alphagov/digitalmarketplace-frontend-toolkit.git#v34.1.0":
   version "34.1.0"
