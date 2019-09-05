@@ -17,11 +17,11 @@ make run-all
 
 ## Setup
 
-The briefs frontend app requires access to the API. The location and access tokens for 
+The briefs frontend app requires access to the API. The location and access tokens for
 the API is set with environment variables.
 
 
-For development you can either point the environment variables to use the 
+For development you can either point the environment variables to use the
 preview environment's `API` boxes, or use local API instances if you have
 them running:
 
@@ -30,7 +30,7 @@ export DM_DATA_API_URL=http://localhost:5000
 export DM_DATA_API_AUTH_TOKEN=<auth_token_accepted_by_api>
 ```
 
-Where `DM_DATA_API_AUTH_TOKEN` is a token accepted by the Data API 
+Where `DM_DATA_API_AUTH_TOKEN` is a token accepted by the Data API
 instance pointed to by `DM_API_URL`.
 
 ### Create and activate the virtual environment
@@ -45,12 +45,6 @@ source ./venv/bin/activate
 Install new Python dependencies with pip
 
 ```pip install -r requirements-dev.txt```
-
-[Install frontend dependencies](https://github.com/alphagov/digitalmarketplace-briefs-frontend#front-end) with yarn and gulp
-
-```
-yarn
-```
 
 ### Run the tests
 
@@ -68,7 +62,7 @@ make test-javascript
 
 ### Run the development server
 
-To run the Briefs Frontend App for local development you can use the convenient run 
+To run the Briefs Frontend App for local development you can use the convenient run
 script, which sets the required environment variables to defaults if they have
 not already been set:
 
@@ -113,20 +107,14 @@ node --version
 
 ### Installation
 
-[How to install yarn](https://yarnpkg.com/en/docs/install)
-To install the required Node modules, type:
-
-```
-yarn
-```
 
 ## Frontend tasks
 
-[YARN](https://yarnpkg.com/en/) is used for all frontend build tasks. The commands available are:
+[npm](https://docs.npmjs.com/cli/run-script) is used for all frontend build tasks. The commands available are:
 
-- `yarn run frontend-build:development` (compile the frontend files for development)
-- `yarn run frontend-build:production` (compile the frontend files for production)
-- `yarn run frontend-build:watch` (watch all frontend+framework files & rebuild when anything changes)
+- `npm run frontend-build:development` (compile the frontend files for development)
+- `npm run frontend-build:production` (compile the frontend files for production)
+- `npm run frontend-build:watch` (watch all frontend+framework files & rebuild when anything changes)
 
 
 ## Frontend tests
