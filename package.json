@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "del": "1.2.0",
-    "digitalmarketplace-frameworks": "https://github.com/alphagov/digitalmarketplace-frameworks.git#16.1.1",
+    "digitalmarketplace-frameworks": "https://github.com/alphagov/digitalmarketplace-frameworks.git#v16.1.1",
     "digitalmarketplace-frontend-toolkit": "https://github.com/alphagov/digitalmarketplace-frontend-toolkit.git#v34.1.0",
     "govuk-elements-sass": "3.0.3",
     "govuk_frontend_toolkit": "5.0.3",
@@ -22,8 +22,7 @@
     "gulp-sourcemaps": "1.5.2",
     "gulp-uglify": "1.5.1",
     "hogan.js": "3.0.2",
-    "jquery": "1.12.0",
-    "jquery-details": "https://github.com/mathiasbynens/jquery-details/archive/v0.1.0.tar.gz"
+    "jquery": "1.12.0"
   },
   "scripts": {
     "test": "./node_modules/gulp/bin/gulp.js test",
