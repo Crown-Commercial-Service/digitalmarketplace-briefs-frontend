@@ -56,9 +56,21 @@ describe("GOVUK.Analytics", function () {
     });
 
     it('configures a universal tracker', function() {
-      expect(universalSetupArguments[0]).toEqual(['create', 'UA-49258698-1', {
+      expect(universalSetupArguments).toContain(['create', 'UA-49258698-1', {
         'cookieDomain': document.domain
       }]);
+      expect(universalSetupArguments).toContain(['send', 'pageview']);
+    });
+    it('configures a cross domain tracker', function() {
+      expect(universalSetupArguments).toContain(['create', 'UA-145652997-1', 'auto', {
+        'name': 'govuk_shared'
+      }]);
+      expect(universalSetupArguments).toContain(['require', 'linker']);
+      expect(universalSetupArguments).toContain(['govuk_shared.require', 'linker']);
+      expect(universalSetupArguments).toContain(['linker:autoLink', [ 'www.gov.uk' ]]);
+      expect(universalSetupArguments).toContain(['govuk_shared.linker:autoLink', [ 'www.gov.uk' ]]);
+      expect(universalSetupArguments).toContain(['govuk_shared.set', 'anonymizeIp', true ]);
+      expect(universalSetupArguments).toContain(['govuk_shared.send', 'pageview']);
     });
   });
 
@@ -81,7 +93,7 @@ describe("GOVUK.Analytics", function () {
       mockLink.appendChild(document.createTextNode('Download supplier responses to ‘Brief 1’'));
       mockLink.href = assetHost + '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/1/responses/download';
       GOVUK.GDM.analytics.events.supplierListDownload({ 'target': mockLink });
-      expect(window.ga.calls.first().args).toEqual(['send', {
+      expect(window.ga.calls.allArgs()).toContain(['send', {
         'hitType': 'event',
         'eventCategory': 'download',
         'eventAction': 'csv',
@@ -100,7 +112,7 @@ describe("GOVUK.Analytics", function () {
       mockLink.appendChild(document.createTextNode('Download supplier responses to ‘Brief 1’'));
       mockLink.href = assetHost + '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1/responses/download';
       GOVUK.GDM.analytics.events.supplierListDownload({ 'target': mockLink });
-      expect(window.ga.calls.first().args).toEqual(['send', {
+      expect(window.ga.calls.allArgs()).toContain(['send', {
         'hitType': 'event',
         'eventCategory': 'download',
         'eventAction': 'csv',
@@ -118,7 +130,7 @@ describe("GOVUK.Analytics", function () {
       mockLink.appendChild(document.createTextNode('List of labs'));
       mockLink.href = assetHost + '/digital-outcomes-and-specialists/communications/catalogues/user-research-studios.csv';
       GOVUK.GDM.analytics.events.supplierListDownload({ 'target': mockLink });
-      expect(window.ga.calls.first().args).toEqual(['send', {
+      expect(window.ga.calls.allArgs()).toContain(['send', {
         'hitType': 'event',
         'eventCategory': 'download',
         'eventAction': 'csv',
@@ -135,7 +147,7 @@ describe("GOVUK.Analytics", function () {
       mockLink.appendChild(document.createTextNode('Download list of suppliers.'));
       mockLink.href = assetHost + '/digital-outcomes-and-specialists/communications/catalogues/user-research-participants-suppliers.csv';
       GOVUK.GDM.analytics.events.supplierListDownload({ 'target': mockLink });
-      expect(window.ga.calls.first().args).toEqual(['send', {
+      expect(window.ga.calls.allArgs()).toContain(['send', {
         'hitType': 'event',
         'eventCategory': 'download',
         'eventAction': 'csv',
@@ -152,7 +164,7 @@ describe("GOVUK.Analytics", function () {
       mockLink.appendChild(document.createTextNode('Download list of suppliers.'));
       mockLink.href = assetHost + '/digital-outcomes-and-specialists/communications/catalogues/digital-specialists-suppliers.csv';
       GOVUK.GDM.analytics.events.supplierListDownload({ 'target': mockLink });
-      expect(window.ga.calls.first().args).toEqual(['send', {
+      expect(window.ga.calls.allArgs()).toContain(['send', {
         'hitType': 'event',
         'eventCategory': 'download',
         'eventAction': 'csv',
@@ -169,7 +181,7 @@ describe("GOVUK.Analytics", function () {
       mockLink.appendChild(document.createTextNode('Download list of suppliers.'));
       mockLink.href = assetHost + '/digital-outcomes-and-specialists/communications/catalogues/digital-outcomes-suppliers.csv';
       GOVUK.GDM.analytics.events.supplierListDownload({ 'target': mockLink });
-      expect(window.ga.calls.first().args).toEqual(['send', {
+      expect(window.ga.calls.allArgs()).toContain(['send', {
         'hitType': 'event',
         'eventCategory': 'download',
         'eventAction': 'csv',
@@ -197,8 +209,7 @@ describe("GOVUK.Analytics", function () {
       $analyticsString = $("<div data-analytics='trackPageView' data-url='http://example.com'/>");
       $(document.body).append($analyticsString);
       window.GOVUK.GDM.analytics.virtualPageViews();
-      expect(window.ga.calls.first().args).toEqual([ 'send', 'pageview', { page: 'http://example.com/vpv' } ]);
-      expect(window.ga.calls.count()).toEqual(1);
+      expect(window.ga.calls.allArgs()).toContain([ 'send', 'pageview', { page: 'http://example.com/vpv' } ]);
     });
 
 
@@ -206,14 +217,14 @@ describe("GOVUK.Analytics", function () {
         $analyticsString = $('<div data-analytics="trackPageView" data-url="http:/testing.co.uk/testrubbs?sweet"/>');
         $(document.body).append($analyticsString);
         window.GOVUK.GDM.analytics.virtualPageViews();
-        expect(window.ga.calls.first().args[2]).toEqual({page: "http:/testing.co.uk/testrubbs/vpv?sweet"});
+        expect(window.ga.calls.allArgs()).toContain(['send', 'pageview', {page: "http:/testing.co.uk/testrubbs/vpv?sweet"}]);
       });
 
       it("Should add '/vpv/' to url at the end if no question mark", function () {
         $analyticsString = $("<div data-analytics='trackPageView' data-url='http://example.com'/>");
         $(document.body).append($analyticsString);
         window.GOVUK.GDM.analytics.virtualPageViews();
-        expect(window.ga.calls.first().args[2]).toEqual({page: "http://example.com/vpv"});
+        expect(window.ga.calls.allArgs()).toContain(['send', 'pageview', {page: "http://example.com/vpv"}]);
       });
   });
 
