@@ -1,0 +1,74 @@
+{% extends "_base_page.html" %}
+{% from "components/tabs/macro.njk" import govukTabs %}
+
+{% block pageTitle %}{{ brief.title }} [DRAFT] - Digital Marketplace{% endblock %}
+
+{% block breadcrumb %}
+  {%
+    with
+    items = [
+      {
+          "link": url_for('external.index'),
+          "label": "Digital Marketplace"
+      },
+      {
+          "link": url_for('external.list_opportunities', framework_family=brief.framework.family),
+          "label": "Supplier opportunities"
+      },
+      breadcrumbs
+    ]
+  %}
+    {% include "toolkit/breadcrumb.html" %}
+  {% endwith %}
+{% endblock %}
+
+
+{% block main_content %}
+
+<div class="grid-row">
+  <div class="column-two-thirds">
+    <header class="page-heading-smaller">
+      <h1>Review your requirements</h1>
+    </header>
+  </div>
+</div>
+
+<div class="grid-row">
+  <div class="column-one-whole">
+    <p class="govuk-body">This is how suppliers will see your requirements when they are published.</p>
+    <p class="govuk-body">
+      <a class="govuk-link" href="{{ url_for('.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Return to overview</a>
+    </p>
+
+    {% set desktopHtml %}
+      <iframe
+        height="930"
+        src="{{ url_for('.review_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+        title="Preview of the page on desktop or tablet"
+      >
+      </iframe>
+    {% endset %}
+
+    {% set pageTabs = [
+      {
+        "label": "Desktop",
+        "id": "desktop-preview",
+        "panel": {
+          "html": desktopHtml
+        }
+      },
+    ] %}
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        {{ govukTabs({
+          "title": "Review your requirements",
+          "items": pageTabs
+        }) }}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

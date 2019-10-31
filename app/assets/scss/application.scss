@@ -58,6 +58,8 @@ $govuk-compatibility-govukelements: true;
 @import "_text.scss";
 @import "_secondary-action-link.scss";
 @import "_error-pages.scss";
+@import "_statistics.scss";
+
 
 // Overrides
 @import "overrides/_notifications_banner";

@@ -953,6 +953,191 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
         assert not self.data_api_client.update_brief.called
 
 
+class TestReviewBrief(BaseApplicationTest):
+
+    def setup_method(self, method):
+        super().setup_method(method)
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+
+        self.data_api_client.get_brief.return_value = BriefStub().single_result_response()
+        self.data_api_client.get_framework.return_value = FrameworkStub(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                LotStub(slug='digital-specialists', allows_brief=True).response()
+            ]
+        ).single_result_response()
+        self.login_as_buyer()
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
+
+    def _setup_brief(self):
+        brief_json = BriefStub(
+            status="draft",
+            framework_slug='digital-outcomes-and-specialists-4'
+        ).single_result_response()
+        brief_questions = brief_json['briefs']
+        brief_questions.update({
+            'backgroundInformation': 'test background info',
+            'contractLength': 'A very long time',
+            'culturalFitCriteria': ['CULTURAL', 'FIT'],
+            'culturalWeighting': 10,
+            'essentialRequirements': 'Everything',
+            'evaluationType': ['test evaluation type'],
+            'existingTeam': 'team team team',
+            'importantDates': 'Near future',
+            'numberOfSuppliers': 5,
+            'location': 'somewhere',
+            'organisation': 'test organisation',
+            'priceWeighting': 80,
+            'specialistRole': 'communicationsManager',
+            'specialistWork': 'work work work',
+            'startDate': 'startDate',
+            'summary': 'blah',
+            'technicalWeighting': 10,
+            'workingArrangements': 'arrangements',
+            'workplaceAddress': 'address',
+            'requirementsLength': '1 week'
+        })
+        return brief_json
+
+    def test_review_page_renders_tabs_and_iframes(self):
+        self.data_api_client.get_brief.return_value = self._setup_brief()
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review")
+
+        assert res.status_code == 200
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+        assert "This is how suppliers will see your requirements when they are published." in page_html
+        assert len(document.xpath('//div[@class="govuk-tabs"]//a[contains(text(), "Desktop")]')) == 1
+        assert len(document.xpath('//iframe')) == 1
+
+    def test_review_source_page_renders_default_application_statistics(self):
+        self.data_api_client.get_brief.return_value = self._setup_brief()
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review-source")
+        assert res.status_code == 200
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+
+        incomplete_responses_section = document.xpath('//div[@id="incomplete-applications"]')[0]
+        completed_responses_section = document.xpath('//div[@id="completed-applications"]')[0]
+
+        assert incomplete_responses_section.xpath('div[@class="big-statistic"]/text()')[0] == '0'
+        assert incomplete_responses_section.xpath('div[@class="statistic-name"]/text()')[0] == "Incomplete applications"
+        assert incomplete_responses_section.xpath('div[@class="statistic-description"]/text()')[0] == "0 SME, 0 large"
+
+        assert completed_responses_section.xpath('div[@class="big-statistic"]/text()')[0] == '0'
+        assert completed_responses_section.xpath('div[@class="statistic-name"]/text()')[0] == "Completed applications"
+        assert completed_responses_section.xpath('div[@class="statistic-description"]/text()')[0] == "0 SME, 0 large"
+
+    def test_review_source_page_renders_default_important_dates(self):
+        self.data_api_client.get_brief.return_value = self._setup_brief()
+
+        with freeze_time('2019-01-01 11:08:00'):
+            res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                                  "digital-specialists/1234/review-source")
+        assert res.status_code == 200
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+
+        important_dates = document.xpath('(//table[@class="summary-item-body"])[1]/tbody/tr')
+
+        assert len(important_dates) == 3
+        assert important_dates[0].xpath('td[@class="summary-item-field-first"]')[0].text_content().strip() \
+            == "Published"
+        assert important_dates[0].xpath('td[@class="summary-item-field"]')[0].text_content().strip() \
+            == "Tuesday 1 January 2019"
+        assert important_dates[1].xpath('td[@class="summary-item-field-first"]')[0].text_content().strip() \
+            == "Deadline for asking questions"
+        assert important_dates[1].xpath('td[@class="summary-item-field"]')[0].text_content().strip() \
+            == "Thursday 3 January 2019 at 11:59pm GMT"
+        assert important_dates[2].xpath('td[@class="summary-item-field-first"]')[0].text_content().strip() \
+            == "Closing date for applications"
+        assert important_dates[2].xpath('td[@class="summary-item-field"]')[0].text_content().strip() \
+            == "Tuesday 8 January 2019 at 11:59pm GMT"
+
+    @pytest.mark.parametrize('brief_q_and_a_link', [True, False])
+    def test_review_source_page_shows_optional_question_and_answer_session_link(self, brief_q_and_a_link):
+        brief_json = self._setup_brief()
+        if brief_q_and_a_link:
+            brief_json['briefs']['questionAndAnswerSessionDetails'] = \
+                "A paragraph of details that get shown on another, login-protected page"
+        self.data_api_client.get_brief.return_value = brief_json
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review-source")
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+        assert bool(document.xpath(
+            "//a[@href=$u][normalize-space(string())=$t]",
+            u='#',
+            t="View question and answer session details"
+        )) == brief_q_and_a_link
+
+    def test_review_source_page_shows_apply_button_and_ask_a_question_links(self):
+        self.data_api_client.get_brief.return_value = self._setup_brief()
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review-source")
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+        assert "No questions have been answered yet" in page_html
+        assert len(document.xpath(
+            "//a[@href=$u][normalize-space(string())=$t]",
+            u="#",
+            t="Log in to ask a question",
+        )) == 1
+        assert len(document.xpath(
+            "//button[normalize-space(string())=$t]",
+            t="Apply for this opportunity",
+        )) == 1
+
+    @pytest.mark.parametrize(
+        'disabled_link_text, count',
+        [
+            ('Digital Marketplace', 2),
+            ('Supplier opportunities', 1),
+            ('Guidance', 1),
+            ('Help', 1),
+            ('Log in', 1),
+            ('Terms and conditions', 1),
+            ('Cookies', 1),
+            ('Privacy notice', 1),
+            ('Government Digital Service', 1)
+        ]
+    )
+    def test_review_source_page_shows_disabled_header_breadcrumbs_and_footer_links(self, disabled_link_text, count):
+        self.data_api_client.get_brief.return_value = self._setup_brief()
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review-source")
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+
+        assert len(document.xpath(
+            "//a[@href=$u][normalize-space(string())=$t]",
+            u="#",
+            t=disabled_link_text,
+        )) == count
+
+    def test_review_page_xframe_options_header_not_set(self):
+        self.data_api_client.get_brief.return_value = self._setup_brief()
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review")
+        assert res.headers['X-Frame-Options'] == 'DENY'
+
+    def test_review_source_page_xframe_options_header_set(self):
+        self.data_api_client.get_brief.return_value = self._setup_brief()
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review-source")
+        assert res.headers['X-Frame-Options'] == 'sameorigin'
+
+
 class TestPublishBrief(BaseApplicationTest):
 
     def setup_method(self, method):
