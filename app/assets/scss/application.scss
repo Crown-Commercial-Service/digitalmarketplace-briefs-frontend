@@ -59,6 +59,9 @@ $govuk-compatibility-govukelements: true;
 @import "_secondary-action-link.scss";
 @import "_error-pages.scss";
 
+// Overrides
+@import "overrides/_notifications_banner";
+
 // Misc styles
 // TODO: Move misc styling into their own partial files or the Digital Marketplace FE Toolkit
 #wrapper {
