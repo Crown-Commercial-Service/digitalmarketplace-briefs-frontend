@@ -62,7 +62,10 @@ class TestAwardBrief(BaseApplicationTest):
         page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
         assert page_title == "WhowontheIneedathingtodoathingcontract?"
 
-        submit_button = document.xpath('//input[@class="button-save" and @value="Save and continue"]')
+        submit_button = document.xpath(
+            '//button[normalize-space(string())=$t]',
+            t="Save and continue",
+        )
         assert len(submit_button) == 1
 
         # No options should be selected
@@ -248,7 +251,10 @@ class TestAwardBriefDetails(BaseApplicationTest):
         page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
         assert page_title == "TellusaboutyourcontractwithBananaCorp"
 
-        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirements"]')
+        submit_button = document.xpath(
+            '//button[@type="submit"][normalize-space(string())=$t]',
+            t="Update requirements",
+        )
         assert len(submit_button) == 1
 
         secondary_link_text = document.xpath('//div[@class="secondary-action-link"]//a[1]')[0]
@@ -423,7 +429,10 @@ class TestCancelBrief(BaseApplicationTest):
         page_title = document.xpath('//h1')[0].text_content()
         assert "Why do you need to cancel {}?".format(self.brief.get('title')) in page_title
 
-        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirements"]')
+        submit_button = document.xpath(
+            '//button[normalize-space(string())=$t]',
+            t="Update requirements",
+        )
         assert len(submit_button) == 1
 
         expected_previous_page_link_text = 'Previous page'
@@ -465,7 +474,10 @@ class TestCancelBrief(BaseApplicationTest):
         page_title = document.xpath('//h1')[0].text_content()
         assert "Why didn’t you award a contract for {}?".format(self.brief.get('title')) in page_title
 
-        submit_button = document.xpath('//input[@class="button-save" and @value="Update requirements"]')
+        submit_button = document.xpath(
+            '//button[normalize-space(string())=$t]',
+            t="Update requirements",
+        )
         assert len(submit_button) == 1
 
         expected_previous_page_link_text = 'Previous page'

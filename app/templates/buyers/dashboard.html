@@ -50,7 +50,15 @@
         {% else %}
             {{ summary.text() }}
         {% endif %}
-        {{ summary.button(text="Make a copy", action=url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
+        {% call summary.field(action=True) %}
+          <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
+            {{ govukButton({
+              "text": "Make a copy",
+              "classes": "govuk-button--secondary govuk-!-margin-0",
+            }) }}
+          </form>
+        {% endcall %}
     {% endcall %}
 {% endcall %}
 
@@ -72,7 +80,15 @@
         {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
         {{ summary.text(item.publishedAt|dateformat) }}
         {{ summary.text(item.applicationsClosedAt|dateformat) }}
-        {{ summary.button(text="Make a copy", action=url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
+        {% call summary.field(action=True) %}
+          <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
+            {{ govukButton({
+              "text": "Make a copy",
+              "classes": "govuk-button--secondary govuk-!-margin-0",
+            }) }}
+          </form>
+        {% endcall %}
     {% endcall %}
 {% endcall %}
 
@@ -102,17 +118,36 @@
             </div>
             <form method="post" action="{{ url_for('.copy_brief', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
-                <button type="submit" class="button-secondary">Make a copy</button>
+                {{ govukButton({
+                  "text": "Make a copy",
+                  "classes": "govuk-button--secondary govuk-!-margin-0",
+                }) }}
             </form>
           {% endcall %}
         {% elif item.status == "withdrawn" %}
           {{ summary.service_link(item.title, url_for("external.get_brief_by_id", framework_family=item.framework.family, brief_id=item.id)) }}
           {{ summary.text("Withdrawn") }}
-          {{ summary.button(text="Make a copy", action=url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
+          {% call summary.field(action=True) %}
+            <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
+              {{ govukButton({
+                "text": "Make a copy",
+                "classes": "govuk-button--secondary govuk-!-margin-0",
+              }) }}
+            </form>
+          {% endcall %}
         {% elif item.status in ["awarded", "cancelled", "unsuccessful"] %}
           {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
           {{ summary.text(item.applicationsClosedAt|dateformat) }}
-          {{ summary.button(text="Make a copy", action=url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
+          {% call summary.field(action=True) %}
+            <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
+              {{ govukButton({
+                "text": "Make a copy",
+                "classes": "govuk-button--secondary govuk-!-margin-0",
+              }) }}
+            </form>
+          {% endcall %}
         {% endif %}
      {% endcall %}
 {% endcall %}

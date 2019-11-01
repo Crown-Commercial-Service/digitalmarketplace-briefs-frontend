@@ -46,15 +46,11 @@
           {% endwith %}
 
           {% block save_button %}
-            {%
-              with
-              label="Update requirements",
-              name="submit",
-              type="save"
-            %}
-            {% include "toolkit/button.html" %}
-          {% endwith %}
-        {% endblock %}
+            {{ govukButton({
+              "text": "Update requirements",
+              "name": "submit",
+            }) }}
+          {% endblock %}
         </form>
 
         {%
