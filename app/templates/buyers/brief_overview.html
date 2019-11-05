@@ -24,7 +24,10 @@
               with
               message = "Are you sure you want to delete these requirements?",
               type = "destructive",
-              action = '<button type="submit" class="button-destructive banner-action">Yes, delete</button>'|safe
+              action = govukButton({
+                "text": "Yes, delete",
+                "classes": "govuk-button--warning app-banner-action",
+              })
             %}
               {% include "toolkit/notification-banner.html" %}
             {% endwith %}
@@ -47,7 +50,10 @@
               heading = "Are you sure you want to withdraw these requirements?",
               banner_content = "<p>{}</p><ul><li>{}</li></ul>".format(withdraw_text, withdraw_list_items|join("</li><li>"))|safe,
               type = "destructive",
-              action = '<button type="submit" class="button-destructive banner-action">Withdraw requirements</button>'|safe
+              action = govukButton({
+                "text": "Withdraw requirements",
+                "classes": "govuk-button--warning app-banner-action",
+              })
             %}
               {% include "toolkit/notification-banner.html" %}
             {% endwith %}

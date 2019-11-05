@@ -29,13 +29,9 @@
 
 {% block save_button %}
 
-  {%
-    with
-    label="Save and continue",
-    type="save",
-    name = "return_to_overview"
-  %}
-    {% include "toolkit/button.html" %}
-  {% endwith %}
+  {{ govukButton({
+    "text": "Save and continue",
+    "name": "return_to_overview",
+  }) }}
 
 {% endblock %}
