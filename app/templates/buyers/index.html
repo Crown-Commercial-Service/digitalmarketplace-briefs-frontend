@@ -39,7 +39,7 @@
             You need to tell us the outcome for {{ user_projects_awaiting_outcomes_total }}
             {{ pluralize(user_projects_awaiting_outcomes_total, "saved search", "saved searches") }}.<br>
           {% endif %}
-          <a href="/buyers/direct-award/g-cloud">View your saved searches</a><br>
+          <a class="govuk-link" href="/buyers/direct-award/g-cloud">View your saved searches</a><br>
         {% else %}
           You don't have any saved searches.
         {% endif %}
@@ -48,7 +48,7 @@
       <h2 class="heading-xmedium">Digital outcomes, specialists and user research participants</h2>
       <p>
         {% if user_briefs_total %}
-          <a href="{{ url_for('buyers.buyer_dos_requirements') }}">View your requirements</a><br>  
+          <a class="govuk-link" href="{{ url_for('buyers.buyer_dos_requirements') }}">View your requirements</a><br>  
         {% else %}   
           You don't have any requirements.
         {% endif %}
@@ -60,11 +60,12 @@
     <h2 class="heading-xmedium">Account settings</h2>
 
     <p>
-      <a href="{{ url_for('external.change_password') }}">Change your password</a>
+      <a class="govuk-link" href="{{ url_for('external.change_password') }}">Change your password</a>
     </p>
 
     <p>
       <a
+        class="govuk-link"
         href="{{ url_for('external.user_research_consent') }}"
         data-analytics="trackEvent"
         data-analytics-category="user-research"

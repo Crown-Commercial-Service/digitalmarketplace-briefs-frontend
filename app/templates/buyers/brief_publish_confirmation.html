@@ -29,7 +29,7 @@
         <p>All requirements are published on the Digital Marketplace where anyone can see them.</p>
       </div>
         {% if brief.lotSlug == 'digital-specialists' and not brief.requirementsLength %}
-          <p><a href="{{ url_for('.edit_brief_question', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug='set-how-long-your-requirements-will-be-open-for', question_id='requirementsLength') }}">Set how long your requirements will be open for</a></p>
+          <p><a class="govuk-link" href="{{ url_for('.edit_brief_question', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug='set-how-long-your-requirements-will-be-open-for', question_id='requirementsLength') }}">Set how long your requirements will be open for</a></p>
           <div class="dmspeak">
             <p>This will show you what the supplier application deadline will be if you publish your requirements today.</p>
           </div>
@@ -58,7 +58,7 @@
           {% if question.answer_required and not question.id == 'requirementsLength' %}
             <ol class="govuk-list govuk-list--number">
               <li>
-                <a href="{{ url_for('.edit_brief_question', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id) }}">{{ question.question }}</a>
+                <a class="govuk-link" href="{{ url_for('.edit_brief_question', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id) }}">{{ question.question }}</a>
               </li>
             </ol>
           {% endif %}
