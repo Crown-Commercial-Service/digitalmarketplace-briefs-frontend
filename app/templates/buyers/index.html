@@ -33,7 +33,7 @@
 
     <div class="dmspeak">
       <h2 class="heading-xmedium">Cloud hosting, software and support</h2>
-      <p>
+      <p class="govuk-body">
         {% if user_has_projects %}
           {% if user_projects_awaiting_outcomes_total %}
             You need to tell us the outcome for {{ user_projects_awaiting_outcomes_total }}
@@ -46,7 +46,7 @@
       </p>
     
       <h2 class="heading-xmedium">Digital outcomes, specialists and user research participants</h2>
-      <p>
+      <p class="govuk-body">
         {% if user_briefs_total %}
           <a class="govuk-link" href="{{ url_for('buyers.buyer_dos_requirements') }}">View your requirements</a><br>  
         {% else %}   
@@ -59,11 +59,11 @@
   <div class="column-one-third dmspeak">
     <h2 class="heading-xmedium">Account settings</h2>
 
-    <p>
+    <p class="govuk-body">
       <a class="govuk-link" href="{{ url_for('external.change_password') }}">Change your password</a>
     </p>
 
-    <p>
+    <p class="govuk-body">
       <a
         class="govuk-link"
         href="{{ url_for('external.user_research_consent') }}"

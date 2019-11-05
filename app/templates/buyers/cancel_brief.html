@@ -29,10 +29,10 @@
 
         <form method="POST" action="{{ url_for(request.endpoint, framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          <p class="question-advice">
+          <p class="govuk-body">
               This information will be added to your requirements. Suppliers will receive a link to view the update.
           </p>
-          <p class="question-advice">
+          <p class="govuk-body">
               You’ll still need to contact suppliers to give them feedback.
           </p>
           {%

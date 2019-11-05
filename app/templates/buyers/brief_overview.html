@@ -50,7 +50,7 @@
             {%
               with
               heading = "Are you sure you want to withdraw these requirements?",
-              banner_content = "<p>{}</p><ul class='govuk-list govuk-list--bullet'><li>{}</li></ul>".format(withdraw_text, withdraw_list_items|join("</li><li>"))|safe,
+              banner_content = "<p class='govuk-body'>{}</p><ul class='govuk-list govuk-list--bullet'><li>{}</li></ul>".format(withdraw_text, withdraw_list_items|join("</li><li>"))|safe,
               type = "destructive",
               action = govukButton({
                 "text": "Withdraw requirements",

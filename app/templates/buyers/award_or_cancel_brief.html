@@ -24,7 +24,7 @@
           %}
             {% include 'toolkit/page-heading.html' %}
           {% endwith %}
-            <p>
+            <p class="govuk-body">
               <a class="govuk-link" href="{{ url_for('external.get_brief_by_id', framework_family=brief.framework.family, brief_id=brief.id) }}">View the outcome of the requirements</a>
             </p>
       {% else %}
