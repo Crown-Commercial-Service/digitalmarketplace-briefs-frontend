@@ -2,7 +2,9 @@
 
 {% import "macros/brief_links.html" as brief_links %}
 
-{% block page_title %}{{ brief.title or brief.lotName }} – Digital Marketplace{% endblock %}
+{% block pageTitle %}
+  {{ brief.title or brief.lotName }} – Digital Marketplace
+{% endblock %}
 
 {% block breadcrumb %}
   {%

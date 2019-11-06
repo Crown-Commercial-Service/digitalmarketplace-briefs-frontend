@@ -2,7 +2,9 @@
 
 {% import "toolkit/forms/macros/forms.html" as forms %}
 
-{% block page_title %}{{ brief.title or brief.lotName }} – Digital Marketplace{% endblock %}
+{% block pageTitle %}
+  {{ brief.title or brief.lotName }} – Digital Marketplace
+{% endblock %}
 
 {% block breadcrumb %}
   {%
