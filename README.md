@@ -75,13 +75,14 @@ More generally, the command to start the development server is:
 DM_ENVIRONMENT=development flask run
 ```
 
-When using the development server the app runs on port 5005 by default.
-This is configured in the `.flaskenv file; see the [Flask cli documentation]
-for details on how to configure the development server.
-
 Use the app at [http://127.0.0.1:5005/](http://127.0.0.1:5005/)
 
-[Flask cli documentation]: https://flask.palletsprojects.com/en/1.0.x/cli/
+When using the development server the app runs on port 5005 by default.
+This can be changed by setting the `DM_BRIEFS_PORT` environment variable, e.g.
+to set the port number to 9005:
+```
+export DM_BRIEFS_PORT=9005
+```
 
 ### Updating application dependencies
 
