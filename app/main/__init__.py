@@ -36,6 +36,7 @@ def _make_content_loader_factory():
     master_cl.load_manifest('digital-outcomes-and-specialists-3', 'briefs', 'award_brief')
 
     master_cl.load_manifest('digital-outcomes-and-specialists-4', 'briefs', 'edit_brief')
+    master_cl.load_manifest('digital-outcomes-and-specialists-4', 'briefs', 'display_brief')
     master_cl.load_manifest('digital-outcomes-and-specialists-4', 'brief-responses', 'output_brief_response')
     master_cl.load_manifest('digital-outcomes-and-specialists-4', 'clarification_question', 'clarification_question')
     master_cl.load_manifest('digital-outcomes-and-specialists-4', 'briefs', 'award_brief')
