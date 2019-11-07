@@ -70,12 +70,19 @@ not already been set:
 make run-app
 ```
 
-More generally, the command to start the server is:
+More generally, the command to start the development server is:
 ```
-python application.py runserver
+DM_ENVIRONMENT=development flask run
 ```
 
-The app runs on port 5005 by default. Use the app at [http://127.0.0.1:5005/](http://127.0.0.1:5005/)
+Use the app at [http://127.0.0.1:5005/](http://127.0.0.1:5005/)
+
+When using the development server the app runs on port 5005 by default.
+This can be changed by setting the `DM_BRIEFS_PORT` environment variable, e.g.
+to set the port number to 9005:
+```
+export DM_BRIEFS_PORT=9005
+```
 
 ### Updating application dependencies
 
