@@ -38,18 +38,18 @@
       {% if response_counts['eligible'] > 0 %}
         {% if brief_responses_required_evidence %}
           <div class="dmspeak">
-              <p>
+              <p class="govuk-body">
                 <span class='visual-emphasis'>{{ response_counts['eligible'] }} {{ pluralize(response_counts['eligible'], "supplier", "suppliers") }}</span>
                 responded to your requirements and {{ pluralize(response_counts['eligible'], "meets", "meet") }} all your essential skills and experience.
                 Any suppliers that did not meet all your essential requirements have already been told they were unsuccessful.
               </p>
-              <p>
+              <p class="govuk-body">
                 You said you’d take <span class='visual-emphasis'>{{ brief.numberOfSuppliers }} {{ pluralize(brief.numberOfSuppliers, "supplier", "suppliers") }}</span> through to the evaluation stage. To do this, you need to:
               </p>
           </div>
           {% with items = [
               {
-                  "body": 'Read the <a href="https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers">guidance on how to shortlist.</a>'|safe,
+                  "body": 'Read the <a class="govuk-link" href="https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers">guidance on how to shortlist.</a>'|safe,
               },
               {
                   "body": 'Review and score the evidence suppliers have given.',
@@ -81,13 +81,13 @@
 
         {% else %}
           <div class="dmspeak">
-            <p>
+            <p class="govuk-body">
                 <span class='visual-emphasis'>{{ response_counts['eligible'] }} {{ pluralize(response_counts['eligible'], "supplier", "suppliers") }}</span>
                 responded to your requirements and {{ pluralize(response_counts['eligible'], "meets", "meet") }} all your essential skills and experience.
                 Any suppliers that did not meet all your essential requirements have already been told they were unsuccessful.
             </p>
-            <p>
-              Download the list of supplier responses and follow the guidance on <a href="https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers">how to shortlist</a>.
+            <p class="govuk-body">
+              Download the list of supplier responses and follow the guidance on <a class="govuk-link" href="https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers">how to shortlist</a>.
             </p>
           </div>
 
@@ -108,20 +108,20 @@
         {% endif %}
       {% else %}
         <div class="dmspeak">
-          <p>
+          <p class="govuk-body">
               No suppliers met your essential skills and experience requirements.
           </p>
           {% if (response_counts['eligible'] or response_counts['failed']) and not brief_responses_required_evidence %}
-            <p>
+            <p class="govuk-body">
                 All the suppliers who applied have already been told they were unsuccessful.
             </p>
           {% endif %}
         </div>
         <div class='explanation-list'>
-            <p class='lead'>
+            <p class="govuk-body-l">
                 If you still need this service, you should start the buying process again. Consider:
             </p>
-            <ul class='list-bullet'>
+            <ul class='govuk-list govuk-list--bullet'>
                 <li>talking to suppliers before you start</li>
                 <li>rewriting your requirements</li>
             </ul>

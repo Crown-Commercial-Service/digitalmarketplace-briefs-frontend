@@ -32,7 +32,7 @@
 {% include "toolkit/page-heading.html" %}
 {% endwith %}
 
-<p class="lede">
+<p class="govuk-body-l">
   You must be employed by, or represent, a public sector organisation.
 </p>
 
@@ -42,7 +42,7 @@
     <form method="POST" action="{{ url_for('.submit_create_buyer_account') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       {{ form.email_address }}
-      <p>We will send an account activation email to this address. You will then be able to set your password.</p>
+      <p class="govuk-body">We will send an account activation email to this address. You will then be able to set your password.</p>
       {%
         with
           type = "save",
