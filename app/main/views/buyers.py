@@ -549,6 +549,7 @@ def publish_brief(framework_slug, lot_slug, brief_id):
     question_and_answers_content = sections.get_question('questionAndAnswerSessionDetails')
     question_and_answers['id'] = question_and_answers_content['id']
 
+    # Annotate the section data with the section slug/id, to construct the Edit link in the template
     for section in sections:
         if section.get_question('questionAndAnswerSessionDetails') == question_and_answers_content:
             question_and_answers['slug'] = section['id']
