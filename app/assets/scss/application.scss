@@ -8,7 +8,7 @@
 @import "_url-helpers.scss";
 
 // Path to assets for use with file-url()
-$path: "/static/images/";
+$path: "/buyers/static/images/";
 
 // Digital Marketplace Front-end toolkit shared CSS placeholders used by other DM toolkit styles
 @import "toolkit/shared_placeholders/_temporary-messages.scss";
@@ -44,9 +44,9 @@ $path: "/static/images/";
 @import "toolkit/forms/_word-counter.scss";
 
 // GOV.UK Design System (compatible with old toolkit/elements)
-$govuk-assets-path: '/user/static/';
-$govuk-images-path: '/user/static/images/govuk-frontend/';
-$govuk-fonts-path: '/user/static/fonts/';
+$govuk-assets-path: '/buyers/static/';
+$govuk-images-path: '/buyers/static/images/govuk-frontend/';
+$govuk-fonts-path: '/buyers/static/fonts/';
 $govuk-compatibility-govukfrontendtoolkit: true;
 $govuk-compatibility-govuktemplate: true;
 $govuk-compatibility-govukelements: true;
