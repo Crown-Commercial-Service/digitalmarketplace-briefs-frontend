@@ -974,10 +974,11 @@ class TestReviewBrief(BaseApplicationTest):
         self.data_api_client_patch.stop()
         super().teardown_method(method)
 
-    def _setup_brief(self):
+    def _setup_brief(self, brief_status="draft", **stub_kwargs):
         brief_json = BriefStub(
-            status="draft",
-            framework_slug='digital-outcomes-and-specialists-4'
+            status=brief_status,
+            framework_slug='digital-outcomes-and-specialists-4',
+            **stub_kwargs
         ).single_result_response()
         brief_questions = brief_json['briefs']
         brief_questions.update({
@@ -1004,6 +1005,98 @@ class TestReviewBrief(BaseApplicationTest):
         })
         return brief_json
 
+    @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill', 'expired'])
+    def test_review_page_404s_if_framework_status_is_not_live(self, framework_status):
+        self.data_api_client.get_framework.return_value = FrameworkStub(
+            slug='digital-outcomes-and-specialists',
+            status=framework_status,
+            lots=[
+                LotStub(slug='digital-specialists', allows_brief=True).response()
+            ]
+        ).single_result_response()
+        self.data_api_client.get_brief.return_value = self._setup_brief()
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review")
+        assert res.status_code == 404
+
+    @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill', 'expired'])
+    def test_review_source_page_404s_if_framework_status_is_not_live(self, framework_status):
+        self.data_api_client.get_framework.return_value = FrameworkStub(
+            slug='digital-outcomes-and-specialists',
+            status=framework_status,
+            lots=[
+                LotStub(slug='digital-specialists', allows_brief=True).response()
+            ]
+        ).single_result_response()
+        self.data_api_client.get_brief.return_value = self._setup_brief()
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review-source")
+        assert res.status_code == 404
+
+    @pytest.mark.parametrize('brief_status', ['live', 'awarded', 'cancelled', 'closed', 'unsuccessful', 'withdrawn'])
+    def test_review_page_404s_if_brief_is_not_draft(self, brief_status):
+        self.data_api_client.get_brief.return_value = self._setup_brief(brief_status=brief_status)
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review")
+        assert res.status_code == 404
+
+    @pytest.mark.parametrize('brief_status', ['live', 'awarded', 'cancelled', 'closed', 'unsuccessful', 'withdrawn'])
+    def test_review_source_page_404s_if_brief_is_not_draft(self, brief_status):
+        self.data_api_client.get_brief.return_value = self._setup_brief(brief_status=brief_status)
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review-source")
+        assert res.status_code == 404
+
+    def test_review_page_404s_if_brief_does_not_belong_to_user(self):
+        self.data_api_client.get_brief.return_value = self._setup_brief(user_id=234)
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review")
+        assert res.status_code == 404
+
+    def test_review_source_page_404s_if_brief_does_not_belong_to_user(self):
+        self.data_api_client.get_brief.return_value = self._setup_brief(user_id=234)
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review-source")
+        assert res.status_code == 404
+
+    def test_review_page_404s_if_brief_has_wrong_lot(self):
+        self.data_api_client.get_brief.return_value = self._setup_brief()
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-outcomes/1234/review")
+        assert res.status_code == 404
+
+    def test_review_source_page_404s_if_brief_has_wrong_lot(self):
+        self.data_api_client.get_brief.return_value = self._setup_brief()
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-outcomes/1234/review-source")
+        assert res.status_code == 404
+
+    def test_review_page_400s_if_unanswered_questions(self):
+        brief_json = self._setup_brief()
+        brief_json['briefs'].pop('essentialRequirements')
+        self.data_api_client.get_brief.return_value = brief_json
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review")
+        assert res.status_code == 400
+
+    def test_review_source_page_400s_if_unanswered_questions(self):
+        brief_json = self._setup_brief()
+        brief_json['briefs'].pop('essentialRequirements')
+        self.data_api_client.get_brief.return_value = brief_json
+
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review-source")
+        assert res.status_code == 400
+
     def test_review_page_renders_tabs_and_iframes(self):
         self.data_api_client.get_brief.return_value = self._setup_brief()
 
@@ -1015,7 +1108,14 @@ class TestReviewBrief(BaseApplicationTest):
         document = html.fromstring(page_html)
         assert "This is how suppliers will see your requirements when they are published." in page_html
         assert len(document.xpath('//div[@class="govuk-tabs"]//a[contains(text(), "Desktop")]')) == 1
-        assert len(document.xpath('//iframe')) == 1
+
+        expected_src_link = "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/" \
+                            "digital-specialists/1234/review-source"
+        assert bool(document.xpath(
+            "//iframe[@src=$u][@title=$t]",
+            u=expected_src_link,
+            t="Preview of the page on desktop or tablet"
+        )) == 1
 
     def test_review_source_page_renders_default_application_statistics(self):
         self.data_api_client.get_brief.return_value = self._setup_brief()
