@@ -1112,9 +1112,16 @@ class TestReviewBrief(BaseApplicationTest):
         expected_src_link = "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/" \
                             "digital-specialists/1234/review-source"
         assert bool(document.xpath(
-            "//iframe[@src=$u][@title=$t]",
+            "//iframe[@src=$u][@title=$t][@class=$c]",
             u=expected_src_link,
-            t="Preview of the page on desktop or tablet"
+            t="Preview of the page on desktop or tablet",
+            c="dm-desktop-iframe"
+        )) == 1
+        assert bool(document.xpath(
+            "//iframe[@src=$u][@title=$t][@class=$c]",
+            u=expected_src_link,
+            t="Preview of the page on mobile",
+            c="dm-mobile-iframe"
         )) == 1
 
     def test_review_source_page_renders_default_application_statistics(self):

@@ -42,11 +42,21 @@
 
     {% set desktopHtml %}
       <iframe
-        height="930"
         src="{{ url_for('.review_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
         title="Preview of the page on desktop or tablet"
+        class="dm-desktop-iframe"
       >
       </iframe>
+    {% endset %}
+    {% set mobileHtml %}
+      <div class="dm-mobile-preview">
+        <iframe
+          src="{{ url_for('.review_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+          title="Preview of the page on mobile"
+          class="dm-mobile-iframe"
+        >
+        </iframe>
+      </div>
     {% endset %}
 
     {% set pageTabs = [
@@ -55,6 +65,13 @@
         "id": "desktop-preview",
         "panel": {
           "html": desktopHtml
+        }
+      },
+      {
+        "label": "Mobile",
+        "id": "mobile-preview",
+        "panel": {
+          "html": mobileHtml
         }
       },
     ] %}
