@@ -50,7 +50,7 @@
 
 {% block main_content %}
 
-<div class="grid-row">
+<div class="govuk-grid-row">
   <div class="column-two-thirds">
     <header class="page-heading-smaller">
       <p class="context">{{ brief.organisation }}</p>
@@ -60,8 +60,8 @@
   </div>
 </div>
 
-<div class="grid-row">
-  <div class="column-one-whole">
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
     {{ statistics.big_stat(
          0,
          "Incomplete applications",
@@ -79,8 +79,8 @@
   </div>
 </div>
 
-<div class="grid-row">
-  <div class="column-one-whole">
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
     {% call(item) summary.list_table(
       [
         {"label": "Published", "value": important_dates.published_date|dateformat},
@@ -125,8 +125,8 @@
 
   </div>
 </div>
-<div class="grid-row">
-  <div class="column-one-whole">
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
     {% if brief.questionAndAnswerSessionDetails %}
       {{ summary.heading("Question and answer session", id="question-and-answer-session") }}
       <p class="govuk-body"><a class="govuk-link" href="#">View question and answer session details</a></p>
@@ -147,8 +147,8 @@
   </div>
 </div>
 
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
       {{ govukButton({
           "text": "Apply for this opportunity"
         })
