@@ -1111,13 +1111,13 @@ class TestReviewBrief(BaseApplicationTest):
 
         expected_src_link = "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/" \
                             "digital-specialists/1234/review-source"
-        assert bool(document.xpath(
+        assert len(document.xpath(
             "//iframe[@src=$u][@title=$t][@class=$c]",
             u=expected_src_link,
             t="Preview of the page on desktop or tablet",
             c="dm-desktop-iframe"
         )) == 1
-        assert bool(document.xpath(
+        assert len(document.xpath(
             "//iframe[@src=$u][@title=$t][@class=$c]",
             u=expected_src_link,
             t="Preview of the page on mobile",
