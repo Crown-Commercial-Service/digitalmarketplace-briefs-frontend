@@ -17,14 +17,10 @@
 
     {% block before_heading %}{% endblock %}
     <div class="column-two-thirds">
-      {% with
-        heading = "Supplier questions",
-        smaller = true,
-        context = brief.get('title', brief['lotName'])
-      %}
-        {% include "toolkit/page-heading.html" %}
-      {% endwith %}
-
+      <span class="govuk-caption-l">{{ brief.get('title', brief['lotName']) }}</span>
+      <h1 class="govuk-heading-l">
+        Supplier questions
+      </h1>
     </div>
 
     <div class="column-one-whole">

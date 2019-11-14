@@ -16,20 +16,11 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         {% if response_counts['eligible'] > 0 %}
-            {% with
-            heading = "Shortlist suppliers",
-            smaller = true
-            %}
-            {% include "toolkit/page-heading.html" %}
-            {% endwith %}
+          {% set heading = 'Shortlist suppliers' %}
         {% else %}
-            {% with
-            heading = "There were no applications",
-            smaller = true
-            %}
-            {% include "toolkit/page-heading.html" %}
-            {% endwith %}
+          {% set heading = 'There were no applications' %}
         {% endif %}
+        <h1 class="govuk-heading-l">{{ heading }}</h1>
     </div>
 </div>
 

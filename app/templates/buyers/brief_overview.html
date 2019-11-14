@@ -67,9 +67,7 @@
 
   <div class="grid-row">
     <div class="column-two-thirds">
-      {% with heading = brief.get('title', brief['lotName']) %}
-        {% include "toolkit/page-heading.html" %}
-      {% endwith %}
+      <h1 class="govuk-heading-xl">{{ brief.get('title', brief['lotName']) }}</h1>
     </div>
   </div>
   <div class="grid-row">
