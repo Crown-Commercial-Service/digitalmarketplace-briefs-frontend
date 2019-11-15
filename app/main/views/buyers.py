@@ -450,6 +450,88 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
     ), 200
 
 
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/review', methods=['GET'])
+def review_brief(framework_slug, lot_slug, brief_id):
+    # Displays draft content in tabs for the user to see what their published brief will look like
+    get_framework_and_lot(framework_slug, lot_slug, data_api_client, allowed_statuses=['live'], must_allow_brief=True)
+    brief = data_api_client.get_brief(brief_id)["briefs"]
+
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id) or not brief_can_be_edited(brief):
+        abort(404)
+
+    content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
+
+    # Check that all questions have been answered
+    unanswered_required, unanswered_optional = count_unanswered_questions(content.summary(brief))
+    if unanswered_required > 0:
+        abort(400, 'There are still unanswered required questions')
+
+    breadcrumbs = get_briefs_breadcrumbs([
+        {
+            "link": url_for(
+                ".view_brief_overview",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']),
+            "label": brief['title']
+        }
+    ])
+
+    return render_template(
+        "buyers/review_brief.html",
+        content=content,
+        unanswered_required=unanswered_required,
+        brief=brief,
+        breadcrumbs=breadcrumbs
+    ), 200
+
+
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/review-source', methods=['GET'])
+def review_brief_source(framework_slug, lot_slug, brief_id):
+    # This view's response currently is what will populate the iframes in the view above
+    get_framework_and_lot(framework_slug, lot_slug, data_api_client, allowed_statuses=['live'], must_allow_brief=True)
+    brief = data_api_client.get_brief(brief_id)["briefs"]
+
+    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id) or not brief_can_be_edited(brief):
+        abort(404)
+
+    # Check that all questions have been answered
+    editable_content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter(
+        {'lot': brief['lotSlug']}
+    )
+    unanswered_required, unanswered_optional = count_unanswered_questions(editable_content.summary(brief))
+    if unanswered_required > 0:
+        abort(400, 'There are still unanswered required questions')
+
+    important_dates = get_publishing_dates(brief)
+    breadcrumbs = get_briefs_breadcrumbs([
+        {
+            "link": url_for(
+                ".view_brief_overview",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']),
+            "label": brief['title']
+        }
+    ])
+
+    display_content = content_loader.get_manifest(brief['frameworkSlug'], 'display_brief').filter(
+        {'lot': brief['lotSlug']}
+    )
+    # TODO: move review_brief_source templates/includes into shared FE toolkit pattern to ensure it's kept in sync
+    html = render_template(
+        "buyers/review_brief_source.html",
+        content=display_content,
+        unanswered_required=unanswered_required,
+        brief=brief,
+        important_dates=important_dates,
+        breadcrumbs=breadcrumbs,
+    )
+    response_headers = {"X-Frame-Options": "sameorigin"}
+
+    return html, 200, response_headers
+
+
 @main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/publish', methods=['GET', 'POST'])
 def publish_brief(framework_slug, lot_slug, brief_id):
     get_framework_and_lot(framework_slug, lot_slug, data_api_client, allowed_statuses=['live'], must_allow_brief=True)
@@ -467,6 +549,7 @@ def publish_brief(framework_slug, lot_slug, brief_id):
     question_and_answers_content = sections.get_question('questionAndAnswerSessionDetails')
     question_and_answers['id'] = question_and_answers_content['id']
 
+    # Annotate the section data with the section slug/id, to construct the Edit link in the template
     for section in sections:
         if section.get_question('questionAndAnswerSessionDetails') == question_and_answers_content:
             question_and_answers['slug'] = section['id']

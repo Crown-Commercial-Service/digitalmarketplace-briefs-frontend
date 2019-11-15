@@ -1,0 +1,170 @@
+{% extends "_base_page.html" %}
+
+{% block page_title %}{{ brief.title }} [DRAFT] - Digital Marketplace{% endblock %}
+{% block inside_header %}
+<div class="header-title">
+    <a href="#">Digital Marketplace</a>
+    <strong class="phase-tag">BETA</strong>
+</div>
+{% endblock %}
+{% block proposition_header %}
+<div class="header-proposition">
+  <div class="content">
+    <a href="#proposition-links" class="js-header-toggle menu">Menu</a>
+    <nav id="proposition-menu">
+      <ul id="proposition-links">
+        <li>
+          <a href="#">Guidance</a>
+        </li>
+        <li>
+          <a href="#">Help</a>
+        </li>
+        <li>
+          <a href="#">Log in</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+{% endblock %}
+{% block breadcrumb %}
+  {%
+    with
+    items = [
+      {
+          "link": "#",
+          "label": "Digital Marketplace"
+      },
+      {
+          "link": "#",
+          "label": "Supplier opportunities"
+      }
+    ]
+  %}
+    {% include "toolkit/breadcrumb.html" %}
+  {% endwith %}
+{% endblock %}
+{% import "toolkit/statistics.html" as statistics %}
+{% import "toolkit/summary-table.html" as summary %}
+
+{% block main_content %}
+
+<div class="govuk-grid-row">
+  <div class="column-two-thirds">
+    <header class="page-heading-smaller">
+      <p class="context">{{ brief.organisation }}</p>
+      <h1>{{ brief.title }} [DRAFT]</h1>
+      <span data-lot="{{ brief.lotSlug }}"></span>
+    </header>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    {{ statistics.big_stat(
+         0,
+         "Incomplete applications",
+         "0 SME, 0 large",
+         id="incomplete-applications"
+       )
+    }}
+    {{ statistics.big_stat(
+         0,
+         "Completed applications",
+         "0 SME, 0 large",
+         id="completed-applications"
+       )
+    }}
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    {% call(item) summary.list_table(
+      [
+        {"label": "Published", "value": important_dates.published_date|dateformat},
+        {"label": "Deadline for asking questions", "value": important_dates.questions_close|utcdatetimeformat},
+        {"label": "Closing date for applications", "value": important_dates.closing_date|utcdatetimeformat}
+      ],
+      caption="Important dates",
+      field_headings=[
+        "Opportunity attribute name",
+        "Opportunity attribute value"
+      ],
+      field_headings_visible=False
+    ) %}
+    {% call summary.row() %}
+      {{ summary.field_name(item.label) }}
+      {{ summary.text(item.value) }}
+    {% endcall %}
+  {% endcall %}
+
+  {% for section in content.summary(brief) %}
+    {{ summary.heading(section.name, id="opportunity-attributes-{}".format(loop.index)) }}
+    {% if section.summary_page_description %}
+      {{ summary.description(section.summary_page_description) }}
+    {% endif %}
+    {% call(item) summary.list_table(
+      section.questions,
+      caption=section.name,
+      field_headings=[
+        "Opportunity attribute name",
+        "Opportunity attribute value"
+      ],
+      field_headings_visible=False
+    ) %}
+      {% call summary.row() %}
+        {{ summary.field_name(item.label) }}
+        {% with item_value = summary[item.type](item.value) | format_links %}
+            {{ (item_value | preserve_line_breaks) if item.type == 'textbox_large' else item_value }}
+        {% endwith %}
+      {% endcall %}
+    {% endcall %}
+{% endfor %}
+
+  </div>
+</div>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    {% if brief.questionAndAnswerSessionDetails %}
+      {{ summary.heading("Question and answer session", id="question-and-answer-session") }}
+      <p class="govuk-body"><a class="govuk-link" href="#">View question and answer session details</a></p>
+    {% endif %}
+
+    {{ summary.heading("Questions asked by suppliers", id="clarification-questions") }}
+    {% call(question) summary.list_table(
+      [],
+      caption="Questions asked by suppliers",
+      field_headings=[],
+      field_headings_visible=False,
+      empty_message="No questions have been answered yet"
+    ) %}
+    {% endcall %}
+
+    <p class="govuk-body"><a class="govuk-link" href="#">Log in to ask a question</a></p>
+
+  </div>
+</div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      {{ govukButton({
+          "text": "Apply for this opportunity"
+        })
+      }}
+    </div>
+  </div>
+
+{% endblock %}
+{% block footer_top %}{% endblock %}
+
+{% block footer_support_links %}
+    <h2 class="visuallyhidden">Support links</h2>
+    <ul>
+      <li><a href="#" class="terms-and-conditions">Terms and conditions</a></li>
+      <li><a href="#">Cookies</a></li>
+      <li><a href="#">Privacy notice</a></li>
+      <li>Built by the <a href="#">Government Digital Service</a></li>
+    </ul>
+{% endblock %}

@@ -40,7 +40,7 @@ class TestApplication(BaseApplicationTest):
     def test_header_xframeoptions_set_to_deny(self):
         res = self.client.get('/buyers')
         assert 200 == res.status_code
-        assert 'DENY', res.headers['X-Frame-Options']
+        assert res.headers['X-Frame-Options'] == 'DENY'
 
     @mock.patch('flask_wtf.csrf.validate_csrf', autospec=True)
     def test_csrf_handler_redirects_to_login(self, validate_csrf):

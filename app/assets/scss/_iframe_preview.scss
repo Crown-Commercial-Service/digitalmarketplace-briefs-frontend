@@ -1,0 +1,33 @@
+// Based on https://github.com/alphagov/content-publisher/blob/1df89cda486515ab41d94e9806d2daedac0d5996/app/assets/stylesheets/components/_page-preview.scss
+
+$app-mobile-frame-width: 320px;
+$app-mobile-frame-height: 585px;
+$app-mobile-border-width: 17px;
+$app-mobile-border-bottom-width: 68px;
+
+.dm-mobile-preview {
+  display: none;
+
+  @include govuk-media-query($from: tablet) {
+    display: block;
+    width: $app-mobile-frame-width + 2 * $app-mobile-border-width;
+    height: $app-mobile-frame-height + $app-mobile-border-width + $app-mobile-border-bottom-width;
+    background-image: file-url("preview-mobile.svg");
+    background-repeat: no-repeat;
+  }
+}
+
+.dm-mobile-iframe {
+  width: $app-mobile-frame-width;
+  height: $app-mobile-frame-height;
+  margin: $app-mobile-border-width;
+  margin-bottom: $app-mobile-border-bottom-width;
+  border: 0;
+}
+
+.dm-desktop-iframe {
+  display: block;
+  width: 100%;
+  height: 1000px;
+  border: 0;
+}
