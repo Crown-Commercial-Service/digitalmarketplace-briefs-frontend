@@ -1,7 +1,7 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from flask import abort, request, redirect, url_for, flash
+from flask import abort, request, redirect, url_for, flash, current_app
 from flask_login import current_user
 
 from app import data_api_client
@@ -228,6 +228,67 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
 
     breadcrumbs = get_briefs_breadcrumbs()
 
+    # Temporary additional link for Preview feature
+    if current_app.config['SHOW_DOS_PREVIEW_LINKS']:
+        publish_requirements_section_links = [
+            {
+                'href': url_for(
+                    ".review_brief",
+                    framework_slug=brief['frameworkSlug'],
+                    lot_slug=brief['lotSlug'],
+                    brief_id=brief['id']
+                ),
+                'text': 'Preview your requirements',
+                'allowed_statuses': ['draft']
+            },
+            {
+                'href': url_for(
+                    ".publish_brief",
+                    framework_slug=brief['frameworkSlug'],
+                    lot_slug=brief['lotSlug'],
+                    brief_id=brief['id']
+                ),
+                'text': 'Publish your requirements',
+                'allowed_statuses': ['draft']
+            }
+        ]
+    else:
+        publish_requirements_section_links = [
+            {
+                'href': url_for(
+                    ".publish_brief",
+                    framework_slug=brief['frameworkSlug'],
+                    lot_slug=brief['lotSlug'],
+                    brief_id=brief['id']
+                ),
+                'text': 'Review and publish your requirements',
+                'allowed_statuses': ['draft']
+            }
+        ]
+
+    # Shared links
+    publish_requirements_section_links.extend([
+        {
+            'href': url_for(
+                ".view_brief_timeline",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']
+            ),
+            'text': 'View question and answer dates',
+            'allowed_statuses': ['live']
+        },
+        {
+            'href': url_for(
+                "external.get_brief_by_id",
+                framework_family=brief['framework']['family'],
+                brief_id=brief['id']
+            ),
+            'text': 'View your published requirements',
+            'allowed_statuses': ['live', 'closed', 'awarded', 'cancelled', 'unsuccessful']
+        }
+    ])
+
     return render_template(
         "buyers/brief_overview.html",
         framework=framework,
@@ -241,7 +302,8 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         call_off_contract_url=call_off_contract_url,
         framework_agreement_url=framework_agreement_url,
         awarded_brief_response_supplier_name=awarded_brief_response_supplier_name,
-        breadcrumbs=breadcrumbs
+        breadcrumbs=breadcrumbs,
+        publish_requirements_section_links=publish_requirements_section_links
     ), 200
 
 
