@@ -339,11 +339,19 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
         }
     ])
 
+    # Show DOS preview link if feature flag set, and all mandatory questions have been answered
+    show_dos_preview_link = False
+    if current_app.config['SHOW_DOS_PREVIEW_LINKS'] is True:
+        unanswered_required, unanswered_optional = count_unanswered_questions(sections)
+        if unanswered_required == 0:
+            show_dos_preview_link = True
+
     return render_template(
         "buyers/section_summary.html",
         brief=brief,
         section=section,
         breadcrumbs=breadcrumbs,
+        show_dos_preview_link=show_dos_preview_link
     ), 200
 
 

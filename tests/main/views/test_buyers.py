@@ -5,6 +5,7 @@ from ...helpers import BaseApplicationTest
 from dmapiclient import HTTPError
 from dmtestutils.api_model_stubs import BriefStub, FrameworkStub, LotStub
 from dmcontent.content_loader import ContentLoader
+from flask import current_app
 import mock
 from lxml import html
 import pytest
@@ -2090,21 +2091,69 @@ class TestViewBriefSectionSummaryPage(BaseApplicationTest):
         ).single_result_response()
         self.login_as_buyer()
 
+        self.content_fixture = ContentLoader('tests/fixtures/content')
+        self.content_fixture.load_manifest('dos', 'data', 'edit_brief')
+
     def teardown_method(self, method):
         self.data_api_client_patch.stop()
         super().teardown_method(method)
 
+    def _setup_brief(self, brief_status="draft", **stub_kwargs):
+        brief_json = BriefStub(
+            status=brief_status,
+            **stub_kwargs
+        ).single_result_response()
+        brief_questions = brief_json['briefs']
+        brief_questions.update({
+            'required1': 'test background info',
+            'required2': 'work work work',
+            'required3_1': 'yep',
+            'required3_2': 'yep'
+        })
+        return brief_json
+
     @mock.patch('app.main.views.buyers.content_loader', autospec=True)
     def test_get_view_section_summary(self, content_loader):
-        content_fixture = ContentLoader('tests/fixtures/content')
-        content_fixture.load_manifest('dos', 'data', 'edit_brief')
-        content_loader.get_manifest.return_value = content_fixture.get_manifest('dos', 'edit_brief')
+        content_loader.get_manifest.return_value = self.content_fixture.get_manifest('dos', 'edit_brief')
 
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-1"
         )
 
         assert res.status_code == 200
+
+    @pytest.mark.parametrize('show_dos_preview_links', (True, False, None))
+    @mock.patch('app.main.views.buyers.content_loader', autospec=True)
+    def test_get_view_section_summary_links(self, content_loader, show_dos_preview_links):
+        content_loader.get_manifest.return_value = self.content_fixture.get_manifest('dos', 'edit_brief')
+        brief = self._setup_brief(lot_slug='digital-specialists')
+        self.data_api_client.get_brief.return_value = brief
+
+        with self.app.app_context():
+            current_app.config['SHOW_DOS_PREVIEW_LINKS'] = show_dos_preview_links
+            res = self.client.get(
+                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-1"
+            )
+
+        assert res.status_code == 200
+        document = html.fromstring(res.get_data(as_text=True))
+
+        overview_links = document.xpath(
+            '//a[@href="/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"]'
+        )
+        assert [link.text_content().strip() for link in overview_links] == [
+            "I need a thing to do a thing",  # breadcrumbs
+            "Return to overview"             # bottom nav link
+        ]
+        preview_link = document.xpath(
+            '//a[@href="/buyers/frameworks/digital-outcomes-and-specialists/'
+            'requirements/digital-specialists/1234/review"]'
+        )
+        if show_dos_preview_links:
+            assert len(preview_link) == 1
+            assert preview_link[0].text_content().strip() == 'Preview your requirements'
+        else:
+            assert len(preview_link) == 0
 
     def test_wrong_lot_get_view_section_summary(self):
         res = self.client.get(

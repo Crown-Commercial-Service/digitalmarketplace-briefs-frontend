@@ -88,6 +88,16 @@
 
   </div>
 
+  {% if show_dos_preview_link %}
+    {%
+      with
+      url = url_for(".review_brief", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+      text = "Preview your requirements"
+    %}
+      {% include "toolkit/secondary-action-link.html" %}
+    {% endwith %}
+  {% endif %}
+
   {%
     with
     url = url_for(".view_brief_overview", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
