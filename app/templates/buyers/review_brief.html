@@ -6,18 +6,7 @@
 
 {% block breadcrumb %}
   {%
-    with
-    items = [
-      {
-          "link": url_for('external.index'),
-          "label": "Digital Marketplace"
-      },
-      {
-          "link": url_for('external.list_opportunities', framework_family=brief.framework.family),
-          "label": "Supplier opportunities"
-      },
-      breadcrumbs
-    ]
+    with items = breadcrumbs
   %}
     {% include "toolkit/breadcrumb.html" %}
   {% endwith %}
@@ -29,7 +18,7 @@
 <div class="govuk-grid-row">
   <div class="column-two-thirds">
     <header class="page-heading-smaller">
-      <h1>Review your requirements</h1>
+      <h1>Preview your requirements</h1>
     </header>
   </div>
 </div>
@@ -85,7 +74,9 @@
         }) }}
       </div>
     </div>
-
+    <p class="govuk-body">
+      <a class="govuk-link" href="{{ url_for('.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Return to overview</a>
+    </p>
   </div>
 </div>
 
