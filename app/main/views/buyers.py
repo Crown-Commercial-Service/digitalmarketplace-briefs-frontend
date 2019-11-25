@@ -531,11 +531,6 @@ def review_brief(framework_slug, lot_slug, brief_id):
 
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
 
-    # Check that all questions have been answered
-    unanswered_required, unanswered_optional = count_unanswered_questions(content.summary(brief))
-    if unanswered_required > 0:
-        abort(400, 'There are still unanswered required questions')
-
     breadcrumbs = get_briefs_breadcrumbs([
         {
             "link": url_for(
@@ -546,6 +541,17 @@ def review_brief(framework_slug, lot_slug, brief_id):
             "label": brief['title']
         }
     ])
+
+    # Check that all questions have been answered
+    unanswered_required, unanswered_optional = count_unanswered_questions(content.summary(brief))
+    if unanswered_required > 0:
+        return render_template(
+            "buyers/review_brief.html",
+            content=content,
+            unanswered_required=unanswered_required,
+            brief=brief,
+            breadcrumbs=breadcrumbs
+        ), 400
 
     return render_template(
         "buyers/review_brief.html",
