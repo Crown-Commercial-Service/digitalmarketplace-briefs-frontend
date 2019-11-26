@@ -1089,6 +1089,30 @@ class TestReviewBrief(BaseApplicationTest):
                               "digital-specialists/1234/review")
         assert res.status_code == 400
 
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+
+        # Show link to the the unanswered question
+        assert 'You still need to complete the following questions before your requirements can be previewed:' in \
+               page_html
+        assert len(document.xpath(
+            "//a[@href=$u][normalize-space(string())=$t]",
+            u="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+              "digital-specialists/1234/edit/shortlist-and-evaluation-process/technicalCompetenceCriteriaSpecialists",
+            t="Technical competence criteria",
+        )) == 1
+
+        # Don't show the preview tabs
+        assert "This is how suppliers will see your requirements when they are published." not in page_html
+        preview_src_link = "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/" \
+                           "digital-specialists/1234/review-source"
+        assert len(document.xpath(
+            "//iframe[@src=$u][@title=$t][@class=$c]",
+            u=preview_src_link,
+            t="Preview of the page on desktop or tablet",
+            c="dm-desktop-iframe"
+        )) == 0
+
     def test_review_source_page_400s_if_unanswered_questions(self):
         brief_json = self._setup_brief()
         brief_json['briefs'].pop('essentialRequirements')

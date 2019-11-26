@@ -25,55 +25,74 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <p class="govuk-body">This is how suppliers will see your requirements when they are published.</p>
-    <p class="govuk-body">
-      <a class="govuk-link" href="{{ url_for('.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Return to overview</a>
-    </p>
 
-    {% set desktopHtml %}
-      <iframe
-        src="{{ url_for('.review_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
-        title="Preview of the page on desktop or tablet"
-        class="dm-desktop-iframe"
-      >
-      </iframe>
-    {% endset %}
-    {% set mobileHtml %}
-      <div class="dm-mobile-preview">
+    {% if unanswered_required %}
+      <div class="dmspeak">
+        <p class="govuk-body">You still need to complete the following questions before your requirements can be previewed:</p>
+      </div>
+      {% for section in content.summary(brief) %}
+        {% for question in section.questions %}
+          {% if question.answer_required and not question.id == 'requirementsLength' %}
+            <ol class="govuk-list govuk-list--number">
+              <li>
+                <a class="govuk-link" href="{{ url_for('.edit_brief_question', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id) }}">{{ question.question }}</a>
+              </li>
+            </ol>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    {% else %}
+      <p class="govuk-body">This is how suppliers will see your requirements when they are published.</p>
+      <p class="govuk-body">
+        <a class="govuk-link" href="{{ url_for('.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Return to overview</a>
+      </p>
+
+      {% set desktopHtml %}
         <iframe
           src="{{ url_for('.review_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
-          title="Preview of the page on mobile"
-          class="dm-mobile-iframe"
+          title="Preview of the page on desktop or tablet"
+          class="dm-desktop-iframe"
         >
         </iframe>
-      </div>
-    {% endset %}
+      {% endset %}
+      {% set mobileHtml %}
+        <div class="dm-mobile-preview">
+          <iframe
+            src="{{ url_for('.review_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+            title="Preview of the page on mobile"
+            class="dm-mobile-iframe"
+          >
+          </iframe>
+        </div>
+      {% endset %}
 
-    {% set pageTabs = [
-      {
-        "label": "Desktop",
-        "id": "desktop-preview",
-        "panel": {
-          "html": desktopHtml
-        }
-      },
-      {
-        "label": "Mobile",
-        "id": "mobile-preview",
-        "panel": {
-          "html": mobileHtml
-        }
-      },
-    ] %}
+      {% set pageTabs = [
+        {
+          "label": "Desktop",
+          "id": "desktop-preview",
+          "panel": {
+            "html": desktopHtml
+          }
+        },
+        {
+          "label": "Mobile",
+          "id": "mobile-preview",
+          "panel": {
+            "html": mobileHtml
+          }
+        },
+      ] %}
 
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full">
-        {{ govukTabs({
-          "title": "Review your requirements",
-          "items": pageTabs
-        }) }}
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+          {{ govukTabs({
+            "title": "Review your requirements",
+            "items": pageTabs
+          }) }}
+        </div>
       </div>
-    </div>
+    {% endif %}
+
     <p class="govuk-body">
       <a class="govuk-link" href="{{ url_for('.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Return to overview</a>
     </p>
