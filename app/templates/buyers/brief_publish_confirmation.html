@@ -16,14 +16,8 @@
 
 <div class='grid-row'>
   <div class='column-two-thirds large-paragraph'>
-    {% with
-        heading = "Publish your requirements and evaluation criteria" if not published else "Question and answer dates",
-        smaller = True,
-        with_breadcrumb = True
-    %}
-        {% include "toolkit/page-heading.html" %}
-    {% endwith %}
-
+    {% set heading = "Publish your requirements and evaluation criteria" if not published else "Question and answer dates" %}
+    <h1 class="govuk-heading-l">{{ heading }}</h1>
     {% if not published %}
       <div class="dmspeak">
         <p class="govuk-body">All requirements are published on the Digital Marketplace where anyone can see them.</p>

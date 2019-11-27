@@ -17,12 +17,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
           <div class="single-question-page">
-              {% with
-                    heading = "Who won the {} contract?".format(brief.title),
-                    smaller = true
-              %}
-                {% include 'toolkit/page-heading.html' %}
-              {% endwith %}
+              <h1 class="govuk-heading-l">Who won the {{ brief.title }} contract?</h1>
 
               <form method="POST" action="{{ url_for('.award_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
                   <p class="govuk-body">

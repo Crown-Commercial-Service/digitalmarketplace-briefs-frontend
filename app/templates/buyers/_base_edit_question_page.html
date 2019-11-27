@@ -13,14 +13,9 @@
 
   <div class="grid-row">
     <div class="column-two-thirds">
-
-      {% with
-        heading = question.question,
-        smaller = true
-      %}
-        {% include 'toolkit/page-heading.html' %}
-      {% endwith %}
-
+      <h1 class="govuk-heading-l">
+        {{ question.question }}
+      </h1>
     </div>
   </div>
 

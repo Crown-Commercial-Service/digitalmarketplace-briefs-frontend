@@ -18,23 +18,12 @@
     <div class="column-two-thirds">
       <div class="single-question-page">
         {% if already_awarded %}
-          {% with
-                heading = "Requirements already updated for {}".format(brief.title),
-                smaller = true
-          %}
-            {% include 'toolkit/page-heading.html' %}
-          {% endwith %}
-            <p class="govuk-body">
-              <a class="govuk-link" href="{{ url_for('external.get_brief_by_id', framework_family=brief.framework.family, brief_id=brief.id) }}">View the outcome of the requirements</a>
-            </p>
+          <h1 class="govuk-heading-l">Requirements already updated for {{ brief.title }}</h1>
+          <p class="govuk-body">
+            <a class="govuk-link" href="{{ url_for('external.get_brief_by_id', framework_family=brief.framework.family, brief_id=brief.id) }}">View the outcome of the requirements</a>
+          </p>
       {% else %}
-        {% with
-          heading = form.award_or_cancel_decision.label.text,
-          smaller = True
-        %}
-          {% include 'toolkit/page-heading.html' %}
-        {% endwith %}
-
+          <h1 class="govuk-heading-l">{{ form.award_or_cancel_decision.label.text }}</h1>
           <form method="POST" action="{{ url_for('.award_or_cancel_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             {%

@@ -18,13 +18,7 @@
   {% include 'toolkit/forms/validation.html' %}
   <div class="grid-row">
     <div class="column-two-thirds">
-      {% with
-        heading = "Tell us about your contract with {}".format(pending_brief_response.supplierName),
-        smaller = True
-      %}
-        {% include 'toolkit/page-heading.html' %}
-      {% endwith %}
-
+      <h1 class="govuk-heading-l">Tell us about your contract with {{ pending_brief_response.supplierName }}</h1>
       <form method="POST" action="{{ url_for('.award_brief_details', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, brief_response_id=pending_brief_response.id) }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           {% for question in section.questions %}
