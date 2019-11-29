@@ -20,20 +20,20 @@
       <p class="govuk-body">
         The email you used doesn't belong to a recognised public sector domain.
       </p>
-      <div class="explanation-list">
-        <p class="govuk-body-l">
-          class="govuk-link" href="{{ url_for('.create_buyer_account') }}">Create an account using a different email address</a> or email
-          <a class="govuk-link" href="mailto:{{ support_email_address }}">{{ support_email_address }}</a> if:
-        </p>
-        <ul class="govuk-list govuk-list--bullet">
-          <li>
-            you think your domain should be recognised
-          </li>
-          <li>
-            you still can't create an account
-          </li>
-        </ul>
-      </div>
+
+      <p class="govuk-body">
+        <a class="govuk-link" href="{{ url_for('.create_buyer_account') }}">Create an account using a different email address</a> or email
+        <a class="govuk-link" href="mailto:{{ support_email_address }}">{{ support_email_address }}</a> if:
+      </p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          you think your domain should be recognised
+        </li>
+        <li>
+          you still can't create an account
+        </li>
+      </ul>
 
     </div>
   </div>
