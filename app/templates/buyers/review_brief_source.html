@@ -118,7 +118,7 @@
     ) %}
       {% call summary.row() %}
         {{ summary.field_name(item.label) }}
-        {% with item_value = summary[item.type](item.value) | format_links %}
+        {% with item_value = summary[item.type](item.value) | format_links(open_links_in_new_tab=True) %}
             {{ (item_value | preserve_line_breaks) if item.type == 'textbox_large' else item_value }}
         {% endwith %}
       {% endcall %}
