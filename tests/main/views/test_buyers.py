@@ -1257,6 +1257,23 @@ class TestReviewBrief(BaseApplicationTest):
             t=disabled_link_text,
         )) == count
 
+    def test_review_source_page_will_open_user_generated_links_in_a_new_tab(self):
+        brief_json = self._setup_brief()
+        brief_json['briefs']['summary'] = "A link to the full summary: https://www.example.com"
+        self.data_api_client.get_brief.return_value = brief_json
+        res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
+                              "digital-specialists/1234/review-source")
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+
+        assert len(document.xpath(
+            "//a[@href=$u][@target=$b][@rel=$r][normalize-space(string())=$t]",
+            u="https://www.example.com",
+            b="_blank",
+            r="external noreferrer noopener",
+            t="https://www.example.com",
+        )) == 1
+
     def test_review_page_xframe_options_header_not_set(self):
         self.data_api_client.get_brief.return_value = self._setup_brief()
         res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
