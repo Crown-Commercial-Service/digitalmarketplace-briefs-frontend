@@ -1,6 +1,6 @@
 {% extends "_base_page.html" %}
 
-{% block page_title %}{{ brief.title }} [DRAFT] - Digital Marketplace{% endblock %}
+{% block page_title %}[Draft] {{ brief.title }} - Digital Marketplace{% endblock %}
 {% block inside_header %}
 <div class="header-title">
     <a href="#">Digital Marketplace</a>
@@ -51,103 +51,103 @@
 {% import "toolkit/summary-table.html" as summary %}
 
 {% block main_content %}
-
-<div class="govuk-grid-row">
-  <div class="column-two-thirds">
-    <header class="page-heading-smaller">
-      <p class="context">{{ brief.organisation }}</p>
-      <h1>{{ brief.title }} [DRAFT]</h1>
-      <span data-lot="{{ brief.lotSlug }}"></span>
-    </header>
+<div class="draft-preview">
+  <div class="govuk-grid-row">
+    <div class="column-two-thirds">
+      <header class="page-heading-smaller">
+        <p class="context">{{ brief.organisation }}</p>
+        <h1>{{ brief.title }}</h1>
+        <span data-lot="{{ brief.lotSlug }}"></span>
+      </header>
+    </div>
   </div>
-</div>
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    {{ statistics.big_stat(
-         0,
-         "Incomplete applications",
-         "0 SME, 0 large",
-         id="incomplete-applications"
-       )
-    }}
-    {{ statistics.big_stat(
-         0,
-         "Completed applications",
-         "0 SME, 0 large",
-         id="completed-applications"
-       )
-    }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      {{ statistics.big_stat(
+           0,
+           "Incomplete applications",
+           "0 SME, 0 large",
+           id="incomplete-applications"
+         )
+      }}
+      {{ statistics.big_stat(
+           0,
+           "Completed applications",
+           "0 SME, 0 large",
+           id="completed-applications"
+         )
+      }}
+    </div>
   </div>
-</div>
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    {% call(item) summary.list_table(
-      [
-        {"label": "Published", "value": important_dates.published_date|dateformat},
-        {"label": "Deadline for asking questions", "value": important_dates.questions_close|utcdatetimeformat},
-        {"label": "Closing date for applications", "value": important_dates.closing_date|utcdatetimeformat}
-      ],
-      caption="Important dates",
-      field_headings=[
-        "Opportunity attribute name",
-        "Opportunity attribute value"
-      ],
-      field_headings_visible=False
-    ) %}
-    {% call summary.row() %}
-      {{ summary.field_name(item.label) }}
-      {{ summary.text(item.value) }}
-    {% endcall %}
-  {% endcall %}
-
-  {% for section in content.summary(brief) %}
-    {{ summary.heading(section.name, id="opportunity-attributes-{}".format(loop.index)) }}
-    {% if section.summary_page_description %}
-      {{ summary.description(section.summary_page_description) }}
-    {% endif %}
-    {% call(item) summary.list_table(
-      section.questions,
-      caption=section.name,
-      field_headings=[
-        "Opportunity attribute name",
-        "Opportunity attribute value"
-      ],
-      field_headings_visible=False
-    ) %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      {% call(item) summary.list_table(
+        [
+          {"label": "Published", "value": important_dates.published_date|dateformat},
+          {"label": "Deadline for asking questions", "value": important_dates.questions_close|utcdatetimeformat},
+          {"label": "Closing date for applications", "value": important_dates.closing_date|utcdatetimeformat}
+        ],
+        caption="Important dates",
+        field_headings=[
+          "Opportunity attribute name",
+          "Opportunity attribute value"
+        ],
+        field_headings_visible=False
+      ) %}
       {% call summary.row() %}
         {{ summary.field_name(item.label) }}
-        {% with item_value = summary[item.type](item.value) | format_links(open_links_in_new_tab=True) %}
-            {{ (item_value | preserve_line_breaks) if item.type == 'textbox_large' else item_value }}
-        {% endwith %}
+        {{ summary.text(item.value) }}
       {% endcall %}
     {% endcall %}
-{% endfor %}
 
+    {% for section in content.summary(brief) %}
+      {{ summary.heading(section.name, id="opportunity-attributes-{}".format(loop.index)) }}
+      {% if section.summary_page_description %}
+        {{ summary.description(section.summary_page_description) }}
+      {% endif %}
+      {% call(item) summary.list_table(
+        section.questions,
+        caption=section.name,
+        field_headings=[
+          "Opportunity attribute name",
+          "Opportunity attribute value"
+        ],
+        field_headings_visible=False
+      ) %}
+        {% call summary.row() %}
+          {{ summary.field_name(item.label) }}
+          {% with item_value = summary[item.type](item.value) | format_links(open_links_in_new_tab=True) %}
+              {{ (item_value | preserve_line_breaks) if item.type == 'textbox_large' else item_value }}
+          {% endwith %}
+        {% endcall %}
+      {% endcall %}
+  {% endfor %}
+
+    </div>
   </div>
-</div>
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    {% if brief.questionAndAnswerSessionDetails %}
-      {{ summary.heading("Question and answer session", id="question-and-answer-session") }}
-      <p class="govuk-body"><a class="govuk-link" href="#">View question and answer session details</a></p>
-    {% endif %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      {% if brief.questionAndAnswerSessionDetails %}
+        {{ summary.heading("Question and answer session", id="question-and-answer-session") }}
+        <p class="govuk-body"><a class="govuk-link" href="#">View question and answer session details</a></p>
+      {% endif %}
 
-    {{ summary.heading("Questions asked by suppliers", id="clarification-questions") }}
-    {% call(question) summary.list_table(
-      [],
-      caption="Questions asked by suppliers",
-      field_headings=[],
-      field_headings_visible=False,
-      empty_message="No questions have been answered yet"
-    ) %}
-    {% endcall %}
+      {{ summary.heading("Questions asked by suppliers", id="clarification-questions") }}
+      {% call(question) summary.list_table(
+        [],
+        caption="Questions asked by suppliers",
+        field_headings=[],
+        field_headings_visible=False,
+        empty_message="No questions have been answered yet"
+      ) %}
+      {% endcall %}
 
-    <p class="govuk-body"><a class="govuk-link" href="#">Log in to ask a question</a></p>
+      <p class="govuk-body"><a class="govuk-link" href="#">Log in to ask a question</a></p>
 
+    </div>
   </div>
-</div>
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -157,7 +157,7 @@
       }}
     </div>
   </div>
-
+</div>
 {% endblock %}
 {% block footer_top %}{% endblock %}
 
