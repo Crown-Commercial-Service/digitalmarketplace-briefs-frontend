@@ -1149,6 +1149,11 @@ class TestReviewBrief(BaseApplicationTest):
             c="dm-mobile-iframe"
         )) == 1
 
+        assert len(document.xpath(
+            "//button[normalize-space(string())=$t]",
+            t="Confirm your requirements and publish",
+        )) == 1
+
     def test_review_source_page_renders_default_application_statistics(self):
         self.data_api_client.get_brief.return_value = self._setup_brief()
 
