@@ -233,7 +233,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         publish_requirements_section_links = [
             {
                 'href': url_for(
-                    ".review_brief",
+                    ".preview_brief",
                     framework_slug=brief['frameworkSlug'],
                     lot_slug=brief['lotSlug'],
                     brief_id=brief['id']
@@ -520,8 +520,8 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
     ), 200
 
 
-@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/review', methods=['GET'])
-def review_brief(framework_slug, lot_slug, brief_id):
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/preview', methods=['GET'])
+def preview_brief(framework_slug, lot_slug, brief_id):
     # Displays draft content in tabs for the user to see what their published brief will look like
     get_framework_and_lot(framework_slug, lot_slug, data_api_client, allowed_statuses=['live'], must_allow_brief=True)
     brief = data_api_client.get_brief(brief_id)["briefs"]
@@ -546,7 +546,7 @@ def review_brief(framework_slug, lot_slug, brief_id):
     unanswered_required, unanswered_optional = count_unanswered_questions(content.summary(brief))
     if unanswered_required > 0:
         return render_template(
-            "buyers/review_brief.html",
+            "buyers/preview_brief.html",
             content=content,
             unanswered_required=unanswered_required,
             brief=brief,
@@ -554,7 +554,7 @@ def review_brief(framework_slug, lot_slug, brief_id):
         ), 400
 
     return render_template(
-        "buyers/review_brief.html",
+        "buyers/preview_brief.html",
         content=content,
         unanswered_required=unanswered_required,
         brief=brief,
@@ -562,8 +562,8 @@ def review_brief(framework_slug, lot_slug, brief_id):
     ), 200
 
 
-@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/review-source', methods=['GET'])
-def review_brief_source(framework_slug, lot_slug, brief_id):
+@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/preview-source', methods=['GET'])
+def preview_brief_source(framework_slug, lot_slug, brief_id):
     # This view's response currently is what will populate the iframes in the view above
     get_framework_and_lot(framework_slug, lot_slug, data_api_client, allowed_statuses=['live'], must_allow_brief=True)
     brief = data_api_client.get_brief(brief_id)["briefs"]
@@ -594,9 +594,9 @@ def review_brief_source(framework_slug, lot_slug, brief_id):
     display_content = content_loader.get_manifest(brief['frameworkSlug'], 'display_brief').filter(
         {'lot': brief['lotSlug']}
     )
-    # TODO: move review_brief_source templates/includes into shared FE toolkit pattern to ensure it's kept in sync
+    # TODO: move preview_brief_source templates/includes into shared FE toolkit pattern to ensure it's kept in sync
     html = render_template(
-        "buyers/review_brief_source.html",
+        "buyers/preview_brief_source.html",
         content=display_content,
         unanswered_required=unanswered_required,
         brief=brief,
