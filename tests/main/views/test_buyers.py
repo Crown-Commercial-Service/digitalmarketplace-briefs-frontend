@@ -1131,7 +1131,7 @@ class TestReviewBrief(BaseApplicationTest):
         assert res.status_code == 200
         page_html = res.get_data(as_text=True)
         document = html.fromstring(page_html)
-        assert "This is how suppliers will see your requirements when they are published." in page_html
+        assert "This is how suppliers see your requirements when they are published." in page_html
         assert len(document.xpath('//div[@class="govuk-tabs"]//a[contains(text(), "Desktop")]')) == 1
 
         expected_src_link = "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/" \
