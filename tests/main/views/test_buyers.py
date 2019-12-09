@@ -1230,10 +1230,6 @@ class TestReviewBrief(BaseApplicationTest):
             u="#",
             t="Log in to ask a question",
         )) == 1
-        assert len(document.xpath(
-            "//button[normalize-space(string())=$t]",
-            t="Apply for this opportunity",
-        )) == 1
 
     @pytest.mark.parametrize(
         'disabled_link_text, count',
@@ -1242,11 +1238,7 @@ class TestReviewBrief(BaseApplicationTest):
             ('Supplier opportunities', 1),
             ('Guidance', 1),
             ('Help', 1),
-            ('Log in', 1),
-            ('Terms and conditions', 1),
-            ('Cookies', 1),
-            ('Privacy notice', 1),
-            ('Government Digital Service', 1)
+            ('Log in', 1)
         ]
     )
     def test_review_source_page_shows_disabled_header_breadcrumbs_and_footer_links(self, disabled_link_text, count):
