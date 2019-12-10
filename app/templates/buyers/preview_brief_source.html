@@ -54,11 +54,8 @@
 <div class="draft-preview">
   <div class="govuk-grid-row">
     <div class="column-two-thirds">
-      <header class="page-heading-smaller">
-        <p class="context">{{ brief.organisation }}</p>
-        <h1>{{ brief.title }}</h1>
-        <span data-lot="{{ brief.lotSlug }}"></span>
-      </header>
+        <span class="govuk-caption-l">{{ brief.organisation }}</span>
+        <h1 class="govuk-heading-l">{{ brief.title }}</h1>
     </div>
   </div>
 
@@ -148,25 +145,10 @@
 
     </div>
   </div>
-
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      {{ govukButton({
-          "text": "Apply for this opportunity"
-        })
-      }}
-    </div>
-  </div>
 </div>
 {% endblock %}
 {% block footer_top %}{% endblock %}
 
 {% block footer_support_links %}
-    <h2 class="visuallyhidden">Support links</h2>
-    <ul>
-      <li><a href="#" class="terms-and-conditions">Terms and conditions</a></li>
-      <li><a href="#">Cookies</a></li>
-      <li><a href="#">Privacy notice</a></li>
-      <li>Built by the <a href="#">Government Digital Service</a></li>
-    </ul>
+
 {% endblock %}

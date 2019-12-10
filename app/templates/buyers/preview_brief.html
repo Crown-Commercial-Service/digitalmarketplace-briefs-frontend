@@ -15,11 +15,9 @@
 
 {% block main_content %}
 
-<div class="govuk-grid-row">
+<div class="grid-row">
   <div class="column-two-thirds">
-    <header class="page-heading-smaller">
-      <h1>Preview your requirements</h1>
-    </header>
+    <h1 class="govuk-heading-l">Preview your requirements</h1>
   </div>
 </div>
 
@@ -42,15 +40,15 @@
         {% endfor %}
       {% endfor %}
     {% else %}
-      <p class="govuk-body">This is how suppliers will see your requirements when they are published.</p>
-      <p class="govuk-body">Links will open in a new tab.</p>
+      <p class="govuk-body">This is how suppliers see your requirements when they are published.</p>
+      <p class="govuk-body">Preview links will open in a new tab.</p>
       <p class="govuk-body">
         <a class="govuk-link" href="{{ url_for('.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Return to overview</a>
       </p>
 
       {% set desktopHtml %}
         <iframe
-          src="{{ url_for('.review_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+          src="{{ url_for('.preview_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
           title="Preview of the page on desktop or tablet"
           class="dm-desktop-iframe"
         >
@@ -59,7 +57,7 @@
       {% set mobileHtml %}
         <div class="dm-mobile-preview">
           <iframe
-            src="{{ url_for('.review_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+            src="{{ url_for('.preview_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
             title="Preview of the page on mobile"
             class="dm-mobile-iframe"
           >
@@ -87,16 +85,18 @@
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
           {{ govukTabs({
-            "title": "Review your requirements",
+            "title": "Preview your requirements",
             "items": pageTabs
           }) }}
         </div>
       </div>
     {% endif %}
+    <form action="{{ url_for('.publish_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}" method="GET">
+      {{ govukButton({
+        "text": "Confirm your requirements and publish",
+      }) }}
+    </form>
 
-    <p class="govuk-body">
-      <a class="govuk-link" href="{{ url_for('.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Return to overview</a>
-    </p>
   </div>
 </div>
 
