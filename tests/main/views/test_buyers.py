@@ -5,7 +5,6 @@ from ...helpers import BaseApplicationTest
 from dmapiclient import HTTPError
 from dmtestutils.api_model_stubs import BriefStub, FrameworkStub, LotStub
 from dmcontent.content_loader import ContentLoader
-from flask import current_app
 import mock
 from lxml import html
 import pytest
@@ -1821,7 +1820,8 @@ class TestBriefSummaryPage(BaseApplicationTest):
             'Shortlist and evaluation process',
             'Set how long your requirements will be open for',
             'Describe question and answer session',
-            'Review and publish your requirements',
+            'Preview your requirements',
+            'Publish your requirements',
             'How to answer supplier questions',
             'How to shortlist suppliers',
             'How to evaluate suppliers',
@@ -2167,11 +2167,9 @@ class TestViewBriefSectionSummaryPage(BaseApplicationTest):
         brief = self._setup_brief(lot_slug='digital-specialists')
         self.data_api_client.get_brief.return_value = brief
 
-        with self.app.app_context():
-            current_app.config['SHOW_DOS_PREVIEW_LINKS'] = show_dos_preview_links
-            res = self.client.get(
-                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-1"
-            )
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-1"
+        )
 
         assert res.status_code == 200
         document = html.fromstring(res.get_data(as_text=True))
@@ -2183,15 +2181,11 @@ class TestViewBriefSectionSummaryPage(BaseApplicationTest):
             "I need a thing to do a thing",  # breadcrumbs
             "Return to overview"             # bottom nav link
         ]
-        preview_link = document.xpath(
-            '//a[@href="/buyers/frameworks/digital-outcomes-and-specialists/'
-            'requirements/digital-specialists/1234/preview"]'
+        assert document.xpath(
+            "//a[@href=$u][normalize-space(string())=$t]",
+            u="/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/preview",
+            t="Preview your requirements",
         )
-        if show_dos_preview_links:
-            assert len(preview_link) == 1
-            assert preview_link[0].text_content().strip() == 'Preview your requirements'
-        else:
-            assert len(preview_link) == 0
 
     def test_wrong_lot_get_view_section_summary(self):
         res = self.client.get(

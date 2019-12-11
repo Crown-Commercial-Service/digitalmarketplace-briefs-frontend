@@ -1,7 +1,7 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from flask import abort, request, redirect, url_for, flash, current_app
+from flask import abort, request, redirect, url_for, flash
 from flask_login import current_user
 
 from app import data_api_client
@@ -228,46 +228,27 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
 
     breadcrumbs = get_briefs_breadcrumbs()
 
-    # Temporary additional link for Preview feature
-    if current_app.config['SHOW_DOS_PREVIEW_LINKS']:
-        publish_requirements_section_links = [
-            {
-                'href': url_for(
-                    ".preview_brief",
-                    framework_slug=brief['frameworkSlug'],
-                    lot_slug=brief['lotSlug'],
-                    brief_id=brief['id']
-                ),
-                'text': 'Preview your requirements',
-                'allowed_statuses': ['draft']
-            },
-            {
-                'href': url_for(
-                    ".publish_brief",
-                    framework_slug=brief['frameworkSlug'],
-                    lot_slug=brief['lotSlug'],
-                    brief_id=brief['id']
-                ),
-                'text': 'Publish your requirements',
-                'allowed_statuses': ['draft']
-            }
-        ]
-    else:
-        publish_requirements_section_links = [
-            {
-                'href': url_for(
-                    ".publish_brief",
-                    framework_slug=brief['frameworkSlug'],
-                    lot_slug=brief['lotSlug'],
-                    brief_id=brief['id']
-                ),
-                'text': 'Review and publish your requirements',
-                'allowed_statuses': ['draft']
-            }
-        ]
-
-    # Shared links
-    publish_requirements_section_links.extend([
+    publish_requirements_section_links = [
+        {
+            'href': url_for(
+                ".preview_brief",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']
+            ),
+            'text': 'Preview your requirements',
+            'allowed_statuses': ['draft']
+        },
+        {
+            'href': url_for(
+                ".publish_brief",
+                framework_slug=brief['frameworkSlug'],
+                lot_slug=brief['lotSlug'],
+                brief_id=brief['id']
+            ),
+            'text': 'Publish your requirements',
+            'allowed_statuses': ['draft']
+        },
         {
             'href': url_for(
                 ".view_brief_timeline",
@@ -287,7 +268,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
             'text': 'View your published requirements',
             'allowed_statuses': ['live', 'closed', 'awarded', 'cancelled', 'unsuccessful']
         }
-    ])
+    ]
 
     return render_template(
         "buyers/brief_overview.html",
@@ -339,12 +320,9 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
         }
     ])
 
-    # Show DOS preview link if feature flag set, and all mandatory questions have been answered
-    show_dos_preview_link = False
-    if current_app.config['SHOW_DOS_PREVIEW_LINKS'] is True:
-        unanswered_required, unanswered_optional = count_unanswered_questions(sections)
-        if unanswered_required == 0:
-            show_dos_preview_link = True
+    # Show preview link if all mandatory questions have been answered
+    unanswered_required, unanswered_optional = count_unanswered_questions(sections)
+    show_dos_preview_link = (unanswered_required == 0)
 
     return render_template(
         "buyers/section_summary.html",
