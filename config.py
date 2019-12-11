@@ -74,9 +74,6 @@ class Config(object):
         jinja_loader = jinja2.FileSystemLoader(template_folders)
         app.jinja_loader = jinja_loader
 
-    # Feature flag - show on Preview and Local only for now
-    SHOW_DOS_PREVIEW_LINKS = False
-
 
 class Test(Config):
     DEBUG = True
@@ -104,9 +101,6 @@ class Development(Config):
     SECRET_KEY = "verySecretKey"
     SHARED_EMAIL_KEY = "very_secret"
 
-    # Feature flag for DOS preview
-    SHOW_DOS_PREVIEW_LINKS = True
-
 
 class Live(Config):
     """Base config for deployed environments"""
@@ -123,8 +117,7 @@ class Live(Config):
 
 
 class Preview(Live):
-    # Feature flag for DOS preview
-    SHOW_DOS_PREVIEW_LINKS = True
+    pass
 
 
 class Staging(Live):
