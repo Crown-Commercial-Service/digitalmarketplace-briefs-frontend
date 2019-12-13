@@ -24,6 +24,7 @@ $path: "/buyers/static/images/";
 @import "toolkit/_breadcrumb.scss";
 @import "toolkit/_buttons.scss";
 @import "toolkit/_document.scss";
+@import "toolkit/_footer.scss";
 @import "toolkit/_grids.scss";
 @import "toolkit/_instruction-list.scss";
 @import "toolkit/_notification-banners.scss";
@@ -54,7 +55,6 @@ $govuk-compatibility-govukelements: true;
 
 // App specific styles
 @import "_brief_submission.scss";
-@import "_footer.scss";
 @import "_text.scss";
 @import "_secondary-action-link.scss";
 @import "_error-pages.scss";
