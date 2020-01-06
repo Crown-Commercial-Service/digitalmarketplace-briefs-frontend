@@ -1101,7 +1101,7 @@ class TestPreviewBrief(BaseApplicationTest):
             t="Technical competence criteria",
         )) == 1
 
-        # Don't show the preview tabs
+        # Don't show the preview tabs or call-to-action button
         assert "This is how suppliers will see your requirements when they are published." not in page_html
         preview_src_link = "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/" \
                            "digital-specialists/1234/preview-source"
@@ -1110,6 +1110,10 @@ class TestPreviewBrief(BaseApplicationTest):
             u=preview_src_link,
             t="Preview of the page on desktop or tablet",
             c="dm-desktop-iframe"
+        )) == 0
+        assert len(document.xpath(
+            "//button[normalize-space(string())=$t]",
+            t="Confirm your requirements and publish",
         )) == 0
 
     def test_preview_source_page_400s_if_unanswered_questions(self):
