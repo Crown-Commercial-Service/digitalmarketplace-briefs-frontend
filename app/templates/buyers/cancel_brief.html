@@ -2,7 +2,7 @@
 
 {% import "toolkit/forms/macros/forms.html" as forms %}
 
-{% block page_title %}
+{% block pageTitle %}
   {{ brief.title or brief.lotName }} – Digital Marketplace
 {% endblock %}
 
@@ -14,7 +14,7 @@
   {% endwith %}
 {% endblock %}
 
-{% block main_content %}
+{% block mainContent %}
   {% include 'toolkit/forms/validation.html' %}
   <div class="grid-row">
     <div class="column-two-thirds">
