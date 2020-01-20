@@ -10,7 +10,6 @@ from ..helpers.buyers_helpers import (
     add_unanswered_counts_to_briefs,
     brief_can_be_edited,
     count_unanswered_questions,
-    get_briefs_breadcrumbs,
     get_framework_and_lot,
     is_brief_correct,
     is_legacy_brief_response,
@@ -73,23 +72,11 @@ def buyer_dos_requirements():
         reverse=True
     )
 
-    breadcrumbs = [
-        {
-            "link": "/",
-            "label": "Digital Marketplace"
-        },
-        {
-            "link": url_for("buyers.buyer_dashboard"),
-            "label": "Your account"
-        }
-    ]
-
     return render_template(
         'buyers/dashboard.html',
         draft_briefs=draft_briefs,
         live_briefs=live_briefs,
         closed_briefs=closed_briefs,
-        breadcrumbs=breadcrumbs,
     )
 
 
@@ -226,8 +213,6 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         for index, question in enumerate(brief['clarificationQuestions'])
     ]
 
-    breadcrumbs = get_briefs_breadcrumbs()
-
     publish_requirements_section_links = [
         {
             'href': url_for(
@@ -283,7 +268,6 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         call_off_contract_url=call_off_contract_url,
         framework_agreement_url=framework_agreement_url,
         awarded_brief_response_supplier_name=awarded_brief_response_supplier_name,
-        breadcrumbs=breadcrumbs,
         publish_requirements_section_links=publish_requirements_section_links
     ), 200
 
@@ -309,17 +293,6 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
     if not section:
         abort(404)
 
-    breadcrumbs = get_briefs_breadcrumbs([
-        {
-            "link": url_for(
-                ".view_brief_overview",
-                framework_slug=brief['frameworkSlug'],
-                lot_slug=brief['lotSlug'],
-                brief_id=brief['id']),
-            "label": brief['title']
-        }
-    ])
-
     # Show preview link if all mandatory questions have been answered
     unanswered_required, unanswered_optional = count_unanswered_questions(sections)
     show_dos_preview_link = (unanswered_required == 0)
@@ -328,7 +301,6 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
         "buyers/section_summary.html",
         brief=brief,
         section=section,
-        breadcrumbs=breadcrumbs,
         show_dos_preview_link=show_dos_preview_link
     ), 200
 
@@ -354,23 +326,11 @@ def edit_brief_question(framework_slug, lot_slug, brief_id, section_slug, questi
     if not question:
         abort(404)
 
-    breadcrumbs = get_briefs_breadcrumbs([
-        {
-            "link": url_for(
-                ".view_brief_overview",
-                framework_slug=brief['frameworkSlug'],
-                lot_slug=brief['lotSlug'],
-                brief_id=brief['id']),
-            "label": brief['title']
-        }
-    ])
-
     return render_template(
         "buyers/edit_brief_question.html",
         brief=section.unformat_data(brief),
         section=section,
-        question=question,
-        breadcrumbs=breadcrumbs,
+        question=question
     ), 200
 
 
@@ -409,24 +369,12 @@ def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, ques
         # we need the brief_id to build breadcrumbs and the update_data to fill in the form.
         brief.update(update_data)
 
-        breadcrumbs = get_briefs_breadcrumbs([
-            {
-                "link": url_for(
-                    ".view_brief_overview",
-                    framework_slug=brief['frameworkSlug'],
-                    lot_slug=brief['lotSlug'],
-                    brief_id=brief['id']),
-                "label": brief['title']
-            }
-        ])
-
         return render_template(
             "buyers/edit_brief_question.html",
             brief=brief,
             section=section,
             question=question,
-            errors=errors,
-            breadcrumbs=breadcrumbs,
+            errors=errors
         ), 400
 
     if section.has_summary_page:
@@ -478,23 +426,11 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
     for response in brief_responses:
         counter[all(response['essentialRequirements'])] += 1
 
-    breadcrumbs = get_briefs_breadcrumbs([
-        {
-            "link": url_for(
-                ".view_brief_overview",
-                framework_slug=brief['frameworkSlug'],
-                lot_slug=brief['lotSlug'],
-                brief_id=brief['id']),
-            "label": brief['title']
-        }
-    ])
-
     return render_template(
         "buyers/brief_responses.html",
         response_counts={"failed": counter[False], "eligible": counter[True]},
         brief_responses_required_evidence=brief_responses_required_evidence,
-        brief=brief,
-        breadcrumbs=breadcrumbs
+        brief=brief
     ), 200
 
 
@@ -509,17 +445,6 @@ def preview_brief(framework_slug, lot_slug, brief_id):
 
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
 
-    breadcrumbs = get_briefs_breadcrumbs([
-        {
-            "link": url_for(
-                ".view_brief_overview",
-                framework_slug=brief['frameworkSlug'],
-                lot_slug=brief['lotSlug'],
-                brief_id=brief['id']),
-            "label": brief['title']
-        }
-    ])
-
     # Check that all questions have been answered
     unanswered_required, unanswered_optional = count_unanswered_questions(content.summary(brief))
     if unanswered_required > 0:
@@ -527,16 +452,14 @@ def preview_brief(framework_slug, lot_slug, brief_id):
             "buyers/preview_brief.html",
             content=content,
             unanswered_required=unanswered_required,
-            brief=brief,
-            breadcrumbs=breadcrumbs
+            brief=brief
         ), 400
 
     return render_template(
         "buyers/preview_brief.html",
         content=content,
         unanswered_required=unanswered_required,
-        brief=brief,
-        breadcrumbs=breadcrumbs
+        brief=brief
     ), 200
 
 
@@ -558,16 +481,6 @@ def preview_brief_source(framework_slug, lot_slug, brief_id):
         abort(400, 'There are still unanswered required questions')
 
     important_dates = get_publishing_dates(brief)
-    breadcrumbs = get_briefs_breadcrumbs([
-        {
-            "link": url_for(
-                ".view_brief_overview",
-                framework_slug=brief['frameworkSlug'],
-                lot_slug=brief['lotSlug'],
-                brief_id=brief['id']),
-            "label": brief['title']
-        }
-    ])
 
     display_content = content_loader.get_manifest(brief['frameworkSlug'], 'display_brief').filter(
         {'lot': brief['lotSlug']}
@@ -578,8 +491,7 @@ def preview_brief_source(framework_slug, lot_slug, brief_id):
         content=display_content,
         unanswered_required=unanswered_required,
         brief=brief,
-        important_dates=important_dates,
-        breadcrumbs=breadcrumbs,
+        important_dates=important_dates
     )
     response_headers = {"X-Frame-Options": "sameorigin"}
 
@@ -630,17 +542,6 @@ def publish_brief(framework_slug, lot_slug, brief_id):
         email_address = brief_users['emailAddress']
         dates = get_publishing_dates(brief)
 
-        breadcrumbs = get_briefs_breadcrumbs([
-            {
-                "link": url_for(
-                    ".view_brief_overview",
-                    framework_slug=brief['frameworkSlug'],
-                    lot_slug=brief['lotSlug'],
-                    brief_id=brief['id']),
-                "label": brief['title']
-            }
-        ])
-
         return render_template(
             "buyers/brief_publish_confirmation.html",
             email_address=email_address,
@@ -648,8 +549,7 @@ def publish_brief(framework_slug, lot_slug, brief_id):
             unanswered_required=unanswered_required,
             sections=sections,
             brief=brief,
-            dates=dates,
-            breadcrumbs=breadcrumbs
+            dates=dates
         ), 200
 
 

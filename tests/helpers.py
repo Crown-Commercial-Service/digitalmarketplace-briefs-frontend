@@ -225,7 +225,7 @@ class BaseApplicationTest(object):
 
     def assert_breadcrumbs(self, response, extra_breadcrumbs=None):
         breadcrumbs = html.fromstring(response.get_data(as_text=True)).xpath(
-            '//*[@id="global-breadcrumb"]/nav/ol/li'
+            '//*[@class="govuk-breadcrumbs"]/ol/li'
         )
 
         breadcrumbs_we_expect = [
@@ -239,5 +239,8 @@ class BaseApplicationTest(object):
         assert len(breadcrumbs) == len(breadcrumbs_we_expect)
 
         for index, link in enumerate(breadcrumbs_we_expect):
-            assert breadcrumbs[index].find('a').text_content().strip() == link[0]
-            assert breadcrumbs[index].find('a').get('href').strip() == link[1]
+            if index < len(breadcrumbs_we_expect) - 1:
+                assert breadcrumbs[index].find('a').text_content().strip() == link[0]
+                assert breadcrumbs[index].find('a').get('href').strip() == link[1]
+            else:  # because last breadcrumb has only text
+                assert breadcrumbs[index].text_content().strip() == link[0]

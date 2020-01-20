@@ -56,6 +56,9 @@ class TestAwardBrief(BaseApplicationTest):
             (
                 'I need a thing to do a thing',
                 '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+            ),
+            (
+                'Who won the contract?',
             )
         ])
 
@@ -245,6 +248,9 @@ class TestAwardBriefDetails(BaseApplicationTest):
             (
                 'I need a thing to do a thing',
                 '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+            ),
+            (
+                'Tell us about your contract',
             )
         ])
 
@@ -423,6 +429,9 @@ class TestCancelBrief(BaseApplicationTest):
             (
                 'I need a thing to do a thing',
                 '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+            ),
+            (
+                "Why do you need to cancel?",
             )
         ])
 

@@ -7,7 +7,7 @@ from flask_login import current_user
 
 from app import data_api_client
 from .. import main, content_loader
-from ..helpers.buyers_helpers import get_framework_and_lot, is_brief_correct, get_briefs_breadcrumbs
+from ..helpers.buyers_helpers import get_framework_and_lot, is_brief_correct
 
 from ..forms.awards import AwardedBriefResponseForm
 from ..forms.cancel import CancelBriefForm
@@ -37,16 +37,6 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
     ):
         abort(404)
 
-    breadcrumbs = get_briefs_breadcrumbs([{
-        "label": brief['title'],
-        "link": url_for(
-            ".view_brief_overview",
-            framework_slug=brief['frameworkSlug'],
-            lot_slug=brief['lotSlug'],
-            brief_id=brief['id']
-        )
-    }])
-
     form = AwardOrCancelBriefForm(brief)
     already_awarded = brief['status'] in ["awarded", "cancelled", "unsuccessful"]
 
@@ -74,7 +64,6 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
         brief=brief,
         form=form,
         errors=errors,
-        breadcrumbs=breadcrumbs,
         already_awarded=already_awarded,
     ), 200 if not errors else 400
 
@@ -89,17 +78,6 @@ def award_brief(framework_slug, lot_slug, brief_id):
         must_allow_brief=True,
     )
     brief = data_api_client.get_brief(brief_id)["briefs"]
-
-    breadcrumbs = get_briefs_breadcrumbs([
-        {
-            "link": url_for(
-                ".view_brief_overview",
-                framework_slug=brief['frameworkSlug'],
-                lot_slug=brief['lotSlug'],
-                brief_id=brief['id']),
-            "label": brief['title']
-        }
-    ])
 
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id, allowed_statuses=['closed']):
         abort(404)
@@ -147,8 +125,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
         "buyers/award.html",
         brief=brief,
         form=form,
-        errors=errors,
-        breadcrumbs=breadcrumbs,
+        errors=errors
     ), 200 if not errors else 400
 
 
@@ -217,17 +194,6 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
         except HTTPError:
             abort(500, "Unexpected API error when cancelling brief")
 
-    breadcrumbs = get_briefs_breadcrumbs([
-        {
-            "link": url_for(
-                ".view_brief_overview",
-                framework_slug=brief['frameworkSlug'],
-                lot_slug=brief['lotSlug'],
-                brief_id=brief['id']),
-            "label": brief['title']
-        }
-    ])
-
     errors = get_errors_from_wtform(form)
 
     return render_template(
@@ -235,7 +201,6 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
         brief=brief,
         form=form,
         errors=errors,
-        breadcrumbs=breadcrumbs,
         previous_page_url=previous_page_url
     ), 200 if not errors else 400
 
@@ -263,17 +228,6 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
     section_id = content.get_next_editable_section_id()
     section = content.get_section(section_id)
 
-    breadcrumbs = get_briefs_breadcrumbs([
-        {
-            "link": url_for(
-                ".view_brief_overview",
-                framework_slug=brief['frameworkSlug'],
-                lot_slug=brief['lotSlug'],
-                brief_id=brief['id']),
-            "label": brief['title']
-        }
-    ])
-
     if request.method == "POST":
         award_data = section.get_data(request.form)
         try:
@@ -293,8 +247,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
                 data=award_data,
                 errors=errors,
                 pending_brief_response=brief_response,
-                section=section,
-                breadcrumbs=breadcrumbs,
+                section=section
             ), 400
 
         flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
@@ -306,6 +259,5 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
         brief=brief,
         data={},
         pending_brief_response=brief_response,
-        section=section,
-        breadcrumbs=breadcrumbs,
+        section=section
     ), 200

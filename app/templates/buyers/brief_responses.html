@@ -4,22 +4,45 @@
   Responses to {{ brief.title or brief.lotName }} – Digital Marketplace
 {% endblock %}
 
+{% if response_counts['eligible'] > 0 %}
+  {% set heading = 'Shortlist suppliers' %}
+{% else %}
+  {% set heading = 'There were no applications' %}
+{% endif %}
+
 {% block breadcrumb %}
-  {%
-      with items = breadcrumbs
-  %}
-    {% include "toolkit/breadcrumb.html" %}
-  {% endwith %}
+  {{ govukBreadcrumbs({
+    "items": [
+        {
+          "href": "/",
+          "text": "Digital Marketplace"
+      },
+      {
+          "href": url_for("buyers.buyer_dashboard"),
+          "text": "Your account"
+      },
+      {
+          "href": url_for("buyers.buyer_dos_requirements"),
+          "text": "Your requirements"
+      },
+      {
+        "href": url_for(
+            ".view_brief_overview",
+            framework_slug=brief['frameworkSlug'],
+            lot_slug=brief['lotSlug'],
+            brief_id=brief['id']),
+        "text": brief['title']
+      },
+      {
+          "text": "Responses"
+      }
+    ]
+  }) }}
 {% endblock %}
 
 {% block mainContent %}
 <div class="grid-row">
     <div class="column-two-thirds">
-        {% if response_counts['eligible'] > 0 %}
-          {% set heading = 'Shortlist suppliers' %}
-        {% else %}
-          {% set heading = 'There were no applications' %}
-        {% endif %}
         <h1 class="govuk-heading-l">{{ heading }}</h1>
     </div>
 </div>

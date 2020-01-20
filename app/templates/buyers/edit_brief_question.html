@@ -3,16 +3,50 @@
 {% import "macros/brief_links.html" as brief_links %}
 
 {% block breadcrumb %}
-  {% set base_breadcrumbs = breadcrumbs %}
-  {% set section_breadcrumb = [{
-        "link": url_for(".view_brief_section_summary", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug),
-        "label": section.name
-      }] if section.has_summary_page else []
+  {% with items = [
+      {
+        "href": "/",
+        "text": "Digital Marketplace"
+      },
+      {
+        "href": url_for("buyers.buyer_dashboard"),
+        "text": "Your account"
+      },
+      {
+        "href": url_for("buyers.buyer_dos_requirements"),
+        "text": "Your requirements"
+      },
+      {
+        "href": url_for(
+          ".view_brief_overview",
+          framework_slug=brief['frameworkSlug'],
+          lot_slug=brief['lotSlug'],
+          brief_id=brief['id']),
+        "text": brief['title']
+      }
+    ]
   %}
-  {%
-    with items = base_breadcrumbs + section_breadcrumb
-  %}
-    {% include "toolkit/breadcrumb.html" %}
+    {% if section.has_summary_page %}
+      {{ govukBreadcrumbs({
+        "items": items + [
+          {
+            "href": url_for(".view_brief_section_summary", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug),
+            "text": section.name
+          },
+          {
+            "text": question.question
+          }
+        ]
+      }) }}
+    {% else %}
+      {{ govukBreadcrumbs({
+        "items": items + [
+          {
+            "text": question.question
+          }
+        ]
+      }) }}
+    {% endif %}
   {% endwith %}
 {% endblock %}
 
