@@ -28,12 +28,12 @@
 
 {% block mainContent %}
 
-<div class="grid-row">
-    <div class="column-two-thirds large-paragraph">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds large-paragraph">
       <h1 class="govuk-heading-l">{{ title_text }}</h1>
     </div>
 
-    <div class="column-two-thirds large-paragraph">
+    <div class="govuk-grid-column-two-thirds large-paragraph">
         <div class="marketplace-paragraph">
                  {% set digital_specialists_intro %}
                     <p class="govuk-body">You can use the Digital Marketplace to find a specialist, such as a developer or a user researcher, for a specific piece of work.</p>
@@ -96,7 +96,7 @@
         </div>
     </div>
 
-    <div class="column-two-thirds large-paragraph">
+    <div class="govuk-grid-column-two-thirds large-paragraph">
         <form action="{{ url_for('buyers.start_new_brief', framework_slug=framework.slug, lot_slug=lot.slug) }}" method="get">
 
             {{ govukButton({

@@ -1776,7 +1776,7 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
 
 class TestBriefSummaryPage(BaseApplicationTest):
 
-    SIDE_LINKS_XPATH = '//div[@class="column-one-third"]//a'
+    SIDE_LINKS_XPATH = '//div[@class="govuk-grid-column-one-third"]//a'
     INSTRUCTION_LINKS_XPATH = '//main[@id="content"]//ul/li/a'
 
     def setup_method(self, method):

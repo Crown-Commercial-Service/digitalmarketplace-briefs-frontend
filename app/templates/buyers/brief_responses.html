@@ -41,14 +41,14 @@
 {% endblock %}
 
 {% block mainContent %}
-<div class="grid-row">
-    <div class="column-two-thirds">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">{{ heading }}</h1>
     </div>
 </div>
 
-<div class="grid-row">
-    <div class="column-two-thirds">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
       {% if response_counts['eligible'] > 0 %}
         {% if brief_responses_required_evidence %}
           <div class="dmspeak">

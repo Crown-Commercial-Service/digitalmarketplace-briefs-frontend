@@ -29,10 +29,10 @@
 {% endblock %}
 
 {% block mainContent %}
-  <div class="grid-row">
+  <div class="govuk-grid-row">
     {% block before_heading %}
       {% if delete_requested %}
-        <div class="column-one-whole">
+        <div class="govuk-grid-column-full">
           <form action="{{ url_for('buyers.delete_a_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="hidden" name="delete_confirmed" value="true" />
@@ -51,7 +51,7 @@
         </div>
       {% endif %}
       {% if withdraw_requested %}
-        <div class="column-one-whole">
+        <div class="govuk-grid-column-full">
           <form action="{{ url_for('buyers.withdraw_a_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="hidden" name="withdraw_confirmed" value="true" />
@@ -79,13 +79,13 @@
     {% endblock %}
   </div>
 
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">{{ brief.get('title', brief['lotName']) }}</h1>
     </div>
   </div>
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
       {% block before_sections %}{% endblock %}
       <ol class="instruction-list steps">
 
@@ -275,7 +275,7 @@
         {% endwith %}
       </ol>
     </div>
-    <div class="column-one-third">
+    <div class="govuk-grid-column-one-third">
       {% if brief.status == 'closed' %}
         <a class="govuk-link" href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirements</a>
       {% elif brief.status == 'live' %}

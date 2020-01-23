@@ -38,8 +38,8 @@
 
 {% block mainContent %}
   {% include 'toolkit/forms/validation.html' %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
       <div class="single-question-page">
         <h1 class="govuk-heading-l">{{ form.cancel_reason.label.text }}</h1>
         <form method="POST" action="{{ url_for(request.endpoint, framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
