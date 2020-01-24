@@ -7,9 +7,34 @@
 {% endblock %}
 
 {% block breadcrumb %}
-  {% with items = breadcrumbs %}
-    {% include "toolkit/breadcrumb.html" %}
-  {% endwith %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "href": "/",
+        "text": "Digital Marketplace"
+      },
+      {
+        "href": url_for("buyers.buyer_dashboard"),
+        "text": "Your account"
+      },
+      {
+        "href": url_for("buyers.buyer_dos_requirements"),
+        "text": "Your requirements"
+      },
+      {
+        "href": url_for(
+          ".view_brief_overview",
+          framework_slug=brief['frameworkSlug'],
+          lot_slug=brief['lotSlug'],
+          brief_id=brief['id']
+        ),
+        "text": brief['title']
+      },
+      {
+          "text": "Have you awarded a contract?"
+      }
+    ]
+  }) }}
 {% endblock %}
 
 {% block mainContent %}

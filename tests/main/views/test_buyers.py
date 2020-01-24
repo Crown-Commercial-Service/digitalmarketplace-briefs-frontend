@@ -578,18 +578,26 @@ class TestEditBriefSubmission(BaseApplicationTest):
         self.data_api_client_patch.stop()
         super().teardown_method(method)
 
-    def _test_breadcrumbs_on_question_page(self, response, has_summary_page=False, section_name=None):
+    def _test_breadcrumbs_on_question_page(self, response, has_summary_page=False, section_name=None, question=None):
         extra_breadcrumbs = [
             ('I need a thing to do a thing',
              '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234')
         ]
         if has_summary_page and section_name:
-            extra_breadcrumbs.append((
-                section_name,
-                '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/{}'.format(
-                    section_name.lower().replace(' ', '-')
+            extra_breadcrumbs.append(
+                (
+                    section_name, (
+                        '/buyers/frameworks/digital-outcomes-and-specialists/requirements/' +
+                        'digital-specialists/1234/{}'.format(section_name.lower().replace(' ', '-'))
+                    )
+                ),
+            )
+        if question:
+            extra_breadcrumbs.append(
+                (
+                    question,
                 )
-            ))
+            )
 
         self.assert_breadcrumbs(response, extra_breadcrumbs)
 
@@ -618,7 +626,9 @@ class TestEditBriefSubmission(BaseApplicationTest):
         assert document.xpath('//h1')[0].text_content().strip() == "Optional 2"
         assert secondary_action_link.get('href').strip() == "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-4"  # noqa
         assert secondary_action_link.text_content().strip() == "Return to section 4"
-        self._test_breadcrumbs_on_question_page(response=res, has_summary_page=True, section_name='Section 4')
+        self._test_breadcrumbs_on_question_page(
+            response=res, has_summary_page=True, section_name='Section 4', question='Optional 2'
+        )
 
     @mock.patch("app.main.views.buyers.content_loader", autospec=True)
     def test_edit_brief_submission_return_link_to_section_summary_if_other_questions(self, content_loader):
@@ -636,7 +646,9 @@ class TestEditBriefSubmission(BaseApplicationTest):
         assert document.xpath('//h1')[0].text_content().strip() == "Required 1"
         assert secondary_action_link.get('href').strip() == "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/section-1"  # noqa
         assert secondary_action_link.text_content().strip() == "Return to section 1"
-        self._test_breadcrumbs_on_question_page(response=res, has_summary_page=True, section_name='Section 1')
+        self._test_breadcrumbs_on_question_page(
+            response=res, has_summary_page=True, section_name='Section 1', question='Required 1'
+        )
 
     @mock.patch("app.main.views.buyers.content_loader", autospec=True)
     def test_edit_brief_submission_return_link_to_brief_overview_if_single_question(self, content_loader):
@@ -654,7 +666,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
         assert document.xpath('//h1')[0].text_content().strip() == "Required 2"
         assert secondary_action_link.get('href').strip() == "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"  # noqa
         assert secondary_action_link.text_content().strip() == "Return to overview"
-        self._test_breadcrumbs_on_question_page(response=res, has_summary_page=False)
+        self._test_breadcrumbs_on_question_page(response=res, has_summary_page=False, question="Required 2")
 
     @mock.patch("app.main.views.buyers.content_loader", autospec=True)
     def test_edit_brief_submission_multiquestion(self, content_loader):

@@ -11,20 +11,21 @@
 %}
 
 {% block breadcrumb %}
-  {%
-    with items = [
+  {{ govukBreadcrumbs({
+    "items": [
       {
-        "link": "/",
-        "label": "Digital Marketplace"
+        "text": "Digital Marketplace",
+        "href": "/"
       },
       {
-        "link": url_for("dos.info_page_for_starting_a_brief", framework_slug=framework.slug, lot_slug=lot.slug),
-        "label": previous_title_text
+        "text": previous_title_text,
+        "href": url_for("dos.info_page_for_starting_a_brief", framework_slug=framework.slug, lot_slug=lot.slug)
+      },
+      {
+        "text": question.question
       }
     ]
-  %}
-    {% include "toolkit/breadcrumb.html" %}
-  {% endwith %}
+  }) }}
 {% endblock %}
 
 {% block save_button %}

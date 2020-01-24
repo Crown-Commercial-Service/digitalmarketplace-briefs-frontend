@@ -1,15 +1,25 @@
 {% extends "toolkit/layouts/_base_page.html" %}
 
-// Insert line for each component module import
-
+{# Import GOV.UK Frontend components for globale usage#}
+{% from "components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% from "components/button/macro.njk" import govukButton %}
 {% from "components/tabs/macro.njk" import govukTabs %}
 
 {# TODO: Remove once we start removing govuk_template, GOV.UK Frontend template uses pageTitle #}
 {% block page_title %}{% block pageTitle %}{% endblock %}{% endblock %}
 
-{# TODO: Remove this block when we start removing govuk_template but be sure #}
-{#       To keep the inner block mainContent otherwise no content will be rendered #}
-{% block main_content %}
-  {% block mainContent %}{% endblock %}
+{% block content %}
+  {% block top_header %}
+  {% endblock %}
+  <div id="wrapper">
+    {% block breadcrumb %}{% endblock %}
+    <main id="content" role="main">
+      {% include "toolkit/flash_messages.html" %}
+      {# TODO: Remove this block when we start removing govuk_template but be sure #}
+      {#       To keep the inner block mainContent otherwise no content will be rendered #}
+      {% block main_content %}
+        {% block mainContent %}{% endblock %}
+      {% endblock %}
+    </main>
+  </div>
 {% endblock %}

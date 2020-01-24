@@ -6,11 +6,21 @@
 {% endblock %}
 
 {% block breadcrumb %}
-  {%
-    with items = breadcrumbs
-  %}
-    {% include "toolkit/breadcrumb.html" %}
-  {% endwith %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "href": "/",
+        "text": "Digital Marketplace"
+      },
+      {
+        "href": url_for("buyers.buyer_dashboard"),
+        "text": "Your account"
+      },
+      {
+        "text": "Your requirements"
+      }
+    ]
+  }) }}
 {% endblock %}
 
 {% block mainContent %}
