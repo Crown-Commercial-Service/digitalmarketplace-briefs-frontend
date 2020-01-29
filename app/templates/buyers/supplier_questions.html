@@ -31,17 +31,19 @@
 {% endblock %}
 
 {% block mainContent %}
-  <div class="grid-row">
 
     {% block before_heading %}{% endblock %}
-    <div class="column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
       <span class="govuk-caption-l">{{ brief.get('title', brief['lotName']) }}</span>
       <h1 class="govuk-heading-l">
         Supplier questions
       </h1>
     </div>
+  </div>
 
-    <div class="column-one-whole">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
       {% import "toolkit/summary-table.html" as summary %}
 
       {{ summary.heading("Supplier questions", id="clarification-questions") }}

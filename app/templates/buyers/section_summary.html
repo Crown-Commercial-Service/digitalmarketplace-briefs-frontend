@@ -35,25 +35,29 @@
 {% endblock %}
 
 {% block mainContent %}
-  <div class="grid-row">
 
-    {% block before_heading %}{% endblock %}
-    <div class="column-two-thirds">
+  {% block before_heading %}{% endblock %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
       <span class="govuk-caption-l">{{ brief.get('title', brief['lotName']) }}</span>
       <h1 class="govuk-heading-l">{{ section.name }}</h1>
     </div>
+  </div>
 
-    {% if section.description %}
-      <div class="column-two-thirds">
-        <div class="section-description">
-          {{ section.description }}
-        </div>
+  {% if section.description %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <div class="section-description">
+        {{ section.description }}
       </div>
-    {% endif %}
+    </div>
+  </div>
+  {% endif %}
 
-    <div class="column-one-whole">
-      {% import "toolkit/summary-table.html" as summary %}
+  {% import "toolkit/summary-table.html" as summary %}
 
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
       {% call(question) summary.list_table(
         section.questions,
         field_headings=[
@@ -88,10 +92,10 @@
               {% endcall %}
             {% elif not question.answer_required %}
               {{ summary.edit_link(
-                   "Edit",
-                   url_for("buyers.edit_brief_question", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id),
-                   hidden_text=question.label
-                 )
+                    "Edit",
+                    url_for("buyers.edit_brief_question", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id),
+                    hidden_text=question.label
+                  )
               }}
             {% else %}
               {% call summary.field() %}{% endcall %}
@@ -101,7 +105,6 @@
         {% endcall %}
       {% endcall %}
     </div>
-
   </div>
 
   {% if show_dos_preview_link %}
