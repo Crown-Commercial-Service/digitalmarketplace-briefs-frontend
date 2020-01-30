@@ -1777,7 +1777,7 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
 class TestBriefSummaryPage(BaseApplicationTest):
 
     SIDE_LINKS_XPATH = '//div[@class="govuk-grid-column-one-third"]//a'
-    INSTRUCTION_LINKS_XPATH = '//main[@id="content"]//ul/li/a'
+    INSTRUCTION_LINKS_XPATH = '//main//ul/li/a'
 
     def setup_method(self, method):
         super().setup_method(method)
@@ -2111,8 +2111,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
         assert res.status_code == 200
 
         document = html.fromstring(res.get_data(as_text=True))
-        section_steps = document.xpath(
-            '//*[@id="content"]/div/div/ol[contains(@class, "instruction-list")]')
+        section_steps = document.cssselect("ol.instruction-list")
         section_1_link = section_steps[0].xpath('li//a[contains(text(), "Section 1")]')
         section_2_link = section_steps[0].xpath('li//a[contains(text(), "Section 2")]')
         section_4_link = section_steps[0].xpath('li//a[contains(text(), "Section 4")]')
@@ -2490,7 +2489,7 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
             assert (document.xpath('//h1')[0]).text_content().strip() == "Question and answer dates"
             assert all(
                 date in
-                [e.text_content() for e in document.xpath('//main[@id="content"]//th/span')]
+                [e.text_content() for e in document.xpath('//main//th/span')]
                 for date in ['2 April', '8 April', '15 April', '16 April']
             )
 
