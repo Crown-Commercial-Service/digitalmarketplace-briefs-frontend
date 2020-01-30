@@ -1249,11 +1249,13 @@ class TestPreviewBrief(BaseApplicationTest):
     @pytest.mark.parametrize(
         'disabled_link_text, count',
         [
-            ('Digital Marketplace', 2),
+            ('GOV.UK Digital Marketplace', 1),
+            ('Digital Marketplace', 1),
             ('Supplier opportunities', 1),
             ('Guidance', 1),
             ('Help', 1),
-            ('Log in', 1)
+            ('Log in', 1),
+            ('send your feedback', 1),
         ]
     )
     def test_preview_source_page_shows_disabled_header_breadcrumbs_and_footer_links(self, disabled_link_text, count):
@@ -1267,7 +1269,7 @@ class TestPreviewBrief(BaseApplicationTest):
             "//a[@href=$u][normalize-space(string())=$t]",
             u="#",
             t=disabled_link_text,
-        )) == count
+        )) == count, f"could not find link '{disabled_link_text}' with href '#'"
 
     def test_preview_source_page_will_open_user_generated_links_in_a_new_tab(self):
         brief_json = self._setup_brief()

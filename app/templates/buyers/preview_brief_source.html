@@ -1,35 +1,38 @@
 {% extends "_base_page.html" %}
 
-{% block pageTitle %}[Draft] {{ brief.title }} - Digital Marketplace{% endblock %}
-{% block inside_header %}
-<div class="header-title">
-    <a href="#">Digital Marketplace</a>
-    <strong class="phase-tag">BETA</strong>
-</div>
-{% endblock %}
-{% block proposition_header %}
-<div class="header-proposition">
-  <div class="content">
-    <a href="#proposition-links" class="js-header-toggle menu">Menu</a>
-    <nav id="proposition-menu">
-      <ul id="proposition-links">
-        <li>
-          <a href="#">Guidance</a>
-        </li>
-        <li>
-          <a href="#">Help</a>
-        </li>
-        <li>
-          <a href="#">Log in</a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</div>
+{% from "govuk-frontend/components/header/macro.njk" import govukHeader %}
 
-{% endblock %}
-{% block after_header %}
-{% endblock %}
+{% block pageTitle %}[Draft] {{ brief.title }} - Digital Marketplace{% endblock %}
+
+{% block header %}
+  {{ govukHeader({
+    "productName": "Digital Marketplace",
+    "homepageUrl": "#",
+    "navigation": [
+      {
+        "text": "Guidance",
+        "href": "#"
+      },
+      {
+        "text": "Help",
+        "href": "#"
+      },
+      {
+        "text": "Log in",
+        "href": "#"
+      },
+    ],
+  }) }}
+{% endblock header %}
+
+{% block phaseBanner %}
+  {{ govukPhaseBanner({
+    "tag": {
+      "text": "beta",
+    },
+    "html": "Help us improve the Digital Marketplace - <a class='govuk-link' href='#'>send your feedback</a>",
+  }) }}
+{% endblock phaseBanner %}
 
 {% block breadcrumb %}
   {{ govukBreadcrumbs({
