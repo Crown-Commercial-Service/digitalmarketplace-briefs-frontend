@@ -120,7 +120,7 @@
           {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
           {{ summary.text(item.applicationsClosedAt|dateformat) }}
           {% call summary.field(action=True) %}
-            <div class="padding-bottom-small">
+            <div class="govuk-!-padding-bottom-2">
                 <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.view_brief_responses', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">View responses</a></p>
                 {% if item.status == "closed" %}
                     <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.award_or_cancel_brief', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">Let suppliers know the outcome</a></p>

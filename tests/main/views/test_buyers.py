@@ -1249,11 +1249,13 @@ class TestPreviewBrief(BaseApplicationTest):
     @pytest.mark.parametrize(
         'disabled_link_text, count',
         [
-            ('Digital Marketplace', 2),
+            ('GOV.UK Digital Marketplace', 1),
+            ('Digital Marketplace', 1),
             ('Supplier opportunities', 1),
             ('Guidance', 1),
             ('Help', 1),
-            ('Log in', 1)
+            ('Log in', 1),
+            ('send your feedback', 1),
         ]
     )
     def test_preview_source_page_shows_disabled_header_breadcrumbs_and_footer_links(self, disabled_link_text, count):
@@ -1267,7 +1269,7 @@ class TestPreviewBrief(BaseApplicationTest):
             "//a[@href=$u][normalize-space(string())=$t]",
             u="#",
             t=disabled_link_text,
-        )) == count
+        )) == count, f"could not find link '{disabled_link_text}' with href '#'"
 
     def test_preview_source_page_will_open_user_generated_links_in_a_new_tab(self):
         brief_json = self._setup_brief()
@@ -1777,7 +1779,7 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
 class TestBriefSummaryPage(BaseApplicationTest):
 
     SIDE_LINKS_XPATH = '//div[@class="govuk-grid-column-one-third"]//a'
-    INSTRUCTION_LINKS_XPATH = '//main[@id="content"]//ul/li/a'
+    INSTRUCTION_LINKS_XPATH = '//main//ul/li/a'
 
     def setup_method(self, method):
         super().setup_method(method)
@@ -2111,8 +2113,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
         assert res.status_code == 200
 
         document = html.fromstring(res.get_data(as_text=True))
-        section_steps = document.xpath(
-            '//*[@id="content"]/div/div/ol[contains(@class, "instruction-list")]')
+        section_steps = document.cssselect("ol.instruction-list")
         section_1_link = section_steps[0].xpath('li//a[contains(text(), "Section 1")]')
         section_2_link = section_steps[0].xpath('li//a[contains(text(), "Section 2")]')
         section_4_link = section_steps[0].xpath('li//a[contains(text(), "Section 4")]')
@@ -2490,7 +2491,7 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
             assert (document.xpath('//h1')[0]).text_content().strip() == "Question and answer dates"
             assert all(
                 date in
-                [e.text_content() for e in document.xpath('//main[@id="content"]//th/span')]
+                [e.text_content() for e in document.xpath('//main//th/span')]
                 for date in ['2 April', '8 April', '15 April', '16 April']
             )
 
