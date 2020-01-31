@@ -8,7 +8,7 @@ const path = require('path')
 const sourcemaps = require('gulp-sourcemaps')
 
 // Paths
-let environment
+let environment = 'development'
 const repoRoot = path.join(__dirname)
 const npmRoot = path.join(repoRoot, 'node_modules')
 const govukToolkitRoot = path.join(npmRoot, 'govuk_frontend_toolkit')
