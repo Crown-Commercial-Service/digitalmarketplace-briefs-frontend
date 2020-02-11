@@ -1,5 +1,7 @@
 import mock
+from lxml import html
 from wtforms import ValidationError
+
 from .helpers import BaseApplicationTest
 from dmapiclient.errors import HTTPError
 
@@ -68,3 +70,11 @@ class TestApplication(BaseApplicationTest):
             # POST requests will not preserve the request path on redirect
             assert res.location == 'http://localhost/user/login'
             assert validate_csrf.call_args_list == [mock.call(None)]
+
+    def test_should_use_local_cookie_page_on_cookie_message(self):
+        res = self.client.get('/buyers')
+        assert res.status_code == 200
+
+        document = html.fromstring(res.get_data(as_text=True))
+        cookie_banner = document.xpath('//div[@id="dm-cookie-banner"]')
+        assert cookie_banner[0].xpath('//h2//text()')[0].strip() == "Can we store analytics cookies on your device?"
