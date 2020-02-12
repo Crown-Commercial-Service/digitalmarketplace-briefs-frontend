@@ -2637,6 +2637,11 @@ class TestBuyerAccountOverview(BaseApplicationTest):
             u="/user/change-password",
             t="Change your password",
         )
+        assert document.xpath(
+            "//a[@href=$u][normalize-space(string())=$t]",
+            u="/user/cookie-settings",
+            t="Change your cookie settings",
+        )
 
         assert bool(document.xpath(
             "//a[@href=$u][normalize-space(string())=$t]",
