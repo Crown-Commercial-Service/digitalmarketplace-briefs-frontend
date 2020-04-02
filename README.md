@@ -32,8 +32,8 @@ By default, the app will be served at [http://127.0.0.1:5005/buyers](http://127.
 
 (If you are using DM Runner you can skip this section.)
 
-The Briefs Frontend app requires access to the API app. The location and access token for
-this service are set with environment variables in `config.py`.
+The Briefs Frontend app requires access to the [API app](https://github.com/alphagov/digitalmarketplace-api).
+The location and access token for this service are set with environment variables in `config.py`.
 
 For development, you can either point the environment variables to use the
 preview environment's `API` box, or use a local API instance if 
@@ -46,6 +46,9 @@ export DM_DATA_API_AUTH_TOKEN=<auth_token_accepted_by_api>
 
 Where `DM_DATA_API_AUTH_TOKEN` is a token accepted by the Data API 
 instance pointed to by `DM_API_URL`.
+
+Note: The login is handled in the [User Frontend app](https://github.com/alphagov/digitalmarketplace-user-frontend),
+so this needs to be running as well, to login as a buyer.
 
 ## Testing
 
