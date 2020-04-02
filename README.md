@@ -25,7 +25,7 @@ make run-all
 
 This command will install dependencies and start the app.
 
-By default, the app will be served at [http://127.0.0.1:5005](http://127.0.0.1:5005).
+By default, the app will be served at [http://127.0.0.1:5005/buyers](http://127.0.0.1:5005/buyers).
  
 
 ### API dependencies
