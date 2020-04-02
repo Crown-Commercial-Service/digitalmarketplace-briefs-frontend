@@ -1,93 +1,80 @@
 # Digital Marketplace Briefs Frontend
 
 [![Coverage Status](https://coveralls.io/repos/alphagov/digitalmarketplace-briefs-frontend/badge.svg?branch=master&service=github)](https://coveralls.io/github/alphagov/digitalmarketplace-briefs-frontend?branch=master)
-[![Requirements Status](https://requires.io/github/alphagov/digitalmarketplace-briefs-frontend/requirements.svg?branch=master)](https://requires.io/github/alphagov/digitalmarketplace-briefs-frontend/requirements/?branch=master)
 ![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)
 
-Frontend briefs application for the digital marketplace.
+Frontend application for the Digital Marketplace.
 
 - Python app, based on the [Flask framework](http://flask.pocoo.org/)
 
+This app contains:
+ 
+- Buyer account dashboard
+- the Digital Outcomes and Specialists buyer journey
+
 ## Quickstart
 
-Install dependencies, run migrations and run the app
+It's recommended to use the [DM Runner](https://github.com/alphagov/digitalmarketplace-runner)
+tool, which will install and run the app as part of the full suite of apps.
+
+If you want to run the app as a stand-alone process, clone the repo then run:
+
 ```
 make run-all
 ````
 
-## Setup
+This command will install dependencies and start the app.
 
-The briefs frontend app requires access to the API. The location and access tokens for
-the API is set with environment variables.
+By default, the app will be served at [http://127.0.0.1:5005/buyers](http://127.0.0.1:5005/buyers).
+ 
 
+### API dependencies
 
-For development you can either point the environment variables to use the
-preview environment's `API` boxes, or use local API instances if you have
-them running:
+(If you are using DM Runner you can skip this section.)
+
+The Briefs Frontend app requires access to the [API app](https://github.com/alphagov/digitalmarketplace-api).
+The location and access token for this service are set with environment variables in `config.py`.
+
+For development, you can either point the environment variables to use the
+preview environment's `API` box, or use a local API instance if 
+you have one running:
 
 ```
 export DM_DATA_API_URL=http://localhost:5000
 export DM_DATA_API_AUTH_TOKEN=<auth_token_accepted_by_api>
 ```
 
-Where `DM_DATA_API_AUTH_TOKEN` is a token accepted by the Data API
+Where `DM_DATA_API_AUTH_TOKEN` is a token accepted by the Data API 
 instance pointed to by `DM_API_URL`.
 
-### Create and activate the virtual environment
+Note: The login is handled in the [User Frontend app](https://github.com/alphagov/digitalmarketplace-user-frontend),
+so this needs to be running as well, to login as a buyer.
 
-```
-python3 -m venv ./venv
-source ./venv/bin/activate
-```
+## Testing
 
-### Upgrade dependencies
-
-Install new Python dependencies with pip
-
-```pip install -r requirements-dev.txt```
-
-### Run the tests
-
-To run the whole testsuite:
+Run the full test suite:
 
 ```
 make test
 ```
 
-To only run the JavaScript tests:
+To only run the Python or Javascript tests:
 
 ```
+make test-python
 make test-javascript
 ```
 
-### Run the development server
-
-To run the Briefs Frontend App for local development you can use the convenient run
-script, which sets the required environment variables to defaults if they have
-not already been set:
+To run the `flake8` linter:
 
 ```
-make run-app
+make test-flake8
 ```
 
-More generally, the command to start the development server is:
-```
-DM_ENVIRONMENT=development flask run
-```
+### Updating Python dependencies
 
-Use the app at [http://127.0.0.1:5005/](http://127.0.0.1:5005/)
-
-When using the development server the app runs on port 5005 by default.
-This can be changed by setting the `DM_BRIEFS_PORT` environment variable, e.g.
-to set the port number to 9005:
-```
-export DM_BRIEFS_PORT=9005
-```
-
-### Updating application dependencies
-
-`requirements.txt` file is generated from the `requirements-app.txt` in order to pin
-versions of all nested dependencies. If `requirements-app.txt` has been changed (or
+`requirements.txt` file is generated from the `requirements.in` in order to pin
+versions of all nested dependencies. If `requirements.in` has been changed (or
 we want to update the unpinned nested dependencies) `requirements.txt` should be
 regenerated with
 
@@ -95,9 +82,9 @@ regenerated with
 make freeze-requirements
 ```
 
-`requirements.txt` should be commited alongside `requirements-app.txt` changes.
+`requirements.txt` should be committed alongside `requirements.in` changes.
 
-## Front-end
+## Frontend assets
 
 Front-end code (both development and production) is compiled using [Node](http://nodejs.org/) and [Gulp](http://gulpjs.com/).
 
@@ -112,10 +99,7 @@ To check the version you're running, type:
 node --version
 ```
 
-### Installation
-
-
-## Frontend tasks
+### Frontend tasks
 
 [npm](https://docs.npmjs.com/cli/run-script) is used for all frontend build tasks. The commands available are:
 
@@ -123,10 +107,31 @@ node --version
 - `npm run frontend-build:production` (compile the frontend files for production)
 - `npm run frontend-build:watch` (watch all frontend+framework files & rebuild when anything changes)
 
+### Updating NPM dependencies
 
-## Frontend tests
+Update the relevant version numbers in `package.json`, then run
 
-To run the JavaScript tests, navigate to `spec/javascripts/support/` and open `LocalTestRunner.html` in a browser.
+```
+npm install
+```
+
+Commit the changes to `package.json` and `package-lock.json`.
+
+You can also run `npm audit fix` to make minor updates to `package-lock.json`.
+
+## Contributing
+
+This repository is maintained by the Digital Marketplace team at the [Government Digital Service](https://github.com/alphagov).
+
+If you have a suggestion for improvement, please raise an issue on this repo.
+
+### Reporting Vulnerabilities
+
+If you have discovered a security vulnerability in this code, we appreciate your help in disclosing it to us in a
+responsible manner.
+
+Please follow the [GDS vulnerability reporting steps](https://github.com/alphagov/.github/blob/master/SECURITY.md),
+giving details of any issue you find. Appropriate credit will be given to those reporting confirmed issues.
 
 ## Licence
 
