@@ -23,7 +23,7 @@
     "jquery": "^3.4.1"
   },
   "scripts": {
-    "test": "standard \"gulpfile.js\" \"spec/**/*.js\" && jest",
+    "test": "standard \"gulpfile.js\"",
     "frontend-build:development": "gulp build:development",
     "frontend-build:production": "gulp build:production",
     "frontend-build:watch": "gulp watch"
