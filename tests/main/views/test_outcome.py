@@ -263,12 +263,9 @@ class TestAwardBriefDetails(BaseApplicationTest):
         )
         assert len(submit_button) == 1
 
-        secondary_link_text = document.xpath('//div[@class="secondary-action-link"]//a[1]')[0]
-        assert secondary_link_text.text_content() == "Previous page"
-
-        secondary_link = document.xpath('//div[@class="secondary-action-link"]//a[1]/@href')[0]
-        assert secondary_link == \
-            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award-contract'
+        secondary_action_link = document.xpath('//a[normalize-space(text())="Previous page"]')[0]
+        assert secondary_action_link.get('href').strip() ==  \
+            "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award-contract"
 
     def test_award_brief_details_post_valid_form_calls_api_and_redirects(self):
         self.data_api_client.update_brief_award_details.return_value = FrameworkStub(
