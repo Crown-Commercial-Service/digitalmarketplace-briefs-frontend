@@ -108,21 +108,23 @@
   </div>
 
   {% if show_dos_preview_link %}
-    {%
-      with
-      url = url_for(".preview_brief", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
-      text = "Preview your requirements"
-    %}
-      {% include "toolkit/secondary-action-link.html" %}
-    {% endwith %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
+         href="{{ url_for('.preview_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+        Preview your requirements
+      </a>
+    </div>
+  </div>
   {% endif %}
 
-  {%
-    with
-    url = url_for(".view_brief_overview", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
-    text = "Return to overview"
-  %}
-    {% include "toolkit/secondary-action-link.html" %}
-  {% endwith %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
+        href="{{ url_for('.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+        Return to overview
+      </a>
+    </div>
+  </div>
 
 {% endblock %}

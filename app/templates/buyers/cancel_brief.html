@@ -69,14 +69,7 @@
             }) }}
           {% endblock %}
         </form>
-
-        {%
-          with
-          url=previous_page_url,
-          text="Previous page"
-        %}
-          {% include "toolkit/secondary-action-link.html" %}
-        {% endwith %}
+        <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block" href="{{ previous_page_url }}">Previous page</a>
       </div>
     </div>
   </div>
