@@ -141,14 +141,10 @@
             </ul>
         </div>
       {% endif %}
-
-      {%
-          with
-          url = url_for('buyers.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
-          text = "Back to overview"
-      %}
-          {% include "toolkit/secondary-action-link.html" %}
-      {% endwith %}
+      <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
+         href="{{ url_for('buyers.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+        Back to overview
+      </a>
     </div>
 </div>
 {% endblock %}

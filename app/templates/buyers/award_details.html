@@ -59,13 +59,10 @@
             }) }}
           {% endblock %}
       </form>
-      {%
-          with
-          url=url_for(".award_brief", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
-          text="Previous page"
-      %}
-          {% include "toolkit/secondary-action-link.html" %}
-      {% endwith %}
+      <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
+         href="{{ url_for('.award_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+        Previous page
+      </a>
     </div>
   </div>
 {% endblock %}
