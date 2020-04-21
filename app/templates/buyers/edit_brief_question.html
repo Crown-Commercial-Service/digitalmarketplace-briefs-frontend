@@ -57,9 +57,13 @@
     "name": "return_to_overview",
   }) }}
 
-  <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
-     href="{{ brief_links.brief_link_url('child', section, brief) }}">
-    {{ "Return to {}".format(section.name|lower if section.has_summary_page else 'overview') }}
-  </a>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <a class="govuk-link govuk-!-margin-top-3 govuk-!-display-inline-block"
+         href="{{ brief_links.brief_link_url('child', section, brief) }}">
+        {{ "Return to {}".format(section.name|lower if section.has_summary_page else 'overview') }}
+      </a>
+    </div>
+  </div>
 
 {% endblock %}
