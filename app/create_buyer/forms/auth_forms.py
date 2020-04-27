@@ -8,7 +8,7 @@ class EmailAddressForm(FlaskForm):
     email_address = DMStripWhitespaceStringField(
         "Your email address",
         validators=[
-            DataRequired(message="You must provide an email address"),
-            ValidEmailAddress(message="You must provide a valid email address"),
+            DataRequired(message="Enter an email address"),
+            ValidEmailAddress(message="Enter an email address in the correct format, like name@example.gov.uk"),
         ]
     )
