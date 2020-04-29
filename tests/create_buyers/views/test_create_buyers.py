@@ -64,7 +64,7 @@ class TestBuyersCreation(BaseApplicationTest):
         assert res.status_code == 400
         data = res.get_data(as_text=True)
         assert 'Create a buyer account' in data
-        assert 'You must provide a valid email address' in data
+        assert 'Enter an email address in the correct format, like name@example.gov.uk' in data
 
     def test_should_raise_validation_error_for_email_address_with_two_at_symbols(self):
         res = self.client.post(
@@ -75,7 +75,7 @@ class TestBuyersCreation(BaseApplicationTest):
         assert res.status_code == 400
         data = res.get_data(as_text=True)
         assert 'Create a buyer account' in data
-        assert 'You must provide a valid email address' in data
+        assert 'Enter an email address in the correct format, like name@example.gov.uk' in data
 
     def test_should_raise_validation_error_for_empty_email_address(self):
         res = self.client.post(
@@ -86,7 +86,7 @@ class TestBuyersCreation(BaseApplicationTest):
         assert res.status_code == 400
         data = res.get_data(as_text=True)
         assert 'Create a buyer account' in data
-        assert 'You must provide an email address' in data
+        assert 'Enter an email address' in data
 
     def test_should_show_error_page_for_unrecognised_email_domain(self):
         self.data_api_client.is_email_address_with_valid_buyer_domain.return_value = False
