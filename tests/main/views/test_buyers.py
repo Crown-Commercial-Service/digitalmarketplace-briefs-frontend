@@ -17,12 +17,12 @@ def find_briefs_mock():
     base_brief_values = {
         "createdAt": "2016-02-01T00:00:00.000000Z",
         "framework": {
-            "slug": "digital-outcomes-and-specialists-2",
-            "family": "digital-outcomes-and-specialists",
+            "slug": "digital-outcomes-and-specialists-4",
+            "family": "digital-outcomes-and-specialists-4",
             "status": "live",
-            "name": "Digital Outcomes and Specialists 2"
+            "name": "Digital Outcomes and Specialists 4"
         },
-        "frameworkSlug": "digital-outcomes-and-specialists-2",
+        "frameworkSlug": "digital-outcomes-and-specialists-4",
         "lot": "digital-specialists"
     }
 
@@ -260,7 +260,7 @@ class TestStartNewBrief(BaseApplicationTest):
         self.data_api_client = self.data_api_client_patch.start()
 
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -279,7 +279,7 @@ class TestStartNewBrief(BaseApplicationTest):
 
     def test_404_if_lot_does_not_allow_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=False).response()
@@ -294,7 +294,7 @@ class TestStartNewBrief(BaseApplicationTest):
     def test_404_if_framework_status_is_not_live(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill', 'expired']:
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                slug='digital-outcomes-and-specialists',
+                slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response(),
@@ -327,7 +327,7 @@ class TestCreateNewBrief(BaseApplicationTest):
 
     def test_create_new_digital_specialists_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -352,7 +352,7 @@ class TestCreateNewBrief(BaseApplicationTest):
 
     def test_create_new_digital_outcomes_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=True).response()
@@ -377,7 +377,7 @@ class TestCreateNewBrief(BaseApplicationTest):
 
     def test_404_if_lot_does_not_allow_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='open',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=False).response()
@@ -395,7 +395,7 @@ class TestCreateNewBrief(BaseApplicationTest):
 
     def test_404_if_framework_status_is_not_live(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='open',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -413,7 +413,7 @@ class TestCreateNewBrief(BaseApplicationTest):
 
     def test_404_if_lot_does_not_exist(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='open',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -431,7 +431,7 @@ class TestCreateNewBrief(BaseApplicationTest):
 
     def test_400_if_form_error(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -471,8 +471,8 @@ class TestCopyBrief(BaseApplicationTest):
         self.data_api_client = self.data_api_client_patch.start()
 
         self.brief = BriefStub(
-            framework_slug="digital-outcomes-and-specialists-2",
-            framework_name="Digital Outcomes and Specialists 2"
+            framework_slug="digital-outcomes-and-specialists-4",
+            framework_name="Digital Outcomes and Specialists 4"
         ).single_result_response()
         self.data_api_client.get_brief.return_value = self.brief
 
@@ -563,9 +563,11 @@ class TestEditBriefSubmission(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
 
-        self.data_api_client.get_brief.return_value = BriefStub().single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug='digital-outcomes-and-specialists-4',
+        ).single_result_response()
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -695,7 +697,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
 
     def test_404_if_lot_does_not_allow_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=False).response()
@@ -727,7 +729,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
     def test_404_if_framework_status_is_not_live(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill', 'expired']:
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                slug='digital-outcomes-and-specialists',
+                slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -771,9 +773,11 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
 
-        self.data_api_client.get_brief.return_value = BriefStub().single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug='digital-outcomes-and-specialists-4',
+        ).single_result_response()
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -888,7 +892,7 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
 
     def test_404_if_lot_does_not_allow_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=False).response()
@@ -919,7 +923,7 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill', 'expired'])
     def test_404_if_framework_status_is_not_live(self, framework_status):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status=framework_status,
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -970,7 +974,7 @@ class TestPreviewBrief(BaseApplicationTest):
 
         self.data_api_client.get_brief.return_value = BriefStub().single_result_response()
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -1016,7 +1020,7 @@ class TestPreviewBrief(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill', 'expired'])
     def test_preview_page_404s_if_framework_status_is_not_live(self, framework_status):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status=framework_status,
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -1031,7 +1035,7 @@ class TestPreviewBrief(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill', 'expired'])
     def test_preview_source_page_404s_if_framework_status_is_not_live(self, framework_status):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status=framework_status,
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -1304,9 +1308,11 @@ class TestPublishBrief(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
 
-        self.data_api_client.get_brief.return_value = BriefStub().single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug='digital-outcomes-and-specialists-4',
+        ).single_result_response()
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -1319,7 +1325,10 @@ class TestPublishBrief(BaseApplicationTest):
         super().teardown_method(method)
 
     def test_publish_brief(self):
-        brief_json = BriefStub(status="draft").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
         brief_questions = brief_json['briefs']
         brief_questions.update({
             'backgroundInformation': 'test background info',
@@ -1353,7 +1362,10 @@ class TestPublishBrief(BaseApplicationTest):
                                "requirements/digital-specialists/1234?published=true"
 
     def test_publish_brief_with_unanswered_required_questions(self):
-        self.data_api_client.get_brief.return_value = BriefStub(status="draft").single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
 
         res = self.client.post("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                                "digital-specialists/1234/publish")
@@ -1387,7 +1399,7 @@ class TestPublishBrief(BaseApplicationTest):
     def test_404_if_framework_status_is_not_live(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill', 'expired']:
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                slug='digital-outcomes-and-specialists',
+                slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -1426,7 +1438,10 @@ class TestPublishBrief(BaseApplicationTest):
             assert not self.data_api_client.publish_brief.called
 
     def test_publish_button_available_if_questions_answered(self):
-        brief_json = BriefStub(status="draft").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
         brief_questions = brief_json['briefs']
         brief_questions.update({
             'backgroundInformation': 'test background info',
@@ -1460,7 +1475,10 @@ class TestPublishBrief(BaseApplicationTest):
         assert 'Publish requirements' in page_html, page_html
 
     def test_publish_button_unavailable_if_questions_not_answered(self):
-        brief_json = BriefStub(status="draft").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
         brief_questions = brief_json['briefs']
         brief_questions.update({
             'requirementsLength': '1 week'
@@ -1476,7 +1494,7 @@ class TestPublishBrief(BaseApplicationTest):
 
     def test_warning_about_setting_requirement_length_is_not_displayed_if_not_specialist_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=True).response()
@@ -1484,7 +1502,9 @@ class TestPublishBrief(BaseApplicationTest):
         ).single_result_response()
 
         self.data_api_client.get_brief.return_value = BriefStub(
-            status="draft", lot_slug="digital-outcomes"
+            framework_slug="digital-outcomes-and-specialists-4",
+            lot_slug="digital-outcomes",
+            status="draft",
         ).single_result_response()
 
         res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
@@ -1496,7 +1516,10 @@ class TestPublishBrief(BaseApplicationTest):
         assert 'Your requirements will be open for 2 weeks' in page_html
 
     def test_correct_content_is_displayed_if_no_requirementLength_is_set(self):
-        self.data_api_client.get_brief.return_value = BriefStub(status="draft").single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
 
         res = self.client.get("/buyers/frameworks/digital-outcomes-and-specialists/requirements/"
                               "digital-specialists/1234/publish")
@@ -1508,7 +1531,10 @@ class TestPublishBrief(BaseApplicationTest):
         assert 'Your requirements will be open for' not in page_html
 
     def test_correct_content_is_displayed_if_requirementLength_is_1_week(self):
-        brief_json = BriefStub(status="draft").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
         brief_questions = brief_json['briefs']
         brief_questions.update({
             'requirementsLength': '1 week'
@@ -1528,7 +1554,10 @@ class TestPublishBrief(BaseApplicationTest):
         assert 'suppliers will be able to apply until Saturday 7 January 2017 at 11:59pm GMT' in page_html
 
     def test_correct_content_is_displayed_if_requirementLength_is_2_weeks(self):
-        brief_json = BriefStub(status="draft").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
         brief_questions = brief_json['briefs']
         brief_questions.update({
             'requirementsLength': '2 weeks'
@@ -1548,7 +1577,10 @@ class TestPublishBrief(BaseApplicationTest):
         assert 'suppliers will be able to apply until Monday 31 July 2017 at 11:59pm GMT' in page_html
 
     def test_correct_content_is_displayed_if_requirementLength_is_not_set(self):
-        brief_json = BriefStub(status="draft").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
         brief_questions = brief_json['briefs']
         brief_questions.update({
             'requirementsLength': None
@@ -1567,7 +1599,10 @@ class TestPublishBrief(BaseApplicationTest):
         assert not document.xpath('//a[contains(text(), "Set how long your requirements will be live for")]')
 
     def test_heading_for_unanswered_questions_not_displayed_if_only_requirements_length_unset(self):
-        brief_json = BriefStub(status="draft").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
         brief_questions = brief_json['briefs']
         brief_questions.update({
             'backgroundInformation': 'test background info',
@@ -1608,9 +1643,11 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
 
-        self.data_api_client.get_brief.return_value = BriefStub().single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+        ).single_result_response()
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -1625,7 +1662,7 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
     def test_delete_brief_submission(self):
         for framework_status in ['live', 'expired']:
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                slug='digital-outcomes-and-specialists',
+                slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -1644,7 +1681,7 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
     def test_404_if_framework_is_not_live_or_expired(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                slug='digital-outcomes-and-specialists',
+                slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -1694,7 +1731,7 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
 
         self.data_api_client.get_brief.return_value = BriefStub().single_result_response()
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -1709,11 +1746,14 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_withdraw_brief_submission(self, framework_status):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status=framework_status,
             lots=[LotStub(slug='digital-specialists', allows_brief=True).response()]
         ).single_result_response()
-        self.data_api_client.get_brief.return_value = BriefStub(status='live').single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug='digital-outcomes-and-specialists-4',
+            status='live',
+        ).single_result_response()
 
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/withdraw",
@@ -1728,7 +1768,7 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill'])
     def test_404_if_framework_is_not_live_or_expired(self, framework_status):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status=framework_status,
             lots=[LotStub(slug='digital-specialists', allows_brief=True).response()]
         ).single_result_response()
@@ -1782,9 +1822,11 @@ class TestBriefSummaryPage(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
 
-        self.data_api_client.get_brief.return_value = BriefStub().single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+        ).single_result_response()
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -1807,13 +1849,16 @@ class TestBriefSummaryPage(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_draft_brief_summary_page(self, framework_status):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status=framework_status,
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
         ).single_result_response()
-        brief_json = BriefStub(status="draft").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
         brief_json['briefs']['specialistRole'] = 'communicationsManager'
         self.data_api_client.get_brief.return_value = brief_json
 
@@ -1862,7 +1907,10 @@ class TestBriefSummaryPage(BaseApplicationTest):
     def test_brief_summary_with_delete_requested_displays_confirmation_banner_for_draft_briefs_only(
             self, status, banner_displayed
     ):
-        self.data_api_client.get_brief.return_value = BriefStub(status=status).single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status=status,
+        ).single_result_response()
 
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?delete_requested=True"  # noqa
@@ -1875,13 +1923,16 @@ class TestBriefSummaryPage(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_live_brief_summary_page_for_live_and_expired_framework(self, framework_status):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status=framework_status,
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
         ).single_result_response()
-        brief_json = BriefStub(status="live").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="live",
+        ).single_result_response()
         brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
         brief_json['briefs']['specialistRole'] = 'communicationsManager'
         brief_json['briefs']["clarificationQuestionsAreClosed"] = True
@@ -1926,7 +1977,10 @@ class TestBriefSummaryPage(BaseApplicationTest):
     def test_brief_summary_with_withdraw_requested_displays_confirmation_banner_for_live_briefs_only(
             self, status, banner_displayed
     ):
-        self.data_api_client.get_brief.return_value = BriefStub(status=status).single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status=status,
+        ).single_result_response()
 
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234?withdraw_requested=True"  # noqa
@@ -1939,13 +1993,16 @@ class TestBriefSummaryPage(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_closed_brief_summary_page_for_live_and_expired_framework(self, framework_status):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status=framework_status,
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
         ).single_result_response()
-        brief_json = BriefStub(status="closed").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="closed",
+        ).single_result_response()
         brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
         brief_json['briefs']['specialistRole'] = 'communicationsManager'
         brief_json['briefs']["clarificationQuestionsAreClosed"] = True
@@ -1986,13 +2043,16 @@ class TestBriefSummaryPage(BaseApplicationTest):
     def test_show_cancelled_and_unsuccessful_brief_summary_page_for_live_and_expired_framework(
             self, status, award_description, framework_status):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status=framework_status,
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
         ).single_result_response()
-        brief_json = BriefStub(status=status).single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status=status,
+        ).single_result_response()
         brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
         brief_json['briefs']['specialistRole'] = 'communicationsManager'
         brief_json['briefs']["clarificationQuestionsAreClosed"] = True
@@ -2019,13 +2079,16 @@ class TestBriefSummaryPage(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_awarded_brief_summary_page_for_live_and_expired_framework(self, framework_status):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status=framework_status,
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
         ).single_result_response()
-        brief_json = BriefStub(status="awarded").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="awarded",
+        ).single_result_response()
         brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
         brief_json['briefs']['specialistRole'] = 'communicationsManager'
         brief_json['briefs']["clarificationQuestionsAreClosed"] = True
@@ -2067,7 +2130,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
 
     def test_404_if_framework_does_not_allow_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=False).response(),
@@ -2081,7 +2144,10 @@ class TestBriefSummaryPage(BaseApplicationTest):
         assert res.status_code == 404
 
     def test_404_if_brief_does_not_belong_to_user(self):
-        self.data_api_client.get_brief.return_value = BriefStub(user_id=234).single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            user_id=234,
+        ).single_result_response()
 
         res = self.client.get(
             "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234"
@@ -2132,9 +2198,11 @@ class TestViewBriefSectionSummaryPage(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
 
-        self.data_api_client.get_brief.return_value = BriefStub().single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+        ).single_result_response()
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -2151,6 +2219,7 @@ class TestViewBriefSectionSummaryPage(BaseApplicationTest):
 
     def _setup_brief(self, brief_status="draft", **stub_kwargs):
         brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
             status=brief_status,
             **stub_kwargs
         ).single_result_response()
@@ -2215,7 +2284,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
         framework = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=True).response(),
@@ -2224,7 +2293,10 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
         self.data_api_client.get_framework.return_value = framework
 
         closed_brief_stub = BriefStub(
-            lot_slug="digital-outcomes", status='closed', user_id=123
+            framework_slug="digital-outcomes-and-specialists-4",
+            lot_slug="digital-outcomes",
+            status='closed',
+            user_id=123,
         ).single_result_response()
         closed_brief_stub['briefs'].update({
             "framework": framework["frameworks"],
@@ -2256,7 +2328,11 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
     @pytest.mark.parametrize('status', buyers.CLOSED_PUBLISHED_BRIEF_STATUSES)
     def test_page_visible_for_awarded_cancelled_unsuccessful_briefs(self, status):
-        brief_stub = BriefStub(lot_slug="digital-outcomes", status='closed').single_result_response()
+        brief_stub = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            lot_slug="digital-outcomes",
+            status="closed",
+        ).single_result_response()
         brief_stub['briefs'].update(
             {
                 'publishedAt': self.brief_publishing_date,
@@ -2289,7 +2365,9 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
     def test_404_if_brief_does_not_belong_to_buyer(self):
         self.data_api_client.get_brief.return_value = BriefStub(
-            lot_slug="digital-outcomes", user_id=234
+            framework_slug="digital-outcomes-and-specialists-4",
+            lot_slug="digital-outcomes",
+            user_id=234,
         ).single_result_response()
 
         self.login_as_buyer()
@@ -2301,7 +2379,9 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
     def test_404_if_brief_is_not_closed_or_awarded(self):
         self.data_api_client.get_brief.return_value = BriefStub(
-            lot_slug="digital-outcomes", status='live'
+            framework_slug="digital-outcomes-and-specialists-4",
+            lot_slug="digital-outcomes",
+            status="live",
         ).single_result_response()
 
         self.login_as_buyer()
@@ -2313,7 +2393,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
     def test_404_if_lot_does_not_allow_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=False).response(),
@@ -2329,7 +2409,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
     def test_404_if_brief_has_wrong_lot(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
@@ -2344,7 +2424,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
         assert res.status_code == 404
 
 
-class TestViewBriefResponsesPageForLegacyBrief(AbstractViewBriefResponsesPage):
+class TestViewBriefResponsesPageForLegacyBrief(BaseApplicationTest):
     brief_responses = {
         "briefResponses": [
             {"essentialRequirements": [True, True, True, True, True]},
@@ -2356,6 +2436,38 @@ class TestViewBriefResponsesPageForLegacyBrief(AbstractViewBriefResponsesPage):
     }
 
     brief_publishing_date = '2016-01-21T12:00:00.000000Z'
+
+    def setup_method(self, method):
+        super().setup_method(method)
+
+        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
+        self.data_api_client = self.data_api_client_patch.start()
+        framework = FrameworkStub(
+            slug='digital-outcomes-and-specialists',
+            status='live',
+            lots=[
+                LotStub(slug='digital-outcomes', allows_brief=True).response(),
+            ]
+        ).single_result_response()
+        self.data_api_client.get_framework.return_value = framework
+
+        closed_brief_stub = BriefStub(
+            framework_slug="digital-outcomes-and-specialists",
+            lot_slug="digital-outcomes",
+            status='closed',
+            user_id=123,
+        ).single_result_response()
+        closed_brief_stub['briefs'].update({
+            "framework": framework["frameworks"],
+            "publishedAt": self.brief_publishing_date,
+        })
+        self.data_api_client.get_brief.return_value = closed_brief_stub
+
+        self.data_api_client.find_brief_responses.return_value = self.brief_responses
+
+    def teardown_method(self, method):
+        self.data_api_client_patch.stop()
+        super().teardown_method(method)
 
     def test_page_shows_correct_message_for_legacy_brief_if_no_eligible_responses(self):
         self.data_api_client.find_brief_responses.return_value = {
@@ -2423,7 +2535,12 @@ class TestViewBriefResponsesPageForNewFlowBrief(AbstractViewBriefResponsesPage):
         assert "All the suppliers who applied have already been told they were unsuccessful." not in page
 
     def test_page_shows_ods_download_link(self):
-        brief_stub = BriefStub(lot_slug="digital-outcomes", status='closed', user_id=123).single_result_response()
+        brief_stub = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            lot_slug="digital-outcomes",
+            status="closed",
+            user_id=123,
+        ).single_result_response()
 
         brief_stub['briefs'].update({
             "framework": self.data_api_client.get_framework.return_value["frameworks"],
@@ -2460,13 +2577,16 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
     def test_show_question_and_answer_dates_for_published_brief(self):
         for framework_status in ['live', 'expired']:
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                slug='digital-outcomes-and-specialists',
+                slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response(),
                 ]
             ).single_result_response()
-            brief_json = BriefStub(status="live").single_result_response()
+            brief_json = BriefStub(
+                framework_slug="digital-outcomes-and-specialists-4",
+                status="live",
+            ).single_result_response()
             brief_json['briefs']['requirementsLength'] = '2 weeks'
             brief_json['briefs']['publishedAt'] = u"2016-04-02T20:10:00.00000Z"
             brief_json['briefs']['clarificationQuestionsClosedAt'] = u"2016-04-12T23:59:00.00000Z"
@@ -2494,13 +2614,16 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
     def test_404_if_framework_is_not_live_or_expired(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                slug='digital-outcomes-and-specialists',
+                slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response(),
                 ]
             ).single_result_response()
-            brief_json = BriefStub(status="live").single_result_response()
+            brief_json = BriefStub(
+                framework_slug="digital-outcomes-and-specialists-4",
+                status="live",
+            ).single_result_response()
             self.data_api_client.get_brief.return_value = brief_json
 
             res = self.client.get(
@@ -2511,13 +2634,16 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
 
     def test_do_not_show_question_and_answer_dates_for_draft_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
         ).single_result_response()
-        brief_json = BriefStub(status="draft").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
         brief_json['briefs']['specialistRole'] = 'communicationsManager'
         brief_json['briefs']["clarificationQuestionsAreClosed"] = True
         self.data_api_client.get_brief.return_value = brief_json
@@ -2530,13 +2656,16 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
 
     def test_do_not_show_question_and_answer_dates_for_closed_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
         ).single_result_response()
-        brief_json = BriefStub(status="closed").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="closed",
+        ).single_result_response()
         brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
         brief_json['briefs']['specialistRole'] = 'communicationsManager'
         brief_json['briefs']["clarificationQuestionsAreClosed"] = True
