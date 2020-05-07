@@ -18,7 +18,7 @@ class TestAwardBrief(BaseApplicationTest):
             {"id": 90, "supplierName": "Bobbins"},
         ]
     }
-    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award-contract"  # noqa
+    url = "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/{brief_id}/award-contract"  # noqa
 
     def setup_method(self, method):
         super(TestAwardBrief, self).setup_method(method)
@@ -27,7 +27,7 @@ class TestAwardBrief(BaseApplicationTest):
         self.data_api_client = self.data_api_client_patch.start()
 
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists-2',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=True).response(),
@@ -35,7 +35,7 @@ class TestAwardBrief(BaseApplicationTest):
         ).single_result_response()
 
         brief_stub = BriefStub(
-            framework_slug="digital-outcomes-and-specialists-2", lot_slug="digital-outcomes", status='closed'
+            framework_slug="digital-outcomes-and-specialists-4", lot_slug="digital-outcomes", status='closed'
         ).single_result_response()
         self.data_api_client.get_brief.return_value = brief_stub
 
@@ -55,7 +55,7 @@ class TestAwardBrief(BaseApplicationTest):
         self.assert_breadcrumbs(res, extra_breadcrumbs=[
             (
                 'I need a thing to do a thing',
-                '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+                '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234'
             ),
             (
                 'Who won the contract?',
@@ -140,7 +140,7 @@ class TestAwardBrief(BaseApplicationTest):
         self.login_as_buyer()
         res = self.client.get(self.url.format(brief_id=1234))
         assert res.status_code == 302
-        assert "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/responses" in res.location  # noqa
+        assert "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/responses" in res.location  # noqa
 
     def test_award_brief_post_raises_400_if_required_fields_not_filled(self):
         self.login_as_buyer()
@@ -173,7 +173,7 @@ class TestAwardBrief(BaseApplicationTest):
 
     def test_award_brief_post_valid_form_calls_api_and_redirects_to_next_question(self):
         self.data_api_client.update_brief_award_brief_response.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists-2',
+            slug='digital-outcomes-and-specialists-4',
             status='closed',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=True).response()
@@ -187,7 +187,7 @@ class TestAwardBrief(BaseApplicationTest):
             u'1234', 2, "buyer@email.com"
         )
         assert res.status_code == 302
-        assert "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award/2/contract-details" in res.location  # noqa
+        assert "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/award/2/contract-details" in res.location  # noqa
 
     def test_award_brief_post_raises_500_on_api_error_and_displays_generic_error_message(self):
         self.data_api_client.update_brief_award_brief_response.side_effect = HTTPError(
@@ -204,7 +204,7 @@ class TestAwardBrief(BaseApplicationTest):
 
 
 class TestAwardBriefDetails(BaseApplicationTest):
-    url = "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award/{brief_response_id}/contract-details"  # noqa
+    url = "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/{brief_id}/award/{brief_response_id}/contract-details"  # noqa
 
     def setup_method(self, method):
         super(TestAwardBriefDetails, self).setup_method(method)
@@ -213,7 +213,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         self.data_api_client = self.data_api_client_patch.start()
 
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists-2',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=True).response(),
@@ -221,7 +221,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         ).single_result_response()
 
         self.data_api_client.get_brief.return_value = BriefStub(
-            framework_slug='digital-outcomes-and-specialists-2', lot_slug="digital-outcomes", status='closed'
+            framework_slug='digital-outcomes-and-specialists-4', lot_slug="digital-outcomes", status='closed'
         ).single_result_response()
         self.data_api_client.get_brief_response.return_value = {
             "briefResponses": {
@@ -249,7 +249,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         self.assert_breadcrumbs(res, extra_breadcrumbs=[
             (
                 'I need a thing to do a thing',
-                '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+                '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234'
             ),
             (
                 'Tell us about your contract',
@@ -267,11 +267,11 @@ class TestAwardBriefDetails(BaseApplicationTest):
 
         secondary_action_link = document.xpath('//a[normalize-space(text())="Previous page"]')[0]
         assert secondary_action_link.get('href').strip() ==  \
-            "/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award-contract"
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/award-contract"
 
     def test_award_brief_details_post_valid_form_calls_api_and_redirects(self):
         self.data_api_client.update_brief_award_details.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists-2',
+            slug='digital-outcomes-and-specialists-4',
             status='awarded',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=True).response()
@@ -386,7 +386,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
 
 
 class TestCancelBrief(BaseApplicationTest):
-    url = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/cancel'
+    url = '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/{brief_id}/cancel'
 
     def setup_method(self, method):
         super(TestCancelBrief, self).setup_method(method)
@@ -395,7 +395,7 @@ class TestCancelBrief(BaseApplicationTest):
         self.data_api_client = self.data_api_client_patch.start()
 
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists-2',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=True).response(),
@@ -403,7 +403,7 @@ class TestCancelBrief(BaseApplicationTest):
         ).single_result_response()
         self.brief = BriefStub(
             user_id=123,
-            framework_slug='digital-outcomes-and-specialists-2',
+            framework_slug='digital-outcomes-and-specialists-4',
             lot_slug="digital-outcomes",
             status='closed'
         ).response()
@@ -429,7 +429,7 @@ class TestCancelBrief(BaseApplicationTest):
         self.assert_breadcrumbs(res, extra_breadcrumbs=[
             (
                 'I need a thing to do a thing',
-                '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+                '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234'
             ),
             (
                 "Why do you need to cancel?",
@@ -447,7 +447,7 @@ class TestCancelBrief(BaseApplicationTest):
 
         expected_previous_page_link_text = 'Previous page'
         expected_previous_page_link_url = (
-            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234'
+            '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234'
         )
 
         assert (
@@ -457,7 +457,7 @@ class TestCancelBrief(BaseApplicationTest):
 
     def test_cancel_form_post_action_is_correct_when_accessed_from_cancel_url(self):
         url = (
-            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/'
+            '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/'
             'digital-outcomes/{brief_id}/cancel'
         )
 
@@ -472,7 +472,7 @@ class TestCancelBrief(BaseApplicationTest):
 
     def test_cancel_form_displays_correctly_accessed_from_award_flow_url(self):
         url = (
-            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/'
+            '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/'
             'digital-outcomes/{brief_id}/cancel-award'
         )
 
@@ -492,7 +492,7 @@ class TestCancelBrief(BaseApplicationTest):
 
         expected_previous_page_link_text = 'Previous page'
         expected_previous_page_link_url = (
-            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/1234/award'
+            '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/award'
         )
 
         assert (
@@ -502,7 +502,7 @@ class TestCancelBrief(BaseApplicationTest):
 
     def test_cancel_form_post_action_is_correct_when_accessed_from_award_flow_url(self):
         url = (
-            '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/'
+            '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/'
             'digital-outcomes/{brief_id}/cancel-award'
         )
 
@@ -595,7 +595,7 @@ class TestCancelBrief(BaseApplicationTest):
         )
 
         redirect_text = html.fromstring(res.get_data(as_text=True)).text_content().strip()
-        expected_url = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/123'
+        expected_url = '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/123'
 
         assert res.status_code == 302
         assert expected_url in redirect_text
@@ -603,7 +603,7 @@ class TestCancelBrief(BaseApplicationTest):
 
 
 class TestAwardOrCancelBrief(BaseApplicationTest):
-    url = '/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/digital-outcomes/{brief_id}/award'
+    url = '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/{brief_id}/award'
 
     def setup_method(self, method):
         super(TestAwardOrCancelBrief, self).setup_method(method)
@@ -611,7 +611,7 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         self.data_api_client = self.data_api_client_patch.start()
 
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists-2',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=True).response(),
@@ -619,7 +619,7 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         ).single_result_response()
         self.brief = BriefStub(
             user_id=123,
-            framework_slug='digital-outcomes-and-specialists-2',
+            framework_slug='digital-outcomes-and-specialists-4',
             lot_slug="digital-outcomes",
             status='closed'
         ).response()
@@ -683,7 +683,7 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         res = self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'yes'})
 
         expected_url = (
-            'http://localhost/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/'
+            'http://localhost/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/'
             'digital-outcomes/{}/award-contract'
         ).format(self.brief['id'])
 
@@ -695,7 +695,7 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         res = self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'no'})
 
         expected_url = (
-            'http://localhost/buyers/frameworks/digital-outcomes-and-specialists-2/requirements/'
+            'http://localhost/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/'
             'digital-outcomes/{}/cancel-award'
         ).format(self.brief['id'])
 
