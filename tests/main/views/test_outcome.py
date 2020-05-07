@@ -706,10 +706,8 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         self.login_as_buyer()
         res = self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'back'})
 
-        expected_url = 'http://localhost/buyers/requirements/digital-outcomes-and-specialists'
-
         assert res.status_code == 302
-        assert res.location == expected_url
+        assert res.location == f"http://localhost{self.briefs_dashboard_url}"
 
     def test_back_causes_flash_message(self):
         self.login_as_buyer()

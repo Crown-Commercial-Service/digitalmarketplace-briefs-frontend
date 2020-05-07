@@ -2771,7 +2771,7 @@ class TestBuyerAccountOverview(BaseApplicationTest):
         assert bool(document.xpath(
             "//a[@href=$u][normalize-space(string())=$t]",
             t="View your requirements",
-            u="/buyers/requirements/digital-outcomes-and-specialists",
+            u=self.briefs_dashboard_url,
         )) == has_briefs
         # but now also a broader assertion mainly aimed at the negative case
         assert bool(document.xpath(
