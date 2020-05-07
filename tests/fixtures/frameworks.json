@@ -278,6 +278,81 @@
       "variations": {}
     },
     {
+      "allowDeclarationReuse": true,
+      "applicationsCloseAtUTC": "2019-08-15T16:00:00.000000Z",
+      "clarificationQuestionsOpen": false,
+      "clarificationsCloseAtUTC": "2019-08-01T16:00:00.000000Z",
+      "clarificationsPublishAtUTC": "2019-08-08T16:00:00.000000Z",
+      "countersignerName": null,
+      "family": "digital-outcomes-and-specialists",
+      "framework": "digital-outcomes-and-specialists",
+      "frameworkAgreementDetails": {
+        "frameworkAgreementVersion": "v1.0",
+        "lotDescriptions": {
+          "digital-outcomes": "Lot 1: digital outcomes",
+          "digital-specialists": "Lot 2: digital specialists",
+          "user-research-participants": "Lot 4: user research participants",
+          "user-research-studios": "Lot 3: user research studios"
+        },
+        "lotOrder": [
+          "digital-outcomes",
+          "digital-specialists",
+          "user-research-studios",
+          "user-research-participants"
+        ],
+        "variations": {}
+      },
+      "frameworkAgreementVersion": "v1.0",
+      "frameworkExpiresAtUTC": "2020-09-30T16:00:00.000000Z",
+      "frameworkLiveAtUTC": "2019-10-01T08:00:00.000000Z",
+      "hasDirectAward": false,
+      "hasFurtherCompetition": true,
+      "id": 12,
+      "intentionToAwardAtUTC": "2019-09-19T16:00:00.000000Z",
+      "lots": [
+        {
+          "allowsBrief": true,
+          "id": 5,
+          "name": "Digital outcomes",
+          "oneServiceLimit": true,
+          "slug": "digital-outcomes",
+          "unitPlural": "services",
+          "unitSingular": "service"
+        },
+        {
+          "allowsBrief": true,
+          "id": 6,
+          "name": "Digital specialists",
+          "oneServiceLimit": true,
+          "slug": "digital-specialists",
+          "unitPlural": "services",
+          "unitSingular": "service"
+        },
+        {
+          "allowsBrief": false,
+          "id": 7,
+          "name": "User research studios",
+          "oneServiceLimit": false,
+          "slug": "user-research-studios",
+          "unitPlural": "labs",
+          "unitSingular": "lab"
+        },
+        {
+          "allowsBrief": true,
+          "id": 8,
+          "name": "User research participants",
+          "oneServiceLimit": true,
+          "slug": "user-research-participants",
+          "unitPlural": "services",
+          "unitSingular": "service"
+        }
+      ],
+      "name": "Digital Outcomes and Specialists 4",
+      "slug": "digital-outcomes-and-specialists-4",
+      "status": "open",
+      "variations": {}
+    },
+    {
       "allow_declaration_reuse": true,
       "application_close_date": "2017-01-16T17:00:00.000000Z",
       "clarificationQuestionsOpen": false,
