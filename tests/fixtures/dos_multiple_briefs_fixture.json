@@ -42,20 +42,20 @@
     },
     {
       "additionalTerms":"You'll never work in this town again.",
-      "applicationsClosedAt":"2016-03-22T00:00:00.000000Z",
+      "applicationsClosedAt":"2020-03-22T00:00:00.000000Z",
       "backgroundInformation":"We'd like to build a thing to do athing.",
       "clarificationQuestions":[
         {
           "answer":"Because",
           "question":"Why?",
-          "publishedAt":"2016-03-04T09:19:42.138442Z"
+          "publishedAt":"2020-03-04T09:19:42.138442Z"
         }
       ],
       "clarificationQuestionsAreClosed":true,
-      "clarificationQuestionsClosedAt":"2016-03-15T00:00:00.000000Z",
-      "clarificationQuestionsPublishedBy": "2016-03-18T23:59:59.000000Z",
+      "clarificationQuestionsClosedAt":"2020-03-15T00:00:00.000000Z",
+      "clarificationQuestionsPublishedBy": "2020-03-18T23:59:59.000000Z",
       "contractLength":"3 Months",
-      "createdAt":"2016-02-12T16:30:55.808730Z",
+      "createdAt":"2020-02-12T16:30:55.808730Z",
       "currentTechnologies":"Business Focus Plus",
       "culturalFitCriteria": [
         "Ability to work with clients with limited technical knowledge"
@@ -71,13 +71,13 @@
         "presentation"
       ],
       "frameworkFamily":"digital-outcomes-and-specialists",
-      "frameworkName":"Digital Outcomes and Specialists 2",
-      "frameworkSlug":"digital-outcomes-and-specialists-2",
+      "frameworkName":"Digital Outcomes and Specialists 4",
+      "frameworkSlug":"digital-outcomes-and-specialists-4",
       "frameworkStatus":"live",
       "id": 4,
       "importantDates":"29th March",
       "links":{
-        "framework":"http://localhost:5000/frameworks/digital-outcomes-and-specialists-2",
+        "framework":"http://localhost:5000/frameworks/digital-outcomes-and-specialists-4",
         "self":"http://localhost:5000/briefs/4"
       },
       "location":"East of England",
@@ -92,22 +92,22 @@
       "phase": "discovery",
       "priceCriteria": "Fixed price",
       "priceWeighting": 30,
-      "publishedAt":"2016-03-07T16:02:51.591567Z",
+      "publishedAt":"2020-03-07T16:02:51.591567Z",
       "specialistRole":"businessAnalyst",
-      "startDate":"2017-5-6",
+      "startDate":"2021-5-6",
       "status":"live",
       "summary": "Build a portal",
       "technicalWeighting": 60,
       "title":"Another requirement",
-      "updatedAt":"2016-02-16T14:04:22.617017Z",
+      "updatedAt":"2020-02-16T14:04:22.617017Z",
       "workingArrangements":"Work"
     }
   ],
   "links":{
-    "prev":"http://localhost:5000/briefs?status=live%2Cclosed&framework=digital-outcomes-and-specialists&page=1",
-    "self":"http://localhost:5000/briefs?status=live%2Cclosed&framework=digital-outcomes-and-specialists&page=2",
-    "last":"http://localhost:5000/briefs?status=live%2Cclosed&framework=digital-outcomes-and-specialists&page=4",
-    "next":"http://localhost:5000/briefs?status=live%2Cclosed&framework=digital-outcomes-and-specialists&page=3"
+    "prev":"http://localhost:5000/briefs?status=live%2Cclosed&framework=digital-outcomes-and-specialists-4&page=1",
+    "self":"http://localhost:5000/briefs?status=live%2Cclosed&framework=digital-outcomes-and-specialists-4&page=2",
+    "last":"http://localhost:5000/briefs?status=live%2Cclosed&framework=digital-outcomes-and-specialists-4&page=4",
+    "next":"http://localhost:5000/briefs?status=live%2Cclosed&framework=digital-outcomes-and-specialists-4&page=3"
   },
   "meta":{
     "total":2
