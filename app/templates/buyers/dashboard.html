@@ -47,7 +47,7 @@
 ) %}
 
     {% call summary.row() %}
-        {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
+        {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id)) }}
 
         {{ summary.text(item.createdAt|dateformat) }}
 
@@ -61,7 +61,7 @@
             {{ summary.text() }}
         {% endif %}
         {% call summary.field(action=True) %}
-          <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
+          <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
             {{ govukButton({
               "text": "Make a copy",
@@ -87,11 +87,11 @@
 ) %}
 
     {% call summary.row() %}
-        {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
+        {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id)) }}
         {{ summary.text(item.publishedAt|dateformat) }}
         {{ summary.text(item.applicationsClosedAt|dateformat) }}
         {% call summary.field(action=True) %}
-          <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
+          <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
             {{ govukButton({
               "text": "Make a copy",
@@ -117,16 +117,16 @@
 
     {% call summary.row() %}
         {% if item.status == "closed" %}
-          {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
+          {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id)) }}
           {{ summary.text(item.applicationsClosedAt|dateformat) }}
           {% call summary.field(action=True) %}
             <div class="govuk-!-padding-bottom-2">
-                <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.view_brief_responses', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">View responses</a></p>
+                <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.view_brief_responses', framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">View responses</a></p>
                 {% if item.status == "closed" %}
-                    <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.award_or_cancel_brief', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">Let suppliers know the outcome</a></p>
+                    <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.award_or_cancel_brief', framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">Let suppliers know the outcome</a></p>
                 {% endif %}
             </div>
-            <form method="post" action="{{ url_for('.copy_brief', framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
+            <form method="post" action="{{ url_for('.copy_brief', framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
                 {{ govukButton({
                   "text": "Make a copy",
@@ -138,7 +138,7 @@
           {{ summary.service_link(item.title, url_for("external.get_brief_by_id", framework_family=item.framework.family, brief_id=item.id)) }}
           {{ summary.text("Withdrawn") }}
           {% call summary.field(action=True) %}
-            <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
+            <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
               {{ govukButton({
                 "text": "Make a copy",
@@ -147,10 +147,10 @@
             </form>
           {% endcall %}
         {% elif item.status in ["awarded", "cancelled", "unsuccessful"] %}
-          {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id)) }}
+          {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id)) }}
           {{ summary.text(item.applicationsClosedAt|dateformat) }}
           {% call summary.field(action=True) %}
-            <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.frameworkSlug, lot_slug=item.lot, brief_id=item.id) }}">
+            <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
               {{ govukButton({
                 "text": "Make a copy",

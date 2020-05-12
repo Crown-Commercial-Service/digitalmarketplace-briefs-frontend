@@ -22,7 +22,7 @@
       {
         "href": url_for(
           ".view_brief_overview",
-          framework_slug=brief['frameworkSlug'],
+          framework_slug=brief.framework.slug,
           lot_slug=brief['lotSlug'],
           brief_id=brief['id']
         ),
@@ -41,7 +41,7 @@
           <div class="single-question-page">
               <h1 class="govuk-heading-l">Who won the {{ brief.title }} contract?</h1>
 
-              <form method="POST" action="{{ url_for('.award_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+              <form method="POST" action="{{ url_for('.award_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
                   <p class="govuk-body">
                       This information will be added to your requirements. Suppliers will receive a link to view the update.
                   </p>
@@ -70,7 +70,7 @@
                     {% endblock %}
               </form>
               <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
-                  href="{{ url_for('.award_or_cancel_brief', framework_slug=brief['frameworkSlug'], lot_slug=brief['lotSlug'], brief_id=brief['id']) }}">
+                  href="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief['lotSlug'], brief_id=brief['id']) }}">
                 Previous page
               </a>
           </div>

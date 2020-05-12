@@ -19,7 +19,7 @@
       {
         "href": url_for(
           ".view_brief_overview",
-          framework_slug=brief['frameworkSlug'],
+          framework_slug=brief.framework.slug,
           lot_slug=brief['lotSlug'],
           brief_id=brief['id']),
         "text": brief['title']
@@ -30,7 +30,7 @@
       {{ govukBreadcrumbs({
         "items": items + [
           {
-            "href": url_for(".view_brief_section_summary", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug),
+            "href": url_for(".view_brief_section_summary", framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug),
             "text": section.name
           },
           {
