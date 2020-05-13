@@ -77,19 +77,9 @@
         </div>
 
         <h2>Download the list of labs</h2>
-
-        {%
-        with
-            items = [
-            {
-            "title": "List of labs",
-            "link": "https://assets.digitalmarketplace.service.gov.uk/{}/communications/catalogues/user-research-studios.csv".format(framework.slug),
-            "file_type": "csv"
-            }
-            ]
-        %}
-        {% include "toolkit/documents.html" %}
-        {% endwith %}
+        <a class="govuk-link govuk-!-display-inline-block govuk-!-margin-top-2 govuk-!-margin-bottom-6" 
+            href="{{ 'https://assets.digitalmarketplace.service.gov.uk/{}/communications/catalogues/user-research-studios.csv'.format(framework.slug) }}"      
+        >List of labs (CSV)</a>
 
         <p class="govuk-body">Get help filtering the list at <a class="govuk-link" href="mailto:{{ support_email_address }}">{{ support_email_address }}</a></p>
 
