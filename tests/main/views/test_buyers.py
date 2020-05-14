@@ -2394,7 +2394,7 @@ class TestViewBriefResponsesPageForLegacyBrief(AbstractViewBriefResponsesPage):
 
         assert res.status_code == 200
         assert self._strip_whitespace(csv_link.text_content()) == \
-            "CSVdocument:Downloadsupplierresponsesto‘Ineedathingtodoathing’"
+            "Downloadsupplierresponsesto‘Ineedathingtodoathing’(CSV)"
 
 
 class TestViewBriefResponsesPageForNewFlowBrief(AbstractViewBriefResponsesPage):
@@ -2443,7 +2443,7 @@ class TestViewBriefResponsesPageForNewFlowBrief(AbstractViewBriefResponsesPage):
 
         assert res.status_code == 200
         assert self._strip_whitespace(csv_link.text_content()) == \
-            "ODSdocument:Downloadsupplierresponsestothisrequirement"
+            "Downloadsupplierresponsestothisrequirement(ODS)"
 
 
 class TestViewQuestionAndAnswerDates(BaseApplicationTest):

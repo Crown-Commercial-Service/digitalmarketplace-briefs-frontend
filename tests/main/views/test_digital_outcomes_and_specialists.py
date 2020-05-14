@@ -140,7 +140,7 @@ class TestStartStudiosInfoPage(BaseApplicationTest):
 
         document = html.fromstring(res.get_data(as_text=True))
 
-        assert document.xpath("//a[@class='document-link-with-icon']")[0].attrib['href'] == (
+        assert document.xpath("//a[normalize-space(text())='List of labs (CSV)']")[0].attrib['href'] == (
             f"https://assets.digitalmarketplace.service.gov.uk/digital-outcomes-and-specialists{slug_suffix}"
             f"/communications/catalogues/user-research-studios.csv"
         )
