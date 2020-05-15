@@ -25,24 +25,31 @@
   {% include "toolkit/forms/validation.html" %}
 {% endwith %}
 
-<h1 class="govuk-heading-l">
-  Create a buyer account
-</h1>
-
-<p class="govuk-body-l">
-  You must be employed by, or represent, a public sector organisation.
-</p>
-
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-xl">
+      Create a buyer account
+    </h1>
+
+    <p class="govuk-body">
+      You must be employed by, or represent, a public sector organisation.
+    </p>
+
+    <p class="govuk-body">
+      Use your work email address to create an account.
+      We use this to check that you are part of a public sector organisation.
+    </p>
+
+    <p class="govuk-body">
+      We will send an account activation email to this address. You will then be able to set your password.
+    </p>
 
     <form method="POST" action="{{ url_for('.submit_create_buyer_account') }}">
 
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
       {{ form.email_address }}
-
-      <p class="govuk-body">We will send an account activation email to this address. You will then be able to set your password.</p>
 
       {{ govukButton({
         "text": "Create account",
