@@ -1,5 +1,7 @@
 {% extends "govuk-frontend/template.njk" %}
 
+{% from "components/error-summary/macro.njk" import govukErrorSummary %}
+
 {# Import GOV.UK Frontend components for globale usage#}
 {% from "govuk-frontend/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% from "govuk-frontend/components/button/macro.njk" import govukButton %}
@@ -45,6 +47,14 @@
 
 {% block content %}
   {% include "toolkit/flash_messages.html" %}
+  {% block errorSummary %}
+    {% if errors %}
+      {{ govukErrorSummary({
+      "titleText": "There is a problem",
+      "errorList": errors.values(),
+    }) }}
+    {% endif %}
+  {% endblock %}
   {% block mainContent %}{% endblock %}
 {% endblock %}
 

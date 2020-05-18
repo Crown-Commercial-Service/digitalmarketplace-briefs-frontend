@@ -20,6 +20,7 @@ from dmapiclient import HTTPError
 from dmutils.dates import get_publishing_dates
 from dmutils.flask import timed_render_template as render_template
 from dmutils.formats import DATETIME_FORMAT
+from dmutils.forms.errors import govuk_errors
 from datetime import datetime
 
 from collections import Counter
@@ -127,7 +128,7 @@ def create_new_brief(framework_slug, lot_slug):
         )["briefs"]
     except HTTPError as e:
         update_data = section.unformat_data(update_data)
-        errors = section.get_error_messages(e.message)
+        errors = govuk_errors(section.get_error_messages(e.message))
 
         return render_template(
             "buyers/create_brief_question.html",
@@ -364,7 +365,7 @@ def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, ques
         )
     except HTTPError as e:
         update_data = section.unformat_data(update_data)
-        errors = section.get_error_messages(e.message)
+        errors = govuk_errors(section.get_error_messages(e.message))
 
         # we need the brief_id to build breadcrumbs and the update_data to fill in the form.
         brief.update(update_data)

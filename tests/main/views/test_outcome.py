@@ -150,10 +150,12 @@ class TestAwardBrief(BaseApplicationTest):
         assert res.status_code == 400
 
         validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
-        assert validation_message.strip() == "You need to answer this question."
+        assert validation_message.strip() == "Select a supplier."
 
-        error_span = document.xpath('//span[@id="error-brief_response"]')[0]
-        assert self._strip_whitespace(error_span.text_content()) == "Youneedtoanswerthisquestion."
+        errors = document.xpath('//span[@id="error-brief_response"]')
+        # assert that a framework iteration specific message has been rendered
+        assert len(errors) == 1
+        assert len(errors[0].text_content()) > 0
 
     def test_award_brief_post_raises_400_if_form_not_valid(self):
         self.login_as_buyer()
@@ -326,10 +328,11 @@ class TestAwardBriefDetails(BaseApplicationTest):
         res = self.client.get(self.url.format(brief_id=9, brief_response_id=5678))
         assert res.status_code == 404
 
-    def _assert_masthead(self, document):
-        masthead_error_links = document.xpath('//a[@class="validation-masthead-link"]')
-        assert masthead_error_links[0].text_content() == "What's the start date?"
-        assert masthead_error_links[1].text_content() == "What's the value?"
+    def _assert_error_summary(self, document):
+        "Assert that a framework iteration specifc message was rendered."
+        error_summary_links = document.cssselect("div.govuk-error-summary a")
+        assert len(error_summary_links[0].text_content()) > 0
+        assert len(error_summary_links[1].text_content()) > 0
 
     def test_award_brief_details_post_raises_400_if_required_fields_not_filled(self):
         self._setup_api_error_response({
@@ -341,10 +344,11 @@ class TestAwardBriefDetails(BaseApplicationTest):
         document = html.fromstring(res.get_data(as_text=True))
 
         assert res.status_code == 400
-        self._assert_masthead(document)
+        self._assert_error_summary(document)
         error_spans = document.xpath('//span[@class="validation-message"]')
-        assert self._strip_whitespace(error_spans[0].text_content()) == "Youneedtoanswerthisquestion."
-        assert self._strip_whitespace(error_spans[1].text_content()) == "Youneedtoanswerthisquestion."
+        # assert that framework iteration specific messages have been rendered
+        assert len(self._strip_whitespace(error_spans[0].text_content())) > 0
+        assert len(self._strip_whitespace(error_spans[1].text_content())) > 0
 
     def test_award_brief_details_post_raises_400_and_displays_error_messages_and_prefills_fields_if_invalid_data(self):
         self._setup_api_error_response({
@@ -366,7 +370,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         assert res.status_code == 400
         document = html.fromstring(res.get_data(as_text=True))
 
-        self._assert_masthead(document)
+        self._assert_error_summary(document)
 
         # Individual error messages
         error_spans = document.xpath('//span[@class="validation-message"]')
@@ -541,7 +545,7 @@ class TestCancelBrief(BaseApplicationTest):
         validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
 
         assert res.status_code == 400
-        assert "You need to answer this question." in validation_message
+        assert "Select a reason for cancelling the brief." in validation_message
 
     def test_that_no_option_chosen_does_not_trigger_update(self):
         res = self.client.post(self.url.format(brief_id=123))
@@ -671,7 +675,7 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
 
         assert res.status_code == 400
-        assert "You need to answer this question." in validation_message
+        assert "Select if you have awarded a contract." in validation_message
         assert self.data_api_client.cancel_brief.called is False
 
     def test_yes_redirects_to_award_form_page(self):
