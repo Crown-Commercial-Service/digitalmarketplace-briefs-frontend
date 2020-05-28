@@ -2278,13 +2278,15 @@ class TestViewBriefSectionSummaryPage(BaseApplicationTest):
 
 
 class AbstractViewBriefResponsesPage(BaseApplicationTest):
+    framework_slug = "digital-outcomes-and-specialists-4"
+
     def setup_method(self, method):
         super().setup_method(method)
 
         self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
         framework = FrameworkStub(
-            slug='digital-outcomes-and-specialists-4',
+            slug=self.framework_slug,
             status='live',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=True).response(),
@@ -2293,7 +2295,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
         self.data_api_client.get_framework.return_value = framework
 
         closed_brief_stub = BriefStub(
-            framework_slug="digital-outcomes-and-specialists-4",
+            framework_slug=self.framework_slug,
             lot_slug="digital-outcomes",
             status='closed',
             user_id=123,
@@ -2313,7 +2315,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
     def test_page_shows_correct_content_when_eligible_responses(self):
         self.login_as_buyer()
         res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/responses"
+            f"/buyers/frameworks/{self.framework_slug}/requirements/digital-outcomes/1234/responses"
         )
         page = res.get_data(as_text=True)
 
@@ -2329,7 +2331,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
     @pytest.mark.parametrize('status', buyers.CLOSED_PUBLISHED_BRIEF_STATUSES)
     def test_page_visible_for_awarded_cancelled_unsuccessful_briefs(self, status):
         brief_stub = BriefStub(
-            framework_slug="digital-outcomes-and-specialists-4",
+            framework_slug=self.framework_slug,
             lot_slug="digital-outcomes",
             status="closed",
         ).single_result_response()
@@ -2345,7 +2347,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
         self.data_api_client.get_brief.return_value = brief_stub
         self.login_as_buyer()
         res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/responses"
+            f"/buyers/frameworks/{self.framework_slug}/requirements/digital-outcomes/1234/responses"
         )
         assert res.status_code == 200
 
@@ -2356,7 +2358,7 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
         self.login_as_buyer()
         res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/responses"
+            f"/buyers/frameworks/{self.framework_slug}/requirements/digital-outcomes/1234/responses"
         )
         page = res.get_data(as_text=True)
         assert res.status_code == 200
@@ -2365,35 +2367,35 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
     def test_404_if_brief_does_not_belong_to_buyer(self):
         self.data_api_client.get_brief.return_value = BriefStub(
-            framework_slug="digital-outcomes-and-specialists-4",
+            framework_slug=self.framework_slug,
             lot_slug="digital-outcomes",
             user_id=234,
         ).single_result_response()
 
         self.login_as_buyer()
         res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/responses"
+            f"/buyers/frameworks/{self.framework_slug}/requirements/digital-outcomes/1234/responses"
         )
 
         assert res.status_code == 404
 
     def test_404_if_brief_is_not_closed_or_awarded(self):
         self.data_api_client.get_brief.return_value = BriefStub(
-            framework_slug="digital-outcomes-and-specialists-4",
+            framework_slug=self.framework_slug,
             lot_slug="digital-outcomes",
             status="live",
         ).single_result_response()
 
         self.login_as_buyer()
         res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/responses"
+            f"/buyers/frameworks/{self.framework_slug}/requirements/digital-outcomes/1234/responses"
         )
 
         assert res.status_code == 404
 
     def test_404_if_lot_does_not_allow_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists-4',
+            slug=self.framework_slug,
             status='live',
             lots=[
                 LotStub(slug='digital-outcomes', allows_brief=False).response(),
@@ -2402,14 +2404,14 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
         self.login_as_buyer()
         res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/responses"
+            f"/buyers/frameworks/{self.framework_slug}/requirements/digital-outcomes/1234/responses"
         )
 
         assert res.status_code == 404
 
     def test_404_if_brief_has_wrong_lot(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists-4',
+            slug=self.framework_slug,
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
@@ -2418,13 +2420,13 @@ class AbstractViewBriefResponsesPage(BaseApplicationTest):
 
         self.login_as_buyer()
         res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/responses"
+            f"/buyers/frameworks/{self.framework_slug}/requirements/digital-outcomes/1234/responses"
         )
 
         assert res.status_code == 404
 
 
-class TestViewBriefResponsesPageForLegacyBrief(BaseApplicationTest):
+class TestViewBriefResponsesPageForLegacyBrief(AbstractViewBriefResponsesPage):
     brief_responses = {
         "briefResponses": [
             {"essentialRequirements": [True, True, True, True, True]},
@@ -2437,37 +2439,7 @@ class TestViewBriefResponsesPageForLegacyBrief(BaseApplicationTest):
 
     brief_publishing_date = '2016-01-21T12:00:00.000000Z'
 
-    def setup_method(self, method):
-        super().setup_method(method)
-
-        self.data_api_client_patch = mock.patch('app.main.views.buyers.data_api_client', autospec=True)
-        self.data_api_client = self.data_api_client_patch.start()
-        framework = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
-            status='live',
-            lots=[
-                LotStub(slug='digital-outcomes', allows_brief=True).response(),
-            ]
-        ).single_result_response()
-        self.data_api_client.get_framework.return_value = framework
-
-        closed_brief_stub = BriefStub(
-            framework_slug="digital-outcomes-and-specialists",
-            lot_slug="digital-outcomes",
-            status='closed',
-            user_id=123,
-        ).single_result_response()
-        closed_brief_stub['briefs'].update({
-            "framework": framework["frameworks"],
-            "publishedAt": self.brief_publishing_date,
-        })
-        self.data_api_client.get_brief.return_value = closed_brief_stub
-
-        self.data_api_client.find_brief_responses.return_value = self.brief_responses
-
-    def teardown_method(self, method):
-        self.data_api_client_patch.stop()
-        super().teardown_method(method)
+    framework_slug = "digital-outcomes-and-specialists"
 
     def test_page_shows_correct_message_for_legacy_brief_if_no_eligible_responses(self):
         self.data_api_client.find_brief_responses.return_value = {
