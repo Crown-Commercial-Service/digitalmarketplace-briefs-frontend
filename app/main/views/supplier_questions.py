@@ -10,6 +10,7 @@ from ..helpers.buyers_helpers import get_framework_and_lot, is_brief_correct
 
 from dmapiclient import HTTPError
 from dmutils.flask import timed_render_template as render_template
+from dmutils.forms.errors import govuk_errors
 
 
 @main.route(
@@ -75,7 +76,7 @@ def add_supplier_question(framework_slug, lot_slug, brief_id):
             if e.status_code != 400:
                 raise
             brief.update(update_data)
-            errors = section.get_error_messages(e.message)
+            errors = govuk_errors(section.get_error_messages(e.message))
             status_code = 400
 
     return render_template(
