@@ -11,7 +11,7 @@ class AwardOrCancelBriefForm(FlaskForm):
         ('back', 'We are still evaluating suppliers'),
     ]
     award_or_cancel_decision = RadioField(
-        validators=[validators.InputRequired(message='You need to answer this question.')],
+        validators=[validators.InputRequired(message='Select if you have awarded a contract.')],
         choices=choices
     )
 

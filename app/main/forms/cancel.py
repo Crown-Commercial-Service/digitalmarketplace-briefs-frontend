@@ -10,7 +10,7 @@ class CancelBriefForm(FlaskForm):
         ('unsuccessful', 'There were no suitable suppliers'),
     ]
     cancel_reason = RadioField(
-        validators=[validators.InputRequired(message='You need to answer this question.')],
+        validators=[validators.InputRequired(message='Select a reason for cancelling the brief.')],
         choices=choices
     )
 

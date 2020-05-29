@@ -8,7 +8,7 @@ class AwardedBriefResponseForm(FlaskForm):
     # BriefResponse choices expected to be set at runtime
     brief_response = RadioField(
         "Winning BriefResponse",
-        validators=[validators.DataRequired(message="You need to answer this question.")],
+        validators=[validators.DataRequired(message="Select a supplier.")],
         coerce=int
     )
 

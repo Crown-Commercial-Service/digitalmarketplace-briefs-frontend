@@ -15,6 +15,7 @@ from ..forms.award_or_cancel import AwardOrCancelBriefForm
 
 from dmapiclient import HTTPError
 from dmutils.flask import timed_render_template as render_template
+from dmutils.forms.errors import govuk_errors
 from dmutils.forms.helpers import get_errors_from_wtform
 
 BRIEF_UPDATED_MESSAGE = "You’ve updated ‘{brief[title]}’"
@@ -239,7 +240,9 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
             )
         except HTTPError as e:
             award_data = section.unformat_data(award_data)
-            errors = section.get_error_messages(e.message)
+            errors = govuk_errors(
+                section.get_error_messages(e.message)
+            )
 
             return render_template(
                 "buyers/award_details.html",

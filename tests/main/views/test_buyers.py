@@ -449,10 +449,9 @@ class TestCreateNewBrief(BaseApplicationTest):
         document = html.fromstring(res.get_data(as_text=True))
 
         assert res.status_code == 400
-        anchor = document.cssselect('div.validation-masthead a[href="#title"]')
+        anchor = document.cssselect('div.govuk-error-summary a')
 
-        assert len(anchor) == 1
-        assert "Title" in anchor[0].text_content().strip()
+        assert len(anchor) == 1  # check that the framework iteration rendered a specific error message
         self.data_api_client.create_brief.assert_called_with(
             'digital-outcomes-and-specialists',
             'digital-specialists',
