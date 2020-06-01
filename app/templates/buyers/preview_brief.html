@@ -22,7 +22,7 @@
       {
         "href": url_for(
           ".view_brief_overview",
-          framework_slug=brief['frameworkSlug'],
+          framework_slug=brief.framework.slug,
           lot_slug=brief['lotSlug'],
           brief_id=brief['id']),
         "text": brief['title']
@@ -55,7 +55,7 @@
         {% for question in section.questions %}
           {% if question.answer_required and not question.id == 'requirementsLength' %}
             <li>
-              <a class="govuk-link" href="{{ url_for('.edit_brief_question', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id) }}">{{ question.question }}</a>
+              <a class="govuk-link" href="{{ url_for('.edit_brief_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id) }}">{{ question.question }}</a>
             </li>
           {% endif %}
         {% endfor %}
@@ -65,12 +65,12 @@
       <p class="govuk-body">This is how suppliers see your requirements when they are published.</p>
       <p class="govuk-body">Preview links will open in a new tab.</p>
       <p class="govuk-body">
-        <a class="govuk-link" href="{{ url_for('.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Return to overview</a>
+        <a class="govuk-link" href="{{ url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Return to overview</a>
       </p>
 
       {% set desktopHtml %}
         <iframe
-          src="{{ url_for('.preview_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+          src="{{ url_for('.preview_brief_source', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
           title="Preview of the page on desktop or tablet"
           class="dm-desktop-iframe"
         >
@@ -79,7 +79,7 @@
       {% set mobileHtml %}
         <div class="dm-mobile-preview">
           <iframe
-            src="{{ url_for('.preview_brief_source', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+            src="{{ url_for('.preview_brief_source', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
             title="Preview of the page on mobile"
             class="dm-mobile-iframe"
           >
@@ -113,7 +113,7 @@
         </div>
       </div>
 
-    <form action="{{ url_for('.publish_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}" method="GET">
+    <form action="{{ url_for('.publish_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}" method="GET">
       {{ govukButton({
         "text": "Confirm your requirements and publish",
       }) }}

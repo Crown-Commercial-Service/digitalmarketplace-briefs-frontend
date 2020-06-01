@@ -14,4 +14,4 @@ pytest-cov
 python-dotenv  # used to load .flaskenv
 watchdog
 
-git+https://github.com/alphagov/digitalmarketplace-test-utils.git@2.6.1#egg=digitalmarketplace-test-utils
+git+https://github.com/alphagov/digitalmarketplace-test-utils.git@2.7.0#egg=digitalmarketplace-test-utils==2.7.0

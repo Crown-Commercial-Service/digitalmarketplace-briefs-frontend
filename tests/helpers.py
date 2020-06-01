@@ -231,7 +231,7 @@ class BaseApplicationTest(object):
         breadcrumbs_we_expect = [
             ('Digital Marketplace', '/'),
             ('Your account', '/buyers'),
-            ('Your requirements', '/buyers/requirements/digital-outcomes-and-specialists'),
+            ('Your requirements', self.briefs_dashboard_url),
         ]
         if extra_breadcrumbs:
             breadcrumbs_we_expect.extend(extra_breadcrumbs)

@@ -24,7 +24,7 @@
       {
         "href": url_for(
             ".view_brief_overview",
-            framework_slug=brief['frameworkSlug'],
+            framework_slug=brief.framework.slug,
             lot_slug=brief['lotSlug'],
             brief_id=brief['id']),
         "text": brief['title']
@@ -41,7 +41,7 @@
     <div class="govuk-grid-column-two-thirds">
       <div class="single-question-page">
         <h1 class="govuk-heading-l">{{ form.cancel_reason.label.text }}</h1>
-        <form method="POST" action="{{ url_for(request.endpoint, framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+        <form method="POST" action="{{ url_for(request.endpoint, framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           <p class="govuk-body">
               This information will be added to your requirements. Suppliers will receive a link to view the update.

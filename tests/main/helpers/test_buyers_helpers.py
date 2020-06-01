@@ -17,25 +17,25 @@ class TestBuyersHelpers(object):
         provided_lot = LotStub(slug='digital-specialists', allows_brief=True).response()
         data_api_client = mock.Mock()
         data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[provided_lot],
         ).single_result_response()
 
-        framework, lot = helpers.buyers_helpers.get_framework_and_lot('digital-outcomes-and-specialists',
+        framework, lot = helpers.buyers_helpers.get_framework_and_lot('digital-outcomes-and-specialists-4',
                                                                       'digital-specialists',
                                                                       data_api_client)
 
         assert framework['status'] == "live"
-        assert framework['name'] == 'Digital Outcomes and Specialists'
-        assert framework['slug'] == 'digital-outcomes-and-specialists'
+        assert framework['name'] == 'Digital Outcomes and Specialists 4'
+        assert framework['slug'] == 'digital-outcomes-and-specialists-4'
         assert framework['clarificationQuestionsOpen'] is True
         assert lot == provided_lot
 
     def test_get_framework_and_lot_404s_for_wrong_framework_status(self):
         data_api_client = mock.Mock()
         data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='open',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response()
@@ -44,7 +44,7 @@ class TestBuyersHelpers(object):
 
         with pytest.raises(NotFound):
             helpers.buyers_helpers.get_framework_and_lot(
-                'digital-outcomes-and-specialists',
+                'digital-outcomes-and-specialists-4',
                 'digital-specialists',
                 data_api_client,
                 allowed_statuses=['live'],
@@ -53,7 +53,7 @@ class TestBuyersHelpers(object):
     def test_get_framework_and_lot_404s_if_allows_brief_required(self):
         data_api_client = mock.Mock()
         data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=False).response()
@@ -62,7 +62,7 @@ class TestBuyersHelpers(object):
 
         with pytest.raises(NotFound):
             helpers.buyers_helpers.get_framework_and_lot(
-                'digital-outcomes-and-specialists',
+                'digital-outcomes-and-specialists-4',
                 'digital-specialists',
                 data_api_client,
                 must_allow_brief=True,
@@ -71,14 +71,14 @@ class TestBuyersHelpers(object):
     @pytest.mark.parametrize(
         ['framework', 'lot', 'user', 'result'],
         [
-            ('digital-outcomes-and-specialists', 'digital-specialists', 123, True),
+            ('digital-outcomes-and-specialists-4', 'digital-specialists', 123, True),
             ('not-digital-outcomes-and-specialists', 'digital-specialists', 123, False),
-            ('digital-outcomes-and-specialists', 'not-digital-specialists', 123, False),
-            ('digital-outcomes-and-specialists', 'digital-specialists', 124, False),
+            ('digital-outcomes-and-specialists-4', 'not-digital-specialists', 123, False),
+            ('digital-outcomes-and-specialists-4', 'digital-specialists', 124, False),
         ]
     )
     def test_is_brief_correct(self, framework, lot, user, result):
-        brief = BriefStub(user_id=123, status='live').response()
+        brief = BriefStub(framework_slug='digital-outcomes-and-specialists-4', user_id=123, status='live').response()
 
         assert helpers.buyers_helpers.is_brief_correct(brief, framework, lot, user) is result
 
@@ -92,9 +92,9 @@ class TestBuyersHelpers(object):
         ]
     )
     def test_if_brief_correct_allow_withdrawn(self, status, allow_withdrawn, result):
-        brief = BriefStub(user_id=123, status=status).response()
+        brief = BriefStub(framework_slug='digital-outcomes-and-specialists-4', user_id=123, status=status).response()
         assert helpers.buyers_helpers.is_brief_correct(
-            brief, 'digital-outcomes-and-specialists', 'digital-specialists', 123, allow_withdrawn=allow_withdrawn
+            brief, 'digital-outcomes-and-specialists-4', 'digital-specialists', 123, allow_withdrawn=allow_withdrawn
         ) is result
 
     @pytest.mark.parametrize(
@@ -104,9 +104,9 @@ class TestBuyersHelpers(object):
         ]
     )
     def test_is_brief_correct_allowed_statuses(self, allowed_statuses, result):
-        brief = BriefStub(user_id=123, status='live').response()
+        brief = BriefStub(framework_slug='digital-outcomes-and-specialists-4', user_id=123, status='live').response()
         assert helpers.buyers_helpers.is_brief_correct(
-            brief, 'digital-outcomes-and-specialists', 'digital-specialists', 123, allowed_statuses=allowed_statuses
+            brief, 'digital-outcomes-and-specialists-4', 'digital-specialists', 123, allowed_statuses=allowed_statuses
         ) is result
 
     def test_is_brief_associated_with_user(self):

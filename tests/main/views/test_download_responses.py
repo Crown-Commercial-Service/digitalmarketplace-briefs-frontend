@@ -34,7 +34,11 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
         self.instance.data_api_client = self.data_api_client
         self.instance.content_loader = self.content_loader
 
-        self.brief = BriefStub(status='closed', user_id=123).response()
+        self.brief = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="closed",
+            user_id=123,
+        ).response()
         self.brief['essentialRequirements'] = [
             "Good nose for tea",
             "Good eye for biscuits",
@@ -120,7 +124,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
                 'briefResponses': self.responses
             }
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                framework_slug='digital-outcomes-and-specialists',
+                framework_slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response(),
@@ -131,7 +135,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
             with mock.patch.object(download_responses, 'data_api_client', self.data_api_client):
                 self.login_as_buyer()
                 res = self.client.get(
-                    "/buyers/frameworks/digital-outcomes-and-specialists"
+                    "/buyers/frameworks/digital-outcomes-and-specialists-4"
                     "/requirements/digital-specialists/1234/responses/download"
                 )
 
@@ -154,7 +158,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
                 'briefResponses': self.responses
             }
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                framework_slug='digital-outcomes-and-specialists',
+                framework_slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response(),
@@ -165,7 +169,7 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
             with mock.patch.object(download_responses, 'data_api_client', self.data_api_client):
                 self.login_as_buyer()
                 res = self.client.get(
-                    "/buyers/frameworks/digital-outcomes-and-specialists"
+                    "/buyers/frameworks/digital-outcomes-and-specialists-4"
                     "/requirements/digital-specialists/1234/responses/download"
                 )
 
@@ -217,7 +221,10 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
     def test_get_file_context(self):
         self.instance.get_responses = mock.Mock()
 
-        brief = BriefStub(status='closed').single_result_response()
+        brief = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="closed",
+        ).single_result_response()
 
         kwargs = {
             'brief_id': mock.Mock(),
@@ -254,7 +261,10 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
     def test_get_file_context_with_incorrect_brief(self):
         self.instance.get_responses = mock.Mock()
 
-        brief = BriefStub(status='closed').single_result_response()
+        brief = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="closed",
+        ).single_result_response()
 
         kwargs = {
             'brief_id': mock.Mock(),
@@ -275,7 +285,10 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
     def test_get_file_context_with_open_brief(self):
         self.instance.get_responses = mock.Mock()
 
-        brief = BriefStub(status='live').single_result_response()
+        brief = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="live",
+        ).single_result_response()
 
         kwargs = {
             'brief_id': mock.Mock(),
@@ -413,7 +426,12 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
 
     def setup_method(self, method):
         super(TestDownloadBriefResponsesCsv, self).setup_method(method)
-        self.brief = BriefStub(status='closed').single_result_response()
+
+        # CSV download only works with DOS1
+        self.brief = BriefStub(
+            framework_slug="digital-outcomes-and-specialists",
+            status="closed",
+        ).single_result_response()
         self.brief['briefs']['essentialRequirements'] = ["E1", "E2"]
         self.brief['briefs']['niceToHaveRequirements'] = ["Nice1", "Nice2", "Nice3"]
 
@@ -514,7 +532,7 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
 
     def test_download_brief_responses_for_brief_without_nice_to_haves(self, data_api_client):
         data_api_client.get_framework.return_value = FrameworkStub(
-            framework_slug='digital-outcomes-and-specialists',
+            framework_slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
@@ -540,7 +558,7 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
     def test_csv_handles_tricky_characters(self, data_api_client):
         data_api_client.find_brief_responses.return_value = self.tricky_character_responses
         data_api_client.get_framework.return_value = FrameworkStub(
-            framework_slug='digital-outcomes-and-specialists',
+            framework_slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
@@ -565,13 +583,17 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
 
     def test_404_if_brief_does_not_belong_to_buyer(self, data_api_client):
         data_api_client.get_framework.return_value = FrameworkStub(
-            framework_slug='digital-outcomes-and-specialists',
+            framework_slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
         ).single_result_response()
-        data_api_client.get_brief.return_value = BriefStub(user_id=234, status='closed').single_result_response()
+        data_api_client.get_brief.return_value = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            user_id=234,
+            status="closed",
+        ).single_result_response()
 
         self.login_as_buyer()
         res = self.client.get(self.url)
@@ -579,13 +601,16 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
 
     def test_404_if_brief_is_not_closed_or_awarded(self, data_api_client):
         data_api_client.get_framework.return_value = FrameworkStub(
-            framework_slug='digital-outcomes-and-specialists',
+            framework_slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
         ).single_result_response()
-        data_api_client.get_brief.return_value = BriefStub(status='live').single_result_response()
+        data_api_client.get_brief.return_value = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="live",
+        ).single_result_response()
 
         self.login_as_buyer()
         res = self.client.get(self.url)
@@ -594,13 +619,16 @@ class TestDownloadBriefResponsesCsv(BaseApplicationTest):
     def test_404_if_framework_is_not_live_or_expired(self, data_api_client):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
             data_api_client.get_framework.return_value = FrameworkStub(
-                framework_slug='digital-outcomes-and-specialists',
+                framework_slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response(),
                 ]
             ).single_result_response()
-            data_api_client.get_brief.return_value = BriefStub(status='closed').single_result_response()
+            data_api_client.get_brief.return_value = BriefStub(
+                framework_slug="digital-outcomes-and-specialists-4",
+                status="closed",
+            ).single_result_response()
 
             self.login_as_buyer()
             res = self.client.get(self.url)

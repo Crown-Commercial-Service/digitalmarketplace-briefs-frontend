@@ -20,7 +20,7 @@ class TestClarificationQuestionsPage(BaseApplicationTest):
         self.data_api_client = self.data_api_client_patch.start()
 
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
@@ -46,19 +46,22 @@ class TestClarificationQuestionsPage(BaseApplicationTest):
         with self.app.app_context():
 
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                slug='digital-outcomes-and-specialists',
+                slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response(),
                 ]
             ).single_result_response()
-            brief_json = BriefStub(status="live").single_result_response()
+            brief_json = BriefStub(
+                framework_slug="digital-outcomes-and-specialists-4",
+                status="live",
+            ).single_result_response()
             brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
             brief_json['briefs']["clarificationQuestionsAreClosed"] = False
             self.data_api_client.get_brief.return_value = brief_json
 
             res = self.client.get(
-                "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/supplier-questions"  # noqa
+                "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/supplier-questions"  # noqa
             )
 
             assert res.status_code == 200
@@ -70,23 +73,27 @@ class TestClarificationQuestionsPage(BaseApplicationTest):
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_clarification_questions_page_for_live_brief_with_one_question(self, framework_status):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status=framework_status,
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
         ).single_result_response()
-        brief_json = BriefStub(status="live", clarification_questions=[
-            {"question": "Why is my question a question?",
-             "answer": "Because",
-             "publishedAt": "2016-01-01T00:00:00.000000Z"}
-        ]).single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="live",
+            clarification_questions=[
+                {"question": "Why is my question a question?",
+                 "answer": "Because",
+                 "publishedAt": "2016-01-01T00:00:00.000000Z"}
+            ],
+        ).single_result_response()
         brief_json['briefs']['publishedAt'] = "2016-04-02T20:10:00.00000Z"
         brief_json['briefs']["clarificationQuestionsAreClosed"] = True
         self.data_api_client.get_brief.return_value = brief_json
 
         res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/supplier-questions"  # noqa
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/supplier-questions"  # noqa
         )
 
         assert res.status_code == 200
@@ -98,36 +105,44 @@ class TestClarificationQuestionsPage(BaseApplicationTest):
         assert "No questions or answers have been published" not in page_html
 
     def test_clarification_questions_page_returns_404_if_not_live_brief(self):
-        self.data_api_client.get_brief.return_value = BriefStub(status="expired", clarification_questions=[
-            {"question": "Why is my question a question?",
-             "answer": "Because",
-             "publishedAt": "2016-01-01T00:00:00.000000Z"}
-        ]).single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="expired",
+            clarification_questions=[
+                {"question": "Why is my question a question?",
+                 "answer": "Because",
+                 "publishedAt": "2016-01-01T00:00:00.000000Z"}
+            ],
+        ).single_result_response()
 
         res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/supplier-questions"  # noqa
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/supplier-questions"  # noqa
         )
 
         assert res.status_code == 404
 
     def test_clarification_questions_page_returns_404_if_brief_not_correct(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),  # 'Incorrect' lot slug
             ]
         ).single_result_response()
-        brief_json = BriefStub(status="live", clarification_questions=[
-            {"question": "Why is my question a question?",
-             "answer": "Because",
-             "publishedAt": "2016-01-01T00:00:00.000000Z"}
-        ]).single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="live",
+            clarification_questions=[
+                {"question": "Why is my question a question?",
+                 "answer": "Because",
+                 "publishedAt": "2016-01-01T00:00:00.000000Z"}
+            ]
+        ).single_result_response()
         brief_json['briefs']['lotSlug'] = "wrong lot slug"
         self.data_api_client.get_brief.return_value = brief_json
 
         res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/supplier-questions"  # noqa
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/supplier-questions"  # noqa
         )
 
         assert res.status_code == 404
@@ -140,7 +155,7 @@ class TestAddBriefClarificationQuestion(BaseApplicationTest):
         self.data_api_client_patch = mock.patch('app.main.views.supplier_questions.data_api_client', autospec=True)
         self.data_api_client = self.data_api_client_patch.start()
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug="digital-outcomes-and-specialists",
+            slug="digital-outcomes-and-specialists-4",
             status="live",
             lots=[
                 LotStub(slug="digital-specialists", allows_brief=True).response(),
@@ -156,18 +171,21 @@ class TestAddBriefClarificationQuestion(BaseApplicationTest):
         framework_statuses = ['live', 'expired']
         for framework_status in framework_statuses:
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                slug="digital-outcomes-and-specialists",
+                slug="digital-outcomes-and-specialists-4",
                 status=framework_status,
                 lots=[
                     LotStub(slug="digital-specialists", allows_brief=True).response(),
                 ]
             ).single_result_response()
-            brief_json = BriefStub(status="live").single_result_response()
+            brief_json = BriefStub(
+                framework_slug="digital-outcomes-and-specialists-4",
+                status="live",
+            ).single_result_response()
             brief_json['briefs']["clarificationQuestionsAreClosed"] = False
             self.data_api_client.get_brief.return_value = brief_json
 
             res = self.client.get(
-                "/buyers/frameworks/digital-outcomes-and-specialists/requirements"
+                "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements"
                 "/digital-specialists/1234/supplier-questions/answer-question")
 
             assert res.status_code == 200
@@ -176,18 +194,21 @@ class TestAddBriefClarificationQuestion(BaseApplicationTest):
         framework_statuses = ['live', 'expired']
         for framework_status in framework_statuses:
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                slug="digital-outcomes-and-specialists",
+                slug="digital-outcomes-and-specialists-4",
                 status=framework_status,
                 lots=[
                     LotStub(slug="digital-specialists", allows_brief=True).response(),
                 ]
             ).single_result_response()
-            brief_json = BriefStub(status="live").single_result_response()
+            brief_json = BriefStub(
+                framework_slug="digital-outcomes-and-specialists-4",
+                status="live",
+            ).single_result_response()
             brief_json['briefs']["clarificationQuestionsAreClosed"] = False
             self.data_api_client.get_brief.return_value = brief_json
 
             res = self.client.post(
-                "/buyers/frameworks/digital-outcomes-and-specialists/requirements"
+                "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements"
                 "/digital-specialists/1234/supplier-questions/answer-question",
                 data={
                     "question": "Why?",
@@ -200,24 +221,26 @@ class TestAddBriefClarificationQuestion(BaseApplicationTest):
 
             # test that the redirect ends up on the right page
             assert res.headers['Location'].endswith(
-                '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-specialists/1234/supplier-questions'  # noqa
+                '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/supplier-questions'  # noqa
             ) is True
 
     def test_404_if_framework_is_not_live_or_expired(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
             self.data_api_client.get_framework.return_value = FrameworkStub(
-                slug='digital-outcomes-and-specialists',
+                slug='digital-outcomes-and-specialists-4',
                 status=framework_status,
                 lots=[
                     LotStub(slug='digital-specialists', allows_brief=True).response(),
                 ]
             ).single_result_response()
-            brief_json = BriefStub().single_result_response()
+            brief_json = BriefStub(
+                framework_slug="digital-outcomes-and-specialists-4",
+            ).single_result_response()
             brief_json['briefs']["clarificationQuestionsAreClosed"] = False
             self.data_api_client.get_brief.return_value = brief_json
 
             res = self.client.post(
-                "/buyers/frameworks/digital-outcomes-and-specialists/requirements"
+                "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements"
                 "/digital-specialists/1234/supplier-questions/answer-question",
                 data={
                     "question": "Why?",
@@ -229,18 +252,20 @@ class TestAddBriefClarificationQuestion(BaseApplicationTest):
 
     def test_404_if_framework_does_not_allow_brief(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=False).response(),
             ]
         ).single_result_response()
-        brief_json = BriefStub().single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+        ).single_result_response()
         brief_json['briefs']["clarificationQuestionsAreClosed"] = False
         self.data_api_client.get_brief.return_value = brief_json
 
         res = self.client.post(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements"
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements"
             "/digital-specialists/1234/supplier-questions/answer-question",
             data={
                 "question": "Why?",
@@ -252,18 +277,21 @@ class TestAddBriefClarificationQuestion(BaseApplicationTest):
 
     def test_404_if_brief_does_not_belong_to_user(self):
         self.data_api_client.get_framework.return_value = FrameworkStub(
-            slug='digital-outcomes-and-specialists',
+            slug='digital-outcomes-and-specialists-4',
             status='live',
             lots=[
                 LotStub(slug='digital-specialists', allows_brief=True).response(),
             ]
         ).single_result_response()
-        brief_json = BriefStub(user_id=234).single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            user_id=234,
+        ).single_result_response()
         brief_json['briefs']["clarificationQuestionsAreClosed"] = False
         self.data_api_client.get_brief.return_value = brief_json
 
         res = self.client.post(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements"
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements"
             "/digital-specialists/1234/supplier-questions/answer-question",
             data={
                 "question": "Why?",
@@ -274,12 +302,15 @@ class TestAddBriefClarificationQuestion(BaseApplicationTest):
         assert not self.data_api_client.add_brief_clarification_question.called
 
     def test_404_if_brief_is_not_live(self):
-        brief_json = BriefStub(status="draft").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
         brief_json['briefs']["clarificationQuestionsAreClosed"] = False
         self.data_api_client.get_brief.return_value = brief_json
 
         res = self.client.post(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements"
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements"
             "/digital-specialists/1234/supplier-questions/answer-question",
             data={
                 "question": "Why?",
@@ -290,7 +321,10 @@ class TestAddBriefClarificationQuestion(BaseApplicationTest):
         assert not self.data_api_client.add_brief_clarification_question.called
 
     def test_validation_error(self):
-        brief_json = BriefStub(status="live").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="live",
+        ).single_result_response()
         brief_json['briefs']["clarificationQuestionsAreClosed"] = False
         self.data_api_client.get_brief.return_value = brief_json
         self.data_api_client.add_brief_clarification_question.side_effect = HTTPError(
@@ -298,7 +332,7 @@ class TestAddBriefClarificationQuestion(BaseApplicationTest):
             {"question": "answer_required"})
 
         res = self.client.post(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements"
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements"
             "/digital-specialists/1234/supplier-questions/answer-question",
             data={
                 "question": "Why?",
@@ -310,14 +344,17 @@ class TestAddBriefClarificationQuestion(BaseApplicationTest):
         assert len(document.cssselect(".validation-message")) == 1, res.get_data(as_text=True)
 
     def test_api_error(self):
-        brief_json = BriefStub(status="live").single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="live",
+        ).single_result_response()
         brief_json['briefs']["clarificationQuestionsAreClosed"] = False
         self.data_api_client.get_brief.return_value = brief_json
         self.data_api_client.add_brief_clarification_question.side_effect = HTTPError(
             mock.Mock(status_code=500))
 
         res = self.client.post(
-            "/buyers/frameworks/digital-outcomes-and-specialists/requirements"
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements"
             "/digital-specialists/1234/supplier-questions/answer-question",
             data={
                 "question": "Why?",

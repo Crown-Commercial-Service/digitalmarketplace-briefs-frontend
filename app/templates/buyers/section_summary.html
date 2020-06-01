@@ -22,7 +22,7 @@
       {
         "href": url_for(
           ".view_brief_overview",
-          framework_slug=brief['frameworkSlug'],
+          framework_slug=brief.framework.slug,
           lot_slug=brief['lotSlug'],
           brief_id=brief['id']),
         "text": brief['title']
@@ -74,54 +74,54 @@
           {% if question.answer_required or question.is_empty %}
             {% if brief.get('status') == 'draft' %}
               {% call summary.field() %}
-                <a class="govuk-link" href="{{ url_for('buyers.edit_brief_question', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id) }}">{{ question.empty_message or "Not answered" }}</a>
-              {% endcall %}
+                  <a class="govuk-link" href="{{ url_for('buyers.edit_brief_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id) }}">{{ question.empty_message or "Not answered" }}</a>
+                {% endcall %}
+              {% else %}
+                {{ summary.text("Not answered") }}
+              {% endif %}
             {% else %}
-              {{ summary.text("Not answered") }}
+              {% with question_value = summary[question.type](question.display_value or question.value) %}
+                {{ (question_value | preserve_line_breaks) if question.type == 'textbox_large' else question_value }}
+              {% endwith %}
             {% endif %}
-          {% else %}
-            {% with question_value = summary[question.type](question.display_value or question.value) %}
-              {{ (question_value | preserve_line_breaks) if question.type == 'textbox_large' else question_value }}
-            {% endwith %}
-          {% endif %}
 
-          {% if brief.get('status') == 'draft' %}
-            {% if question.is_empty and not question.answer_required %}
-              {% call summary.field(action=True) %}
-                Optional
-              {% endcall %}
-            {% elif not question.answer_required %}
-              {{ summary.edit_link(
-                    "Edit",
-                    url_for("buyers.edit_brief_question", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id),
-                    hidden_text=question.label
-                  )
-              }}
-            {% else %}
-              {% call summary.field() %}{% endcall %}
+            {% if brief.get('status') == 'draft' %}
+              {% if question.is_empty and not question.answer_required %}
+                {% call summary.field(action=True) %}
+                  Optional
+                {% endcall %}
+              {% elif not question.answer_required %}
+                {{ summary.edit_link(
+                      "Edit",
+                      url_for("buyers.edit_brief_question", framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id),
+                      hidden_text=question.label
+                    )
+                }}
+              {% else %}
+                {% call summary.field() %}{% endcall %}
+              {% endif %}
             {% endif %}
-          {% endif %}
 
+          {% endcall %}
         {% endcall %}
-      {% endcall %}
+      </div>
     </div>
-  </div>
 
-  {% if show_dos_preview_link %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
-         href="{{ url_for('.preview_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
-        Preview your requirements
-      </a>
+    {% if show_dos_preview_link %}
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
+           href="{{ url_for('.preview_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+          Preview your requirements
+        </a>
+      </div>
     </div>
-  </div>
-  {% endif %}
+    {% endif %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
-        href="{{ url_for('.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
+        href="{{ url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
         Return to overview
       </a>
     </div>

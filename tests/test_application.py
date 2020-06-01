@@ -60,7 +60,7 @@ class TestApplication(BaseApplicationTest):
             validate_csrf.side_effect = ValidationError('The CSRF session token is missing.')
 
             res = self.client.post(
-                '/buyers/frameworks/digital-outcomes-and-specialists/requirements/digital-outcomes/create',
+                '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/create',
                 data={'anything': 'here'},
             )
 

@@ -20,7 +20,7 @@
         "text": "Your requirements"
       },
       {
-        "href": url_for("buyers.view_brief_overview", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+        "href": url_for("buyers.view_brief_overview", framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id),
         "text": brief.get("title", brief["lotName"])
       },
       {
@@ -47,7 +47,7 @@
       {% import "toolkit/summary-table.html" as summary %}
 
       {{ summary.heading("Supplier questions", id="clarification-questions") }}
-      {{ summary.top_link("Answer a supplier question", url_for('.add_supplier_question', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id)) }}
+      {{ summary.top_link("Answer a supplier question", url_for('.add_supplier_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id)) }}
       {% call(question) summary.list_table(
         brief.clarificationQuestions,
         field_headings=[
@@ -71,7 +71,7 @@
   </div>
 
   <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
-     href="{{ url_for('.view_brief_overview', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+     href="{{ url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
     Return to overview
   </a>
 

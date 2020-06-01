@@ -6,11 +6,11 @@
       {"question": "Why?", "answer": "Because", "publishedAt": "2016-12-02T00:00:00.000000Z"}
     ],
     "clarificationQuestionsAreClosed": true,
-    "clarificationQuestionsClosedAt": "2016-12-07T11:09:28.054129Z",
-    "clarificationQuestionsPublishedBy": "2017-06-10T23:59:59.000000Z",
+    "clarificationQuestionsClosedAt": "2019-12-07T11:09:28.054129Z",
+    "clarificationQuestionsPublishedBy": "2020-06-10T23:59:59.000000Z",
     "contractLength": "Up to 24 months or completion of the services.",
     "contractLength": "4 weeks",
-    "createdAt": "2016-11-25T10:47:23.126761Z",
+    "createdAt": "2019-11-25T10:47:23.126761Z",
     "culturalFitCriteria": [
       "Work well in a team within our organisation.",
       "Mentor members of the team."
@@ -25,13 +25,13 @@
     ],
     "existingTeam": "Key stakeholders within Border Force",
     "frameworkFamily": "digital-outcomes-and-specialists",
-    "frameworkName": "Digital Outcomes and Specialists 2",
-    "frameworkSlug": "digital-outcomes-and-specialists-2",
+    "frameworkName": "Digital Outcomes and Specialists 4",
+    "frameworkSlug": "digital-outcomes-and-specialists-4",
     "frameworkStatus": "live",
     "id": 1,
     "importantDates": "31st of March: Test coverage must be 100%.",
     "links": {
-      "framework": "http://localhost:5000/frameworks/digital-outcomes-and-specialists",
+      "framework": "http://localhost:5000/frameworks/digital-outcomes-and-specialists-4",
       "self": "http://localhost:5000/briefs/2"
     },
     "location": "London",
@@ -45,18 +45,18 @@
     "numberOfSuppliers": 5,
     "organisation": "ByteMe IT",
     "priceWeighting": 30,
-    "publishedAt": "2016-12-01T11:09:28.054129Z",
+    "publishedAt": "2019-12-01T11:09:28.054129Z",
     "questionAndAnswerSessionDetails": "session details",
     "requirementsLength": "2 weeks",
     "securityClearance": "Security clearance required",
     "specialistRole": "qualityAssurance",
     "specialistWork": "Squashing bugs left right and center",
-    "startDate": "2017-3-1",
+    "startDate": "2020-3-1",
     "status": "live",
     "summary": "Be the best QA ever",
     "technicalWeighting": 60,
     "title": "QA tester for next-gen web project",
-    "updatedAt": "2016-12-01T11:08:28.061327Z",
+    "updatedAt": "2019-12-01T11:08:28.061327Z",
     "users": [
       {
         "active": true,

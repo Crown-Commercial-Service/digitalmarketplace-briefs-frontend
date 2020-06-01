@@ -137,7 +137,7 @@
               },
               'links': [
                 {
-                  'href': url_for(".supplier_questions",framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+                  'href': url_for(".supplier_questions",framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id),
                   'text': 'Publish questions and answers',
                   'allowed_statuses': ['live']
                 },
@@ -160,12 +160,12 @@
               },
               'links': [
                 {
-                  'href': url_for(".view_brief_responses", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+                  'href': url_for(".view_brief_responses", framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id),
                   'text': 'View and shortlist suppliers',
                   'allowed_statuses': ['closed']
                 },
                 {
-                  'href': url_for(".view_brief_responses", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+                  'href': url_for(".view_brief_responses", framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id),
                   'text': 'View suppliers who applied',
                   'allowed_statuses': ['cancelled', 'unsuccessful', 'awarded']
                 },
@@ -216,11 +216,11 @@
                 },
                 {
                   'href': call_off_contract_url,
-                  'text': "Download the " + brief.frameworkName + " contract",
+                  'text': "Download the " + brief.framework.name + " contract",
                   'allowed_statuses': ['draft', 'live', 'closed']
                 },
                 {
-                  'href': url_for(".award_or_cancel_brief", framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id),
+                  'href': url_for(".award_or_cancel_brief", framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id),
                   'text': "Let suppliers know the outcome",
                   'allowed_statuses': ['closed']
                 }

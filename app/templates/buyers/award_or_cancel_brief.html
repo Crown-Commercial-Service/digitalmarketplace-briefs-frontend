@@ -24,7 +24,7 @@
       {
         "href": url_for(
           ".view_brief_overview",
-          framework_slug=brief['frameworkSlug'],
+          framework_slug=brief.framework.slug,
           lot_slug=brief['lotSlug'],
           brief_id=brief['id']
         ),
@@ -48,7 +48,7 @@
           </p>
       {% else %}
           <h1 class="govuk-heading-l">{{ form.award_or_cancel_decision.label.text }}</h1>
-          <form method="POST" action="{{ url_for('.award_or_cancel_brief', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+          <form method="POST" action="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             {%
                   with
