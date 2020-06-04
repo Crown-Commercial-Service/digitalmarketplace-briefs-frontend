@@ -1,0 +1,15 @@
+// We want to ensure that govuk-label components are consistent with existing
+// labels. To do this we change the default label class to be styled like a
+// medium heading. This style was copied from
+// https://github.com/alphagov/govuk-frontend/blob/v2.13.0/src/components/label/_label.scss#L27-L30
+//
+// TODO: Remove/move this to digitalmarketplace-govuk-frontend when ready
+
+.govuk-label {
+  @include govuk-text-colour;
+  @include govuk-font($size: 24, $weight: bold);
+
+  display: block;
+
+  margin-bottom: govuk-spacing(2);
+}
