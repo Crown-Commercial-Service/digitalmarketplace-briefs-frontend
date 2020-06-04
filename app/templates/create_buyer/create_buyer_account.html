@@ -45,7 +45,20 @@
 
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-      {{ form.email_address }}
+      {{ govukInput({
+        "label": {
+          "text": form.email_address.label.text,
+        },
+        "errorMessage": errors.email_address.errorMessage,
+        "id": "input-email_address",
+        "name": "email_address",
+        "type": "email",
+        "value": form.email_address.data,
+        "attributes": {
+          "autocomplete": "username",
+          "spellcheck": "false",
+        }
+      }) }}
 
       {{ govukButton({
         "text": "Create account",
