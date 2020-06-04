@@ -41,7 +41,7 @@
       We will send an account activation email to this address. You will then be able to set your password.
     </p>
 
-    <form method="POST" action="{{ url_for('.submit_create_buyer_account') }}">
+    <form method="POST" action="{{ url_for('.submit_create_buyer_account') }}" novalidate>
 
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
