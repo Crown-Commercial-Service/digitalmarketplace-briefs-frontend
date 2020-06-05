@@ -6,9 +6,9 @@ from dmutils.forms.validators import EmailValidator as ValidEmailAddress
 
 class EmailAddressForm(FlaskForm):
     email_address = DMStripWhitespaceStringField(
-        "Your email address",
+        "",
         validators=[
-            DataRequired(message="Enter an email address"),
-            ValidEmailAddress(message="Enter an email address in the correct format, like name@example.gov.uk"),
+            DataRequired(message="email_address_data_required"),
+            ValidEmailAddress(message="email_address_invalid_email_address"),
         ]
     )

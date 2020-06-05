@@ -41,15 +41,20 @@
       We will send an account activation email to this address. You will then be able to set your password.
     </p>
 
+    {% set emailAddressErrorMessages = {
+      "email_address_data_required": "Enter an email address",
+      "email_address_invalid_email_address": "Enter an email address in the correct format, like name@example.gov.uk",
+    } %}
+
     <form method="POST" action="{{ url_for('.submit_create_buyer_account') }}" novalidate>
 
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
       {{ govukInput({
         "label": {
-          "text": form.email_address.label.text,
+          "text": "Your email address",
         },
-        "errorMessage": errors.email_address.errorMessage,
+        "errorMessage": emailAddressErrorMessages[email_address.errorMessage],
         "id": "input-email_address",
         "name": "email_address",
         "type": "email",
