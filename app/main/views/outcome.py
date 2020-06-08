@@ -44,7 +44,7 @@ def award_or_cancel_brief(framework_slug, lot_slug, brief_id):
     if already_awarded is False and form.validate_on_submit():
         answer = form.data.get('award_or_cancel_decision')
         if answer == 'back':
-            flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
+            flash(BRIEF_UPDATED_MESSAGE.format(brief=brief), "success")
             return redirect(url_for('.buyer_dos_requirements'))
         elif answer == 'yes':
             return redirect(
@@ -188,7 +188,7 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
                 )
             else:
                 abort(400, "Unrecognized status '{}'".format(new_status))
-            flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
+            flash(BRIEF_UPDATED_MESSAGE.format(brief=brief), "success")
             return redirect(
                 url_for('.view_brief_overview', framework_slug=framework_slug, lot_slug=lot_slug, brief_id=brief_id)
             )
@@ -253,7 +253,7 @@ def award_brief_details(framework_slug, lot_slug, brief_id, brief_response_id):
                 section=section
             ), 400
 
-        flash(BRIEF_UPDATED_MESSAGE.format(brief=brief))
+        flash(BRIEF_UPDATED_MESSAGE.format(brief=brief), "success")
 
         return redirect(url_for(".buyer_dos_requirements"))
 
