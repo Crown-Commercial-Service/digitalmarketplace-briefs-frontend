@@ -295,7 +295,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         )
         assert res.status_code == 302
         assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-        self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", expected_category="success")
+        self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", "message")
 
     @mock.patch('app.main.views.outcome.is_brief_correct')
     def test_award_brief_details_raises_400_if_brief_not_correct(self, is_brief_correct):
@@ -599,7 +599,7 @@ class TestCancelBrief(BaseApplicationTest):
 
         assert res.status_code == 302
         assert expected_url in redirect_text
-        self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", expected_category="success")
+        self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", "message")
 
 
 class TestAwardOrCancelBrief(BaseApplicationTest):
@@ -713,7 +713,7 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         self.login_as_buyer()
         self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'back'})
 
-        self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", expected_category="success")
+        self.assert_flashes("You’ve updated ‘I need a thing to do a thing’", "message")
 
     def test_random_post_data_triggers_invalid_choice(self):
         self.login_as_buyer()
