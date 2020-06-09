@@ -593,7 +593,7 @@ def delete_a_brief(framework_slug, lot_slug, brief_id):
         abort(404)
 
     data_api_client.delete_brief(brief_id, current_user.email_address)
-    flash(BRIEF_DELETED_MESSAGE.format(brief=brief))
+    flash(BRIEF_DELETED_MESSAGE.format(brief=brief), "success")
 
     return redirect(url_for(".buyer_dos_requirements"))
 
@@ -613,6 +613,6 @@ def withdraw_a_brief(framework_slug, lot_slug, brief_id):
         abort(404)
 
     data_api_client.withdraw_brief(brief_id, current_user.email_address)
-    flash(BRIEF_WITHDRAWN_MESSAGE.format(brief=brief))
+    flash(BRIEF_WITHDRAWN_MESSAGE.format(brief=brief), "success")
 
     return redirect(url_for(".buyer_dos_requirements"))
