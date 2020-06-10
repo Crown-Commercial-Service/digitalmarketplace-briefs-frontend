@@ -1676,7 +1676,10 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
             assert res.status_code == 302
             assert self.data_api_client.delete_brief.called
             assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-            self.assert_flashes("Your requirements ‘I need a thing to do a thing’ were deleted")
+            self.assert_flashes(
+                "Your requirements ‘I need a thing to do a thing’ were deleted",
+                expected_category="success"
+            )
 
     def test_404_if_framework_is_not_live_or_expired(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
@@ -1763,7 +1766,10 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
         assert res.status_code == 302
         assert self.data_api_client.delete_brief.call_args_list == []
         assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-        self.assert_flashes("You’ve withdrawn your requirements for ‘I need a thing to do a thing’")
+        self.assert_flashes(
+            "You’ve withdrawn your requirements for ‘I need a thing to do a thing’",
+            expected_category="success"
+        )
 
     @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill'])
     def test_404_if_framework_is_not_live_or_expired(self, framework_status):

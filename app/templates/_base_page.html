@@ -12,6 +12,7 @@
 {# Import DM Components #}
 {% from "digitalmarketplace/components/cookie-banner/macro.njk" import dmCookieBanner %}
 {% from "digitalmarketplace/components/header/macro.njk" import dmHeader%}
+{% from "digitalmarketplace/components/alert/macro.njk" import dmAlert %}
 {% from "digitalmarketplace/components/footer/macro.njk" import dmFooter%}
 
 {% set assetPath = '/buyers/static' %}
@@ -54,7 +55,7 @@
     %}
       {% for category, message in messages %}
         {{ dmAlert({
-          "titleText": titles[category] or message,
+          "titleHtml": titles.get("category") or message,
           "text": message if category in titles else None,
           "type": category,
         }) }}
