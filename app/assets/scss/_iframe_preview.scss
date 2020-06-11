@@ -38,3 +38,9 @@ $app-mobile-border-bottom-width: 68px;
   background-position: 50% 0;
   background-size: contain;
 }
+
+.app-stat-block {
+  @include govuk-media-query($from: tablet) {
+      width: 30%;
+  }
+}

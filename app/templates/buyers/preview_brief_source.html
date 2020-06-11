@@ -65,21 +65,13 @@
   </div>
 
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      {{ statistics.big_stat(
-           0,
-           "Incomplete applications",
-           "0 SME, 0 large",
-           id="incomplete-applications"
-         )
-      }}
-      {{ statistics.big_stat(
-           0,
-           "Completed applications",
-           "0 SME, 0 large",
-           id="completed-applications"
-         )
-      }}
+    <div class="govuk-grid-column-one-third app-stat-block" id="incomplete-applications">
+      <h2><span class="govuk-!-font-size-36 govuk-!-display-block">0</span><span>Incomplete applications</span></h2>
+      <p class="govuk-body govuk-!-font-size-16">0 SME, 0 large</p>
+    </div>
+    <div class="govuk-grid-column-one-third app-stat-block" id="completed-applications">
+      <h2><span class="govuk-!-font-size-36 govuk-!-display-block">0</span><span>Completed applications</span></h2>
+      <p class="govuk-body govuk-!-font-size-16">0 SME, 0 large</p>
     </div>
   </div>
 
