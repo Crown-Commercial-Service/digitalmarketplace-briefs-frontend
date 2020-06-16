@@ -21,6 +21,7 @@ from dmutils.dates import get_publishing_dates
 from dmutils.flask import timed_render_template as render_template
 from dmutils.formats import DATETIME_FORMAT
 from dmutils.forms.errors import govuk_errors
+from dmcontent.html import to_summary_list_rows
 from datetime import datetime
 
 from collections import Counter
@@ -486,10 +487,22 @@ def preview_brief_source(framework_slug, lot_slug, brief_id):
     display_content = content_loader.get_manifest(brief['frameworkSlug'], 'display_brief').filter(
         {'lot': brief['lotSlug']}
     )
+
+    # Get attributes in format suitable for govukSummaryList
+    brief_summary = display_content.summary(brief)
+    for section in brief_summary:
+        section.summary_list = to_summary_list_rows(
+            section.questions,
+            format_links=True,
+            filter_empty=False,
+            open_links_in_new_tab=True
+        )
+
     # TODO: move preview_brief_source templates/includes into shared FE toolkit pattern to ensure it's kept in sync
     html = render_template(
         "buyers/preview_brief_source.html",
         content=display_content,
+        content_summary=brief_summary,
         unanswered_required=unanswered_required,
         brief=brief,
         important_dates=important_dates

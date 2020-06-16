@@ -1181,13 +1181,13 @@ class TestPreviewBrief(BaseApplicationTest):
         incomplete_responses_section = document.xpath('//div[@id="incomplete-applications"]')[0]
         completed_responses_section = document.xpath('//div[@id="completed-applications"]')[0]
 
-        assert incomplete_responses_section.xpath('div[@class="big-statistic"]/text()')[0] == '0'
-        assert incomplete_responses_section.xpath('div[@class="statistic-name"]/text()')[0] == "Incomplete applications"
-        assert incomplete_responses_section.xpath('div[@class="statistic-description"]/text()')[0] == "0 SME, 0 large"
+        assert incomplete_responses_section.xpath('h2//span[1]/text()')[0] == '0'
+        assert incomplete_responses_section.xpath('h2//span[2]/text()')[0] == "Incomplete applications"
+        assert incomplete_responses_section.xpath('p[1]/text()')[0] == "0 SME, 0 large"
 
-        assert completed_responses_section.xpath('div[@class="big-statistic"]/text()')[0] == '0'
-        assert completed_responses_section.xpath('div[@class="statistic-name"]/text()')[0] == "Completed applications"
-        assert completed_responses_section.xpath('div[@class="statistic-description"]/text()')[0] == "0 SME, 0 large"
+        assert completed_responses_section.xpath('h2//span[1]/text()')[0] == '0'
+        assert completed_responses_section.xpath('h2//span[2]/text()')[0] == "Completed applications"
+        assert completed_responses_section.xpath('p[1]/text()')[0] == "0 SME, 0 large"
 
     def test_preview_source_page_renders_default_important_dates(self):
         self.data_api_client.get_brief.return_value = self._setup_brief()
@@ -1199,20 +1199,20 @@ class TestPreviewBrief(BaseApplicationTest):
         page_html = res.get_data(as_text=True)
         document = html.fromstring(page_html)
 
-        important_dates = document.xpath('(//table[@class="summary-item-body"])[1]/tbody/tr')
+        important_dates = document.xpath('(//dl[@id="opportunity-important-dates"]//div)')
 
         assert len(important_dates) == 3
-        assert important_dates[0].xpath('td[@class="summary-item-field-first"]')[0].text_content().strip() \
+        assert important_dates[0].xpath('dt')[0].text_content().strip() \
             == "Published"
-        assert important_dates[0].xpath('td[@class="summary-item-field"]')[0].text_content().strip() \
+        assert important_dates[0].xpath('dd')[0].text_content().strip() \
             == "Tuesday 1 January 2019"
-        assert important_dates[1].xpath('td[@class="summary-item-field-first"]')[0].text_content().strip() \
+        assert important_dates[1].xpath('dt')[0].text_content().strip() \
             == "Deadline for asking questions"
-        assert important_dates[1].xpath('td[@class="summary-item-field"]')[0].text_content().strip() \
+        assert important_dates[1].xpath('dd')[0].text_content().strip() \
             == "Thursday 3 January 2019 at 11:59pm GMT"
-        assert important_dates[2].xpath('td[@class="summary-item-field-first"]')[0].text_content().strip() \
+        assert important_dates[2].xpath('dt')[0].text_content().strip() \
             == "Closing date for applications"
-        assert important_dates[2].xpath('td[@class="summary-item-field"]')[0].text_content().strip() \
+        assert important_dates[2].xpath('dd')[0].text_content().strip() \
             == "Tuesday 8 January 2019 at 11:59pm GMT"
 
     @pytest.mark.parametrize('brief_q_and_a_link', [True, False])
