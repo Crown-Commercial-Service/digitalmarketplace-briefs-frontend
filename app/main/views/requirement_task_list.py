@@ -64,7 +64,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         for index, question in enumerate(brief['clarificationQuestions'])
     ]
 
-    publish_requirements_section_links = [
+    publish_requirements_section_instructions = [
         {
             'href': url_for(
                 ".preview_brief",
@@ -75,7 +75,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
             'text': 'Preview your requirements',
             'allowed_statuses': ['draft'],
             'startable': sections_status['previewable'],
-            'id': 'preview_brief_link'
+            'active_tag': 'Optional'
         },
         {
             'href': url_for(
@@ -87,8 +87,10 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
             'text': 'Publish your requirements',
             'allowed_statuses': ['draft'],
             'startable': sections_status['publishable'],
-            'id': 'publish_brief_link'
+            'active_tag': 'To do'
         },
+    ]
+    publish_requirements_section_links = [
         {
             'href': url_for(
                 ".view_brief_timeline",
@@ -121,5 +123,6 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         call_off_contract_url=call_off_contract_url,
         framework_agreement_url=framework_agreement_url,
         awarded_brief_response_supplier_name=awarded_brief_response_supplier_name,
-        publish_requirements_section_links=publish_requirements_section_links
+        publish_requirements_section_links=publish_requirements_section_links,
+        publish_requirements_section_instructions=publish_requirements_section_instructions
     ), 200
