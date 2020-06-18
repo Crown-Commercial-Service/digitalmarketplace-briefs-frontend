@@ -11,7 +11,10 @@ from ...helpers import BaseApplicationTest
 class TestBriefSummaryPage(BaseApplicationTest):
 
     SIDE_LINKS_XPATH = '//div[@class="govuk-grid-column-one-third"]//a'
-    INSTRUCTION_LINKS_XPATH = '//main//ul/li/a'
+    INSTRUCTION_LINKS_XPATH = '//span[@class="dm-task-list__task-name"]/a'
+    INSTRUCTION_TAGS_XPATH = '//main//ol/li/ul/li//strong'
+    GUIDANCE_LINKS_XPATH = '//a[@class="govuk-link dm-task-list__link"]'
+    INSTRUCTION_TEXT_XPATH = '//main//ol/li/ul/li/span[not(./a)]'
 
     def setup_method(self, method):
         super().setup_method(method)
@@ -67,6 +70,13 @@ class TestBriefSummaryPage(BaseApplicationTest):
         document = html.fromstring(page_html)
 
         assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
+        assert self._get_links(document, self.GUIDANCE_LINKS_XPATH, text_only=True) == [
+            'How to answer supplier questions',
+            'How to shortlist suppliers',
+            'How to evaluate suppliers',
+            'How to award a contract',
+            'Download the Digital Outcomes and Specialists 4 contract',
+        ]
         assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
             'Title',
             'Specialist role',
@@ -75,13 +85,22 @@ class TestBriefSummaryPage(BaseApplicationTest):
             'Shortlist and evaluation process',
             'Set how long your requirements will be open for',
             'Describe question and answer session',
+        ]
+        assert self._get_links(document, self.INSTRUCTION_TEXT_XPATH, text_only=True) == [
             'Preview your requirements',
             'Publish your requirements',
-            'How to answer supplier questions',
-            'How to shortlist suppliers',
-            'How to evaluate suppliers',
-            'How to award a contract',
-            'Download the Digital Outcomes and Specialists 4 contract',
+        ]
+
+        assert self._get_links(document, self.INSTRUCTION_TAGS_XPATH, text_only=True) == [
+            'Done',             # Title
+            'Done',             # Specialist role
+            'To do',            # Location
+            'To do',            # Description of work
+            'To do',            # Shortlist and evaluation process
+            'To do',            # Set how long your requirements will be open for
+            'Optional',         # Describe question and answer session
+            'Cannot start yet',  # Preview your requirements
+            'Cannot start yet',  # Publish your requirements
         ]
 
         assert "Awarded to " not in page_html
@@ -91,6 +110,53 @@ class TestBriefSummaryPage(BaseApplicationTest):
                 "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/delete"  # noqa
             )
         ]
+
+    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
+    def test_draft_brief_summary_page_tags_change_state(self, framework_status):
+        self.data_api_client.get_framework.return_value = FrameworkStub(
+            slug='digital-outcomes-and-specialists-4',
+            status=framework_status,
+            lots=[
+                LotStub(slug='digital-specialists', allows_brief=True).response(),
+            ]
+        ).single_result_response()
+        brief_json = BriefStub(
+            framework_slug="digital-outcomes-and-specialists-4",
+            status="draft",
+        ).single_result_response()
+        # brief_json['briefs']['specialistRole'] = 'communicationsManager'
+        self.data_api_client.get_brief.return_value = brief_json
+
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234"
+        )
+
+        assert res.status_code == 200
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+
+        initial_tags = self._get_links(document, self.INSTRUCTION_TAGS_XPATH, text_only=True)
+
+        assert initial_tags[1] == 'To do'   # Specialist role
+        assert initial_tags[3] == 'To do'   # Description of work
+
+        brief_json['briefs']['specialistRole'] = 'communicationsManager'
+        brief_json['briefs']['organisation'] = 'United Team Group'
+
+        self.data_api_client.get_brief.return_value = brief_json
+
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234"
+        )
+
+        assert res.status_code == 200
+        page_html = res.get_data(as_text=True)
+        document = html.fromstring(page_html)
+
+        new_tags = self._get_links(document, self.INSTRUCTION_TAGS_XPATH, text_only=True)
+
+        assert new_tags[1] == 'Done'
+        assert new_tags[3] == 'In progress'
 
     @pytest.mark.parametrize(
         'status, banner_displayed',
@@ -140,7 +206,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
         document = html.fromstring(page_html)
 
         assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-        assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
+        assert self._get_links(document, self.GUIDANCE_LINKS_XPATH, text_only=True) == [
             'View question and answer dates',
             'View your published requirements',
             'Publish questions and answers',
@@ -207,13 +273,15 @@ class TestBriefSummaryPage(BaseApplicationTest):
         document = html.fromstring(page_html)
 
         assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-        assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
+        assert self._get_links(document, self.GUIDANCE_LINKS_XPATH, text_only=True) == [
             'View your published requirements',
             'View and shortlist suppliers',
             'How to shortlist suppliers',
             'How to evaluate suppliers',
             'How to award a contract',
-            'Download the Digital Outcomes and Specialists 4 contract',
+            'Download the Digital Outcomes and Specialists 4 contract'
+        ]
+        assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
             'Let suppliers know the outcome'
         ]
 
@@ -257,7 +325,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
         document = html.fromstring(page_html)
 
         assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-        assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
+        assert self._get_links(document, self.GUIDANCE_LINKS_XPATH, text_only=True) == [
             'View your published requirements',
             'View suppliers who applied',
         ]
@@ -311,7 +379,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
         document = html.fromstring(page_html)
 
         assert (document.xpath('//h1')[0]).text_content().strip() == "I need a thing to do a thing"
-        assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
+        assert self._get_links(document, self.GUIDANCE_LINKS_XPATH, text_only=True) == [
             'View your published requirements',
             'View suppliers who applied',
         ]
@@ -365,7 +433,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
         assert res.status_code == 200
 
         document = html.fromstring(res.get_data(as_text=True))
-        section_steps = document.cssselect("ol.instruction-list")
+        section_steps = document.cssselect("ol.dm-task-list")
         section_1_link = section_steps[0].xpath('li//a[contains(text(), "Section 1")]')
         section_2_link = section_steps[0].xpath('li//a[contains(text(), "Section 2")]')
         section_4_link = section_steps[0].xpath('li//a[contains(text(), "Section 4")]')
