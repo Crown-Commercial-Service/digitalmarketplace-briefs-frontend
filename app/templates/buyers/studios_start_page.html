@@ -21,69 +21,60 @@
 {% block mainContent %}
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds large-paragraph">
-      <h1 class="govuk-heading-l">Find a user research lab</h1>
-    </div>
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">Find a user research lab</h1>
+    
+    <p class="govuk-body">
+      To find a user research lab, you need to tell suppliers what facilities you need and when. They’ll then tell you what they can do and how much it will cost.
+    </p>
 
-    <div class="govuk-grid-column-two-thirds large-paragraph">
-        <div class="marketplace-paragraph">
-            <p class="govuk-body">
-                To find a user research lab, you need to tell suppliers what facilities you need and when. They’ll then tell you what they can do and how much it will cost.
-            </p>
-        </div>
+    <h2 class="govuk-heading-m">Before you start</h2>
+    <ol class="govuk-list govuk-list--number">
+      <li>
+        Prepare your requirements and set evaluation criteria.<br />
+        For example: a lab in York with a desktop PC and an observation room
+      </li>
+      <li>Get approval to buy what you need.</li>
+    </ol>
 
-        <h2>Before you start</h2>
-        <ol class="govuk-list govuk-list--number">
-            <li>
-                Prepare your requirements and set evaluation criteria.<br />
-                eg a lab in York with a desktop PC and an observation room
-            </li>
-            <li>Get approval to buy what you need.</li>
-        </ol>
+    <h2 class="govuk-heading-m">Create a shortlist</h2>
+    <ol class="govuk-list govuk-list--number" start="3">
+      <li>Download the list of user research labs from the Digital Marketplace.</li>
+      <li>Filter the list of labs on location and your requirements to create a shortlist.</li>
+    </ol>
 
-        <h2>Create a shortlist</h2>
-        <ol class="govuk-list govuk-list--number" start="3">
-            <li>Download the list of user research labs from the Digital Marketplace.</li>
-            <li>Filter the list of labs on location and your requirements to create a shortlist.</li>
-        </ol>
+    <h2 class="govuk-heading-m">Contact your shortlist</h2>
+    <ol class="govuk-list govuk-list--number" start="5">
+      <li>
+        <a class="govuk-link" href="mailto:{{ support_email_address }}">Contact the Crown Commercial Service</a> to get contact details for the suppliers on your shortlist.
+      </li>
+      <li>Send your requirements and evaluation criteria to shortlisted suppliers.</li>
+      <li>Answer supplier questions.</li>
+      <li>Suppliers will tell you if they can meet your requirements.</li>
+    </ol>
 
-        <h2>Contact your shortlist</h2>
-        <ol class="govuk-list govuk-list--number" start="5">
-            <li>
-                Contact the <a class="govuk-link" href="mailto:{{ support_email_address }}">Crown Commercial Service</a>
-                to get contact details for the suppliers on your shortlist.
-            </li>
-            <li>Send your requirements and evaluation criteria to shortlisted suppliers.</li>
-            <li>Answer supplier questions.</li>
-            <li>Suppliers will tell you if they can meet your requirements.</li>
-        </ol>
+    <h2 class="govuk-heading-m">Evaluate</h2>
+    <ol class="govuk-list govuk-list--number" start="9">
+      <li>Evaluate suppliers responses on:
+        <ul class="govuk-list govuk-list--bullet">
+          <li>availability</li>
+          <li>location, facilities and accessibility</li>
+          <li>price</li>
+        </ul>
+      </li>
+      <li>Award a contract to the supplier that best meets your needs.</li>
+    </ol>
 
-        <h2>Evaluate</h2>
-        <ol class="govuk-list govuk-list--number" start="9">
-            <li>Evaluate suppliers responses on:
-                <div class="explanation-list">
-                    <ul class="govuk-list govuk-list--bullet">
-                        <li>availability</li>
-                        <li>location, facilities and accessibility</li>
-                        <li>price</li>
-                    </ul>
-                </div>
-            </li>
-            <li>Award a contract to the supplier that best meets your needs.</li>
-        </ol>
+    <p class="govuk-body">Read more about <a class="govuk-link" href="https://www.gov.uk/guidance/how-to-hire-user-research-labs-on-the-digital-marketplace">how to hire user research labs</a>.</p>
+        
+    <h2 class="govuk-heading-m">Download the list of labs</h2>
+    <a class="govuk-link govuk-!-display-inline-block govuk-!-margin-bottom-6" 
+        href="{{ 'https://assets.digitalmarketplace.service.gov.uk/{}/communications/catalogues/user-research-studios.csv'.format(framework.slug) }}"      
+    >List of labs (CSV)</a>
 
-        <div class="marketplace-paragraph">
-            <p class="govuk-body">Read more about <a class="govuk-link" href="https://www.gov.uk/guidance/how-to-hire-user-research-labs-on-the-digital-marketplace">how to hire user research labs</a>.</p>
-        </div>
+    <p class="govuk-body">Get help filtering the list at <a class="govuk-link" href="mailto:{{ support_email_address }}">{{ support_email_address }}</a></p>
 
-        <h2>Download the list of labs</h2>
-        <a class="govuk-link govuk-!-display-inline-block govuk-!-margin-top-2 govuk-!-margin-bottom-6" 
-            href="{{ 'https://assets.digitalmarketplace.service.gov.uk/{}/communications/catalogues/user-research-studios.csv'.format(framework.slug) }}"      
-        >List of labs (CSV)</a>
-
-        <p class="govuk-body">Get help filtering the list at <a class="govuk-link" href="mailto:{{ support_email_address }}">{{ support_email_address }}</a></p>
-
-    </div>
+  </div>
 </div>
 
 {% endblock %}
