@@ -279,9 +279,7 @@ class TestBriefSummaryPage(BaseApplicationTest):
             'How to shortlist suppliers',
             'How to evaluate suppliers',
             'How to award a contract',
-            'Download the Digital Outcomes and Specialists 4 contract'
-        ]
-        assert self._get_links(document, self.INSTRUCTION_LINKS_XPATH, text_only=True) == [
+            'Download the Digital Outcomes and Specialists 4 contract',
             'Let suppliers know the outcome'
         ]
 

@@ -157,15 +157,6 @@
                 'text': 'Awarded to ' + awarded_brief_response_supplier_name,
                 'allowed_statuses': ['awarded']
               },
-              'additional_instructions': [
-                {
-                  'href': url_for(".award_or_cancel_brief", framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id),
-                  'text': "Let suppliers know the outcome",
-                  'allowed_statuses': ['closed'],
-                  'startable': true,
-                  'active_tag': 'To do'
-                }
-              ],
               'links': [
                 {
                   'href': 'https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services',
@@ -176,6 +167,11 @@
                   'href': call_off_contract_url,
                   'text': "Download the " + brief.framework.name + " contract",
                   'allowed_statuses': ['draft', 'live', 'closed']
+                },
+                {
+                  'href': url_for(".award_or_cancel_brief", framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id),
+                  'text': "Let suppliers know the outcome",
+                  'allowed_statuses': ['closed']
                 }
               ]
             }
