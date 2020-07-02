@@ -1,0 +1,2241 @@
+# name: TestRequirementsTaskListPageAwardedBrief.test_awarded_brief_requirements_task_list[expired]
+  '
+  <ol class="dm-task-list">
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">1. </span>Write requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">2. </span>Set how you&#8217;ll evaluate suppliers</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">3. </span>Publish requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/digital-outcomes-and-specialists/opportunities/1234">View your published requirements</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+                  
+                
+                  
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">4. </span>Answer supplier questions</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">5. </span>Shortlist</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/responses">View suppliers who applied</a></li>
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">6. </span>Evaluate</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">7. </span>Award a contract</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+                
+                  <p class="dm-task-list__text">Awarded to 100 Percent IT Ltd</p>
+                
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+          </ol>
+  
+          
+      
+  '
+---
+# name: TestRequirementsTaskListPageAwardedBrief.test_awarded_brief_requirements_task_list[live]
+  '
+  <ol class="dm-task-list">
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">1. </span>Write requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">2. </span>Set how you&#8217;ll evaluate suppliers</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">3. </span>Publish requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/digital-outcomes-and-specialists/opportunities/1234">View your published requirements</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+                  
+                
+                  
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">4. </span>Answer supplier questions</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">5. </span>Shortlist</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/responses">View suppliers who applied</a></li>
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">6. </span>Evaluate</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">7. </span>Award a contract</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+                
+                  <p class="dm-task-list__text">Awarded to 100 Percent IT Ltd</p>
+                
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+          </ol>
+  
+          
+      
+  '
+---
+# name: TestRequirementsTaskListPageCancelledOrUnsuccessfulBrief.test_cancelled_or_unsuccessful_brief_requirements_task_list[cancelled-expired]
+  '
+  <ol class="dm-task-list">
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">1. </span>Write requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">2. </span>Set how you&#8217;ll evaluate suppliers</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">3. </span>Publish requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/digital-outcomes-and-specialists/opportunities/1234">View your published requirements</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+                  
+                
+                  
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">4. </span>Answer supplier questions</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">5. </span>Shortlist</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/responses">View suppliers who applied</a></li>
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">6. </span>Evaluate</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">7. </span>Award a contract</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">The contract was not awarded - the requirements were cancelled.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+                
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+          </ol>
+  
+          
+      
+  '
+---
+# name: TestRequirementsTaskListPageCancelledOrUnsuccessfulBrief.test_cancelled_or_unsuccessful_brief_requirements_task_list[cancelled-live]
+  '
+  <ol class="dm-task-list">
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">1. </span>Write requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">2. </span>Set how you&#8217;ll evaluate suppliers</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">3. </span>Publish requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/digital-outcomes-and-specialists/opportunities/1234">View your published requirements</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+                  
+                
+                  
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">4. </span>Answer supplier questions</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">5. </span>Shortlist</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/responses">View suppliers who applied</a></li>
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">6. </span>Evaluate</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">7. </span>Award a contract</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">The contract was not awarded - the requirements were cancelled.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+                
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+          </ol>
+  
+          
+      
+  '
+---
+# name: TestRequirementsTaskListPageCancelledOrUnsuccessfulBrief.test_cancelled_or_unsuccessful_brief_requirements_task_list[unsuccessful-expired]
+  '
+  <ol class="dm-task-list">
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">1. </span>Write requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">2. </span>Set how you&#8217;ll evaluate suppliers</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">3. </span>Publish requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/digital-outcomes-and-specialists/opportunities/1234">View your published requirements</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+                  
+                
+                  
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">4. </span>Answer supplier questions</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">5. </span>Shortlist</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/responses">View suppliers who applied</a></li>
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">6. </span>Evaluate</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">7. </span>Award a contract</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">The contract was not awarded - no suitable suppliers applied.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+                
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+          </ol>
+  
+          
+      
+  '
+---
+# name: TestRequirementsTaskListPageCancelledOrUnsuccessfulBrief.test_cancelled_or_unsuccessful_brief_requirements_task_list[unsuccessful-live]
+  '
+  <ol class="dm-task-list">
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">1. </span>Write requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">2. </span>Set how you&#8217;ll evaluate suppliers</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">3. </span>Publish requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/digital-outcomes-and-specialists/opportunities/1234">View your published requirements</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+                  
+                
+                  
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">4. </span>Answer supplier questions</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">5. </span>Shortlist</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/responses">View suppliers who applied</a></li>
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">6. </span>Evaluate</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">7. </span>Award a contract</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">The contract was not awarded - no suitable suppliers applied.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+                
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+          </ol>
+  
+          
+      
+  '
+---
+# name: TestRequirementsTaskListPageClosedBrief.test_closed_brief_requirements_task_list[expired]
+  '
+  <ol class="dm-task-list">
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">1. </span>Write requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">2. </span>Set how you&#8217;ll evaluate suppliers</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">3. </span>Publish requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/digital-outcomes-and-specialists/opportunities/1234">View your published requirements</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+                  
+                
+                  
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">4. </span>Answer supplier questions</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">5. </span>Shortlist</h2>
+              <!-- Description -->
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/responses">View and shortlist suppliers</a></li>
+                  
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers">How to shortlist suppliers</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">6. </span>Evaluate</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Evaluate your shortlist using the criteria and methods you published with your requirements.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers">How to evaluate suppliers</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">7. </span>Award a contract</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">You must give your chosen supplier a contract before they start work.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services">How to award a contract</a></li>
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/government/publications/digital-outcomes-and-specialists-4-call-off-contract">Download the Digital Outcomes and Specialists 4 contract</a></li>
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/award">Let suppliers know the outcome</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+                
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+          </ol>
+  
+          
+      
+  '
+---
+# name: TestRequirementsTaskListPageClosedBrief.test_closed_brief_requirements_task_list[live]
+  '
+  <ol class="dm-task-list">
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">1. </span>Write requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">2. </span>Set how you&#8217;ll evaluate suppliers</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">3. </span>Publish requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/digital-outcomes-and-specialists/opportunities/1234">View your published requirements</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+                  
+                
+                  
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">4. </span>Answer supplier questions</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">5. </span>Shortlist</h2>
+              <!-- Description -->
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/responses">View and shortlist suppliers</a></li>
+                  
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers">How to shortlist suppliers</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">6. </span>Evaluate</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Evaluate your shortlist using the criteria and methods you published with your requirements.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers">How to evaluate suppliers</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">7. </span>Award a contract</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">You must give your chosen supplier a contract before they start work.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services">How to award a contract</a></li>
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/government/publications/digital-outcomes-and-specialists-4-call-off-contract">Download the Digital Outcomes and Specialists 4 contract</a></li>
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/award">Let suppliers know the outcome</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+                
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+          </ol>
+  
+          
+      
+  '
+---
+# name: TestRequirementsTaskListPageDraftBrief.test_draft_brief_requirements_task_list
+  '
+  <ol class="dm-task-list">
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">1. </span>Write requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Before you can publish your requirements, you must complete:</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                  
+                    
+                    <li class="dm-task-list__item">
+                      <span class="dm-task-list__task-name">
+                        <a class="govuk-link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/edit/title/title%0A%20%20%20%20%0A%20%20%0A" aria-describedby="step-1-title">Title</a>
+                      </span>
+                      
+                      <strong class="govuk-tag dm-task-list__tag" id="step-1-title">Done</strong>
+                      
+                    </li>
+                    
+                  
+                    
+                    <li class="dm-task-list__item">
+                      <span class="dm-task-list__task-name">
+                        <a class="govuk-link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/edit/specialist-role/specialistRole%0A%20%20%20%20%0A%20%20%0A" aria-describedby="step-1-specialist-role">Specialist role</a>
+                      </span>
+                      
+                      <strong class="govuk-tag govuk-tag--grey dm-task-list__tag" id="step-1-specialist-role">To do</strong>
+                      
+                    </li>
+                    
+                  
+                    
+                    <li class="dm-task-list__item">
+                      <span class="dm-task-list__task-name">
+                        <a class="govuk-link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/edit/location/location%0A%20%20%20%20%0A%20%20%0A" aria-describedby="step-1-location">Location</a>
+                      </span>
+                      
+                      <strong class="govuk-tag govuk-tag--grey dm-task-list__tag" id="step-1-location">To do</strong>
+                      
+                    </li>
+                    
+                  
+                    
+                    <li class="dm-task-list__item">
+                      <span class="dm-task-list__task-name">
+                        <a class="govuk-link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/description-of-work%0A%20%20%0A" aria-describedby="step-1-description-of-work">Description of work</a>
+                      </span>
+                      
+                      <strong class="govuk-tag govuk-tag--grey dm-task-list__tag" id="step-1-description-of-work">To do</strong>
+                      
+                    </li>
+                    
+                  
+                    
+                  
+                    
+                  
+                    
+                  
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">2. </span>Set how you&#8217;ll evaluate suppliers</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Before you can publish your requirements, you must complete:</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                  
+                    
+                  
+                    
+                  
+                    
+                  
+                    
+                  
+                    
+                    <li class="dm-task-list__item">
+                      <span class="dm-task-list__task-name">
+                        <a class="govuk-link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/shortlist-and-evaluation-process%0A%20%20%0A" aria-describedby="step-2-shortlist-and-evaluation-process">Shortlist and evaluation process</a>
+                      </span>
+                      
+                      <strong class="govuk-tag govuk-tag--grey dm-task-list__tag" id="step-2-shortlist-and-evaluation-process">To do</strong>
+                      
+                    </li>
+                    
+                  
+                    
+                  
+                    
+                  
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">3. </span>Publish requirements</h2>
+              <!-- Description -->
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                  
+                    
+                  
+                    
+                  
+                    
+                  
+                    
+                  
+                    
+                  
+                    
+                    <li class="dm-task-list__item">
+                      <span class="dm-task-list__task-name">
+                        <a class="govuk-link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/edit/set-how-long-your-requirements-will-be-open-for/requirementsLength%0A%20%20%20%20%0A%20%20%0A" aria-describedby="step-3-set-how-long-your-requirements-will-be-open-for">Set how long your requirements will be open for</a>
+                      </span>
+                      
+                      <strong class="govuk-tag govuk-tag--grey dm-task-list__tag" id="step-3-set-how-long-your-requirements-will-be-open-for">To do</strong>
+                      
+                    </li>
+                    
+                  
+                    
+                    <li class="dm-task-list__item">
+                      <span class="dm-task-list__task-name">
+                        <a class="govuk-link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/describe-question-and-answer-session%0A%20%20%0A" aria-describedby="step-3-describe-question-and-answer-session">Describe question and answer session</a>
+                      </span>
+                      
+                      <strong class="govuk-tag govuk-tag--grey dm-task-list__tag" id="step-3-describe-question-and-answer-session">Optional</strong>
+                      
+                    </li>
+                    
+                  
+                
+                
+                  
+                    
+                    <li class="dm-task-list__item">
+                      <span class="dm-task-list__task-name">Preview your requirements</span>
+                      <strong class="govuk-tag govuk-tag--grey dm-task-list__tag" id="step-3-instruction-1">Cannot start yet</strong>
+                    </li>
+                    
+                  
+                
+                  
+                    
+                    <li class="dm-task-list__item">
+                      <span class="dm-task-list__task-name">Publish your requirements</span>
+                      <strong class="govuk-tag govuk-tag--grey dm-task-list__tag" id="step-3-instruction-2">Cannot start yet</strong>
+                    </li>
+                    
+                  
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">4. </span>Answer supplier questions</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">When you&#8217;ve published your requirements, you must answer all supplier questions.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-answer-supplier-questions-about-your-digital-outcomes-and-specialists-requirements">How to answer supplier questions</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">5. </span>Shortlist</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">After the application deadline, shortlist the suppliers who applied.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers">How to shortlist suppliers</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">6. </span>Evaluate</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Evaluate your shortlist using the criteria and methods you published with your requirements.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers">How to evaluate suppliers</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">7. </span>Award a contract</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">You must give your chosen supplier a contract before they start work.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services">How to award a contract</a></li>
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/government/publications/digital-outcomes-and-specialists-4-call-off-contract">Download the Digital Outcomes and Specialists 4 contract</a></li>
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+                
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+          </ol>
+  
+          
+      
+  '
+---
+# name: TestRequirementsTaskListPageLiveBrief.test_live_brief_requirements_task_list[expired]
+  '
+  <ol class="dm-task-list">
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">1. </span>Write requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">2. </span>Set how you&#8217;ll evaluate suppliers</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">3. </span>Publish requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Open for applications until Thursday 7 April 2016 at 12:00am GMT.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/timeline">View question and answer dates</a></li>
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/digital-outcomes-and-specialists/opportunities/1234">View your published requirements</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+                  
+                
+                  
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">4. </span>Answer supplier questions</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">You must answer all questions by Saturday 2 April 2016. Suppliers will send you questions by email.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/supplier-questions">Publish questions and answers</a></li>
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-answer-supplier-questions-about-your-digital-outcomes-and-specialists-requirements">How to answer supplier questions</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">5. </span>Shortlist</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">After the application deadline, shortlist the suppliers who applied.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers">How to shortlist suppliers</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">6. </span>Evaluate</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Evaluate your shortlist using the criteria and methods you published with your requirements.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers">How to evaluate suppliers</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">7. </span>Award a contract</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">You must give your chosen supplier a contract before they start work.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services">How to award a contract</a></li>
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/government/publications/digital-outcomes-and-specialists-4-call-off-contract">Download the Digital Outcomes and Specialists 4 contract</a></li>
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+                
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+          </ol>
+  
+          
+      
+  '
+---
+# name: TestRequirementsTaskListPageLiveBrief.test_live_brief_requirements_task_list[live]
+  '
+  <ol class="dm-task-list">
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">1. </span>Write requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">2. </span>Set how you&#8217;ll evaluate suppliers</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Done</p>
+              
+              <!-- Non-task list links -->
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">3. </span>Publish requirements</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Open for applications until Thursday 7 April 2016 at 12:00am GMT.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/timeline">View question and answer dates</a></li>
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/digital-outcomes-and-specialists/opportunities/1234">View your published requirements</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+                  
+                
+                  
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">4. </span>Answer supplier questions</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">You must answer all questions by Saturday 2 April 2016. Suppliers will send you questions by email.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/supplier-questions">Publish questions and answers</a></li>
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-answer-supplier-questions-about-your-digital-outcomes-and-specialists-requirements">How to answer supplier questions</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">5. </span>Shortlist</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">After the application deadline, shortlist the suppliers who applied.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers">How to shortlist suppliers</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">6. </span>Evaluate</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">Evaluate your shortlist using the criteria and methods you published with your requirements.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers">How to evaluate suppliers</a></li>
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+            
+            <li class="dm-task-list__section">
+              <h2><span class="dm-task-list__section-number">7. </span>Award a contract</h2>
+              <!-- Description -->
+              
+              <p class="dm-task-list__text">You must give your chosen supplier a contract before they start work.</p>
+              
+              <!-- Non-task list links -->
+              
+                <ul class="govuk-list">
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services">How to award a contract</a></li>
+                  
+                
+                  
+                    <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/government/publications/digital-outcomes-and-specialists-4-call-off-contract">Download the Digital Outcomes and Specialists 4 contract</a></li>
+                  
+                
+                  
+                
+                </ul>
+              
+              <!-- Body -->
+              
+                
+              
+              <!-- Instructions -->
+              <ul class="dm-task-list__items">
+                
+                
+              </ul>
+            </li>
+            
+          </ol>
+  
+          
+      
+  '
+---
