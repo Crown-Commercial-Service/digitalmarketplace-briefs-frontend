@@ -68,6 +68,7 @@ def add_cache_control(response):
 
 
 from ..main import errors
+from .views import create_a_requirement as create_a_requirement_views
 from .views import buyers as buyers_views
 from .views import supplier_questions as supplier_questions_views
 from .views import outcome as outcome_views
