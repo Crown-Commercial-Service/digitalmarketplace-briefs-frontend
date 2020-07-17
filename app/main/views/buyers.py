@@ -27,7 +27,6 @@ from collections import Counter
 CLOSED_BRIEF_STATUSES = ['closed', 'withdrawn', 'awarded', 'cancelled', 'unsuccessful']
 CLOSED_PUBLISHED_BRIEF_STATUSES = ['closed', 'awarded', 'cancelled', 'unsuccessful']
 
-BRIEF_DELETED_MESSAGE = "Your requirements ‘{brief[title]}’ were deleted"
 BRIEF_WITHDRAWN_MESSAGE = "You’ve withdrawn your requirements for ‘{brief[title]}’"
 
 
@@ -340,26 +339,6 @@ def view_brief_responses(framework_slug, lot_slug, brief_id):
         brief_responses_required_evidence=brief_responses_required_evidence,
         brief=brief
     ), 200
-
-
-@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/delete', methods=['POST'])
-def delete_a_brief(framework_slug, lot_slug, brief_id):
-    get_framework_and_lot(
-        framework_slug,
-        lot_slug,
-        data_api_client,
-        allowed_statuses=['live', 'expired'],
-        must_allow_brief=True
-    )
-    brief = data_api_client.get_brief(brief_id)["briefs"]
-
-    if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id) or not brief_can_be_edited(brief):
-        abort(404)
-
-    data_api_client.delete_brief(brief_id, current_user.email_address)
-    flash(BRIEF_DELETED_MESSAGE.format(brief=brief), "success")
-
-    return redirect(url_for(".buyer_dos_requirements"))
 
 
 @main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/withdraw', methods=['POST'])
