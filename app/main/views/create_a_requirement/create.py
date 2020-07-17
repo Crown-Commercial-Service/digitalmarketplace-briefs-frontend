@@ -80,8 +80,11 @@ def create_new_brief(framework_slug, lot_slug):
                 brief_id=brief['id']))
 
 
-@main.route('/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/copy', methods=['POST'])
+@main.route("/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/copy", methods=["GET", "POST"])
 def copy_brief(framework_slug, lot_slug, brief_id):
+    if request.method == "GET":
+        abort(404)
+
     brief = data_api_client.get_brief(brief_id)["briefs"]
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id, allow_withdrawn=True):
         abort(404)
