@@ -13,7 +13,7 @@ class TestStartNewBrief(BaseApplicationTest):
         super().setup_method(method)
         self.login_as_buyer()
         self.data_api_client_patch = mock.patch(
-            "app.main.views.create_a_requirement.create.data_api_client", autospec=True
+            "app.main.views.create_a_brief.create.data_api_client", autospec=True
         )
         self.data_api_client = self.data_api_client_patch.start()
 
@@ -76,7 +76,7 @@ class TestCreateNewBrief(BaseApplicationTest):
     def setup_method(self, method):
         super().setup_method(method)
         self.data_api_client_patch = mock.patch(
-            "app.main.views.create_a_requirement.create.data_api_client", autospec=True
+            "app.main.views.create_a_brief.create.data_api_client", autospec=True
         )
         self.data_api_client = self.data_api_client_patch.start()
         self.login_as_buyer()
@@ -228,7 +228,7 @@ class TestCopyBrief(BaseApplicationTest):
         super().setup_method(method)
         self.login_as_buyer()
         self.data_api_client_patch = mock.patch(
-            "app.main.views.create_a_requirement.create.data_api_client", autospec=True
+            "app.main.views.create_a_brief.create.data_api_client", autospec=True
         )
         self.data_api_client = self.data_api_client_patch.start()
 
@@ -281,7 +281,7 @@ class TestCopyBrief(BaseApplicationTest):
             "1235/edit/title/title"
         )
 
-    @mock.patch("app.main.views.create_a_requirement.create.is_brief_correct", autospec=True)
+    @mock.patch("app.main.views.create_a_brief.create.is_brief_correct", autospec=True)
     def test_404_if_brief_is_not_correct(self, is_brief_correct):
         is_brief_correct.return_value = False
 

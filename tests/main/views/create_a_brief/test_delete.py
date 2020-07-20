@@ -10,7 +10,7 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
     def setup_method(self, method):
         super().setup_method(method)
         self.data_api_client_patch = mock.patch(
-            "app.main.views.create_a_requirement.delete.data_api_client", autospec=True
+            "app.main.views.create_a_brief.delete.data_api_client", autospec=True
         )
         self.data_api_client = self.data_api_client_patch.start()
 

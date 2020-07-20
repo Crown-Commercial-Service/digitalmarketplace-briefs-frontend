@@ -13,7 +13,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
     def setup_method(self, method):
         super().setup_method(method)
         self.data_api_client_patch = mock.patch(
-            "app.main.views.create_a_requirement.edit.data_api_client", autospec=True
+            "app.main.views.create_a_brief.edit.data_api_client", autospec=True
         )
         self.data_api_client = self.data_api_client_patch.start()
 
@@ -65,7 +65,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
         document = html.fromstring(res.get_data(as_text=True))
         assert document.xpath('//h1')[0].text_content().strip() == "Organisation the work is for"
 
-    @mock.patch("app.main.views.create_a_requirement.edit.content_loader", autospec=True)
+    @mock.patch("app.main.views.create_a_brief.edit.content_loader", autospec=True)
     def test_edit_brief_submission_return_link_to_section_summary_if_section_has_description(self, content_loader):
         content_fixture = ContentLoader('tests/fixtures/content')
         content_fixture.load_manifest('dos', 'data', 'edit_brief')
@@ -84,7 +84,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
             response=res, has_summary_page=True, section_name='Section 4', question='Optional 2'
         )
 
-    @mock.patch("app.main.views.create_a_requirement.edit.content_loader", autospec=True)
+    @mock.patch("app.main.views.create_a_brief.edit.content_loader", autospec=True)
     def test_edit_brief_submission_return_link_to_section_summary_if_other_questions(self, content_loader):
         content_fixture = ContentLoader('tests/fixtures/content')
         content_fixture.load_manifest('dos', 'data', 'edit_brief')
@@ -103,7 +103,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
             response=res, has_summary_page=True, section_name='Section 1', question='Required 1'
         )
 
-    @mock.patch("app.main.views.create_a_requirement.edit.content_loader", autospec=True)
+    @mock.patch("app.main.views.create_a_brief.edit.content_loader", autospec=True)
     def test_edit_brief_submission_return_link_to_brief_overview_if_single_question(self, content_loader):
         content_fixture = ContentLoader('tests/fixtures/content')
         content_fixture.load_manifest('dos', 'data', 'edit_brief')
@@ -120,7 +120,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
         assert secondary_action_link.get('href').strip() == "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234"  # noqa
         self._test_breadcrumbs_on_question_page(response=res, has_summary_page=False, question="Required 2")
 
-    @mock.patch("app.main.views.create_a_requirement.edit.content_loader", autospec=True)
+    @mock.patch("app.main.views.create_a_brief.edit.content_loader", autospec=True)
     def test_edit_brief_submission_multiquestion(self, content_loader):
         content_fixture = ContentLoader('tests/fixtures/content')
         content_fixture.load_manifest('dos', 'data', 'edit_brief')
@@ -225,7 +225,7 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
     def setup_method(self, method):
         super().setup_method(method)
         self.data_api_client_patch = mock.patch(
-            "app.main.views.create_a_requirement.edit.data_api_client", autospec=True
+            "app.main.views.create_a_brief.edit.data_api_client", autospec=True
         )
         self.data_api_client = self.data_api_client_patch.start()
 
@@ -261,7 +261,7 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
             updated_by='buyer@email.com'
         )
 
-    @mock.patch("app.main.views.create_a_requirement.edit.content_loader", autospec=True)
+    @mock.patch("app.main.views.create_a_brief.edit.content_loader", autospec=True)
     def test_post_update_if_multiple_questions_redirects_to_section_summary(self, content_loader):
         content_fixture = ContentLoader('tests/fixtures/content')
         content_fixture.load_manifest('dos', 'data', 'edit_brief')
@@ -285,7 +285,7 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
             'buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/section-1'
         ) is True
 
-    @mock.patch("app.main.views.create_a_requirement.edit.content_loader", autospec=True)
+    @mock.patch("app.main.views.create_a_brief.edit.content_loader", autospec=True)
     def test_post_update_if_section_description_redirects_to_section_summary(self, content_loader):
         content_fixture = ContentLoader('tests/fixtures/content')
         content_fixture.load_manifest('dos', 'data', 'edit_brief')
@@ -309,7 +309,7 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
             'buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/section-4'
         ) is True
 
-    @mock.patch("app.main.views.create_a_requirement.edit.content_loader", autospec=True)
+    @mock.patch("app.main.views.create_a_brief.edit.content_loader", autospec=True)
     def test_post_update_if_single_question_no_description_redirects_to_overview(self, content_loader):
         content_fixture = ContentLoader('tests/fixtures/content')
         content_fixture.load_manifest('dos', 'data', 'edit_brief')
@@ -426,7 +426,7 @@ class TestViewBriefSectionSummaryPage(BaseApplicationTest):
     def setup_method(self, method):
         super().setup_method(method)
         self.data_api_client_patch = mock.patch(
-            "app.main.views.create_a_requirement.edit.data_api_client", autospec=True
+            "app.main.views.create_a_brief.edit.data_api_client", autospec=True
         )
         self.data_api_client = self.data_api_client_patch.start()
 
@@ -464,7 +464,7 @@ class TestViewBriefSectionSummaryPage(BaseApplicationTest):
         })
         return brief_json
 
-    @mock.patch('app.main.views.create_a_requirement.edit.content_loader', autospec=True)
+    @mock.patch('app.main.views.create_a_brief.edit.content_loader', autospec=True)
     def test_get_view_section_summary(self, content_loader):
         content_loader.get_manifest.return_value = self.content_fixture.get_manifest('dos', 'edit_brief')
 
@@ -475,7 +475,7 @@ class TestViewBriefSectionSummaryPage(BaseApplicationTest):
         assert res.status_code == 200
 
     @pytest.mark.parametrize('show_dos_preview_links', (True, False, None))
-    @mock.patch('app.main.views.create_a_requirement.edit.content_loader', autospec=True)
+    @mock.patch('app.main.views.create_a_brief.edit.content_loader', autospec=True)
     def test_get_view_section_summary_links(self, content_loader, show_dos_preview_links):
         content_loader.get_manifest.return_value = self.content_fixture.get_manifest('dos', 'edit_brief')
         brief = self._setup_brief(lot_slug='digital-specialists')

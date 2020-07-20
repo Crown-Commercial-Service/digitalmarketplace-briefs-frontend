@@ -13,7 +13,7 @@ class TestPreviewBrief(BaseApplicationTest):
     def setup_method(self, method):
         super().setup_method(method)
         self.data_api_client_patch = mock.patch(
-            "app.main.views.create_a_requirement.publish.data_api_client", autospec=True
+            "app.main.views.create_a_brief.publish.data_api_client", autospec=True
         )
         self.data_api_client = self.data_api_client_patch.start()
 
@@ -351,7 +351,7 @@ class TestPublishBrief(BaseApplicationTest):
     def setup_method(self, method):
         super().setup_method(method)
         self.data_api_client_patch = mock.patch(
-            "app.main.views.create_a_requirement.publish.data_api_client", autospec=True
+            "app.main.views.create_a_brief.publish.data_api_client", autospec=True
         )
         self.data_api_client = self.data_api_client_patch.start()
 
@@ -688,7 +688,7 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
     def setup_method(self, method):
         super().setup_method(method)
         self.data_api_client_patch = mock.patch(
-            "app.main.views.create_a_requirement.publish.data_api_client", autospec=True
+            "app.main.views.create_a_brief.publish.data_api_client", autospec=True
         )
         self.data_api_client = self.data_api_client_patch.start()
         self.login_as_buyer()
