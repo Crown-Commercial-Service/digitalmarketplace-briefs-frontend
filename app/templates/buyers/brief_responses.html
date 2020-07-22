@@ -106,15 +106,13 @@
             </p>
           {% endif %}
         </div>
-        <div class='explanation-list'>
-            <p class="govuk-body-l">
-                If you still need this service, you should start the buying process again. Consider:
-            </p>
-            <ul class='govuk-list govuk-list--bullet'>
-                <li>talking to suppliers before you start</li>
-                <li>rewriting your requirements</li>
-            </ul>
-        </div>
+        <p class="govuk-body-l">
+          If you still need this service, you should start the buying process again. Consider:
+        </p>
+        <ul class='govuk-list govuk-list--bullet'>
+            <li>talking to suppliers before you start</li>
+            <li>rewriting your requirements</li>
+        </ul>
       {% endif %}
       <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
          href="{{ url_for('buyers.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
