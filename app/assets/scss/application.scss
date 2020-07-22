@@ -47,7 +47,6 @@ $govuk-global-styles: true;
 // App specific styles
 @import "_brief_submission.scss";
 @import "_text.scss";
-@import "_error-pages.scss";
 @import "_statistics.scss";
 @import "_iframe_preview.scss";
 
@@ -56,5 +55,6 @@ $govuk-global-styles: true;
 @import "overrides/_govuk-label";
 @import "overrides/_summary-list.scss";
 @import "overrides/_question-advice.scss";
+@import "overrides/_dmspeak.scss";
 
 

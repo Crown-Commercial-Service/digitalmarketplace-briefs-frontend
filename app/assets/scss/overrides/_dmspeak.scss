@@ -1,0 +1,9 @@
+/**
+ * These styles maintain compatibility with the toolkit components which use them.
+ * They are not present in Briefs FE app templates.
+ * They should be removed once Briefs FE no longer uses DM-Frontend-Toolkit
+ */
+
+.error-page {
+    @extend .dmspeak;
+}
