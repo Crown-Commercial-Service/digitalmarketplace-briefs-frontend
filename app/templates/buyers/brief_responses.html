@@ -61,23 +61,12 @@
                 You said you’d take <span class='visual-emphasis'>{{ brief.numberOfSuppliers }} {{ pluralize(brief.numberOfSuppliers, "supplier", "suppliers") }}</span> through to the evaluation stage. To do this, you need to:
               </p>
           </div>
-          {% with items = [
-              {
-                  "body": 'Read the <a class="govuk-link" href="https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers">guidance on how to shortlist.</a>'|safe,
-              },
-              {
-                  "body": 'Review and score the evidence suppliers have given.',
-              },
-              {
-                  "body": 'Tell the highest scoring suppliers that they’re through to the next stage.',
-              },
-              {
-                  "body": 'Tell any unsuccessful suppliers who don\'t make it through to the next stage.',
-              }
-          ]
-          %}
-              {% include "toolkit/instruction-list.html" %}
-          {% endwith %}
+          <ol class="govuk-list govuk-list--number">
+            <li>Read the <a class="govuk-link" href="https://www.gov.uk/guidance/how-to-shortlist-digital-outcomes-and-specialists-suppliers">guidance on how to shortlist.</a></li>
+            <li>Review and score the evidence suppliers have given.</li>
+            <li>Tell the highest scoring suppliers that they’re through to the next stage.</li>
+            <li>Tell any unsuccessful suppliers who don't make it through to the next stage.</li>
+          </ol>
           
           <div class="govuk-width-full">
             <a class="govuk-link" 
