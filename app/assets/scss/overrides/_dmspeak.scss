@@ -4,6 +4,17 @@
  * They should be removed once Briefs FE no longer uses DM-Frontend-Toolkit
  */
 
+ // Error pages simply use all the .dmspeak styling
 .error-page {
     @extend .dmspeak;
+}
+
+// %markdown-description and %heading-small are both toolkit placeholder selectors
+.section-description {
+  @extend %markdown-description;
+  padding-bottom: 30px;
+  h2 {
+    @extend %heading-small;
+    margin-bottom: -5px;
+  }
 }
