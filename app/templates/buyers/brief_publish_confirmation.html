@@ -40,47 +40,35 @@
   <div class="govuk-grid-column-two-thirds">
     {% set heading = "Publish your requirements and evaluation criteria" if not published else "Question and answer dates" %}
     <h1 class="govuk-heading-l">{{ heading }}</h1>
-    {% if not published %}
-      <div class="dmspeak">
-        <p class="govuk-body">All requirements are published on the Digital Marketplace where anyone can see them.</p>
-      </div>
-        {% if brief.lotSlug == 'digital-specialists' and not brief.requirementsLength %}
-          <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.edit_brief_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug='set-how-long-your-requirements-will-be-open-for', question_id='requirementsLength') }}">Set how long your requirements will be open for</a></p>
-          <div class="dmspeak">
-            <p class="govuk-body">This will show you what the supplier application deadline will be if you publish your requirements today.</p>
-          </div>
-        {% else %}
-          <p class="govuk-body">Your requirements will be open for {{ dates.application_open_weeks }}.</p>
-          <div class="dmspeak">
-            <p class="govuk-body">If you publish your requirements today ({{ dates.published_date | shortdateformat }}), suppliers will be able to apply until {{ dates.closing_date | utcdatetimeformat }}.</p>
-          </div>
-        {% endif %}
-    {% endif %}
+    {% if not published -%}
+      <p class="govuk-body">All requirements are published on the Digital Marketplace where anyone can see them.</p>
+      {% if brief.lotSlug == 'digital-specialists' and not brief.requirementsLength -%}
+        <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.edit_brief_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug='set-how-long-your-requirements-will-be-open-for', question_id='requirementsLength') }}">Set how long your requirements will be open for</a></p>
+        <p class="govuk-body">This will show you what the supplier application deadline will be if you publish your requirements today.</p>
+      {% else -%}
+        <p class="govuk-body">Your requirements will be open for {{ dates.application_open_weeks }}.</p>
+        <p class="govuk-body">If you publish your requirements today ({{ dates.published_date | shortdateformat }}), suppliers will be able to apply until {{ dates.closing_date | utcdatetimeformat }}.</p>
+      {% endif %}
+    {% endif -%}
 
     <p class="govuk-body">Supplier questions will be sent to:</p>
-    <div class="dmspeak">
-      <p class="govuk-body">{{ email_address }}</p>
-    </div>
-    <div class="dmspeak">
-      <p class="govuk-body">Make sure this email address {% if not published %}will be{% else %}is{% endif %} monitored. If you’re away while suppliers can still ask questions, you should make sure your emails are forwarded to a colleague.</p>
-    </div>
+    <p class="govuk-body">{{ email_address }}</p>
+    <p class="govuk-body">Make sure this email address {% if not published %}will be{% else %}is{% endif %} monitored. If you’re away while suppliers can still ask questions, you should make sure your emails are forwarded to a colleague.</p>
 
-    {% if not published and unanswered_required > 0 %}
-      <div class="dmspeak">
-        <p class="govuk-body"><strong>You still need to complete the following questions before your requirements can be published:</strong></p>
-      </div>
+    {%- if not published and unanswered_required > 0 %}
+      <p class="govuk-body"><strong>You still need to complete the following questions before your requirements can be published:</strong></p>
       <ul class="govuk-list govuk-list--bullet">
-      {% for section in sections %}
-        {% for question in section.questions %}
-          {% if question.answer_required and not question.id == 'requirementsLength' %}
+      {%- for section in sections %}
+        {%- for question in section.questions %}
+          {%- if question.answer_required and not question.id == 'requirementsLength' %}
             <li>
               <a class="govuk-link" href="{{ url_for('.edit_brief_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id) }}">{{ question.question }}</a>
             </li>
-          {% endif %}
-        {% endfor %}
-      {% endfor %}
+          {%- endif %}
+        {%- endfor %}
+      {%- endfor %}
       </ul>
-    {% elif brief.lotSlug != 'digital-specialists' or brief.requirementsLength %}
+    {% elif brief.lotSlug != 'digital-specialists' or brief.requirementsLength -%}
       {% import "toolkit/summary-table.html" as summary %}
         {% call summary.mapping_table(
         row_bold_borders=True,
@@ -139,7 +127,7 @@
           }) }}
         </form>
       {% endif %}
-    {% endif %}
+    {%- endif %}
     <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
        href="{{ url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
       Return to overview

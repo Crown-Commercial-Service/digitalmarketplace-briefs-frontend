@@ -47,19 +47,17 @@
   <div class="govuk-grid-column-full">
 
     {% if unanswered_required %}
-      <div class="dmspeak">
-        <p class="govuk-body">You still need to complete the following questions before your requirements can be previewed:</p>
-      </div>
+      <p class="govuk-body">You still need to complete the following questions before your requirements can be previewed:</p>
       <ul class="govuk-list govuk-list--bullet">
-      {% for section in content.summary(brief) %}
-        {% for question in section.questions %}
-          {% if question.answer_required %}
+      {%- for section in content.summary(brief) %}
+        {%- for question in section.questions %}
+          {%- if question.answer_required %}
             <li>
               <a class="govuk-link" href="{{ url_for('.edit_brief_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=section.slug, question_id=question.id) }}">{{ question.question }}</a>
             </li>
-          {% endif %}
-        {% endfor %}
-      {% endfor %}
+          {%- endif %}
+        {%- endfor %}
+      {%- endfor %}
       </ul>
     {% else %}
       <p class="govuk-body">This is how suppliers see your requirements when they are published.</p>

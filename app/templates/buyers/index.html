@@ -28,33 +28,31 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds dm-account-overview-options">
 
-    <div class="dmspeak">
-      <h2 class="heading-xmedium">Cloud hosting, software and support</h2>
-      <p class="govuk-body">
-        {% if user_has_projects %}
-          {% if user_projects_awaiting_outcomes_total %}
-            You need to tell us the outcome for {{ user_projects_awaiting_outcomes_total }}
-            {{ pluralize(user_projects_awaiting_outcomes_total, "saved search", "saved searches") }}.<br>
-          {% endif %}
-          <a class="govuk-link" href="/buyers/direct-award/g-cloud">View your saved searches</a><br>
-        {% else %}
-          You don't have any saved searches.
+    <h2 class="govuk-heading-m">Cloud hosting, software and support</h2>
+    <p class="govuk-body">
+      {% if user_has_projects %}
+        {% if user_projects_awaiting_outcomes_total %}
+          You need to tell us the outcome for {{ user_projects_awaiting_outcomes_total }}
+          {{ pluralize(user_projects_awaiting_outcomes_total, "saved search", "saved searches") }}.<br>
         {% endif %}
-      </p>
+        <a class="govuk-link" href="/buyers/direct-award/g-cloud">View your saved searches</a><br>
+      {% else %}
+        You don't have any saved searches.
+      {% endif %}
+    </p>
 
-      <h2 class="heading-xmedium">Digital outcomes, specialists and user research participants</h2>
-      <p class="govuk-body">
-        {% if user_briefs_total %}
-          <a class="govuk-link" href="{{ url_for('buyers.buyer_dos_requirements') }}">View your requirements</a><br>
-        {% else %}
-          You don't have any requirements.
-        {% endif %}
-      </p>
-    </div>
+    <h2 class="govuk-heading-m">Digital outcomes, specialists and user research participants</h2>
+    <p class="govuk-body">
+      {% if user_briefs_total %}
+        <a class="govuk-link" href="{{ url_for('buyers.buyer_dos_requirements') }}">View your requirements</a><br>
+      {% else %}
+        You don't have any requirements.
+      {% endif %}
+    </p>
 
   </div>
-  <div class="govuk-grid-column-one-third dmspeak">
-    <h2 class="heading-xmedium">Account settings</h2>
+  <div class="govuk-grid-column-one-third">
+    <h2 class="govuk-heading-m">Account settings</h2>
     <ul class="govuk-list">
       <li>
         <a class="govuk-link" href="{{ url_for('external.change_password') }}">Change your password</a>
