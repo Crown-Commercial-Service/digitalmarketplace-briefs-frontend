@@ -76,13 +76,3 @@ ol.steps {
     margin-left: (30 / 19) * -1em; // -25px in ems
   }
 }
-
-.section-description {
-  @extend %markdown-description;
-  padding-bottom: 30px;
-  h2 {
-    @extend %heading-small;
-    margin-bottom: -5px;
-  }
-}
-
