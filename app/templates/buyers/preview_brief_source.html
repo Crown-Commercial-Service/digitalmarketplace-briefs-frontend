@@ -1,6 +1,7 @@
 {% extends "_base_page.html" %}
 
-{% from "govuk-frontend/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% block pageTitle %}[Draft] {{ brief.title }} - Digital Marketplace{% endblock %}
 
@@ -51,8 +52,6 @@
     ]
   }) }}
 {% endblock %}
-
-{% from "govuk-frontend/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% block mainContent %}
 <div class="draft-preview">
