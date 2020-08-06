@@ -4,6 +4,7 @@ from flask_login import current_user
 from dmapiclient import HTTPError
 from dmutils.flask import timed_render_template as render_template
 from dmutils.forms.errors import govuk_errors
+from dmcontent.html import to_summary_list_row
 
 from app import data_api_client
 from ... import main, content_loader
@@ -127,6 +128,22 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
 
     if not section:
         abort(404)
+
+    section.summary_list = []
+    for question in section.questions:
+        section.summary_list.append(
+            to_summary_list_row(
+                question,
+                action_link=url_for(
+                    'buyers.edit_brief_question',
+                    framework_slug=framework_slug,
+                    lot_slug=lot_slug,
+                    brief_id=brief_id,
+                    section_slug=section_slug,
+                    question_id=question.id
+                )
+            )
+        )
 
     # Show preview link if all mandatory questions have been answered
     unanswered_required, unanswered_optional = count_unanswered_questions(sections)
