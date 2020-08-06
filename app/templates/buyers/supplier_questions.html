@@ -32,47 +32,33 @@
 
 {% block mainContent %}
 
-    {% block before_heading %}{% endblock %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <span class="govuk-caption-l">{{ brief.get('title', brief['lotName']) }}</span>
-      <h1 class="govuk-heading-l">
-        Supplier questions
-      </h1>
-    </div>
+{% block before_heading %}{% endblock %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <span class="govuk-caption-l">{{ brief.get('title', brief['lotName']) }}</span>
+    <h1 class="govuk-heading-l">
+      Supplier questions
+    </h1>
   </div>
+</div>
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      {% import "toolkit/summary-table.html" as summary %}
+<p id="clarification-questions" class="govuk-body govuk-!-font-size-24"><a href="{{url_for('.add_supplier_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id)}}">Answer a supplier question</a></p>
+{% if brief.clarificationQuestions is undefined or brief.clarificationQuestions|length == 0 %} 
+<p class="summary-item-no-content">No questions or answers have been published</p>
+{% else %}
+{{ govukSummaryList({
+  "rows": brief.clarificationQuestions, 
+  "classes": 'app-govuk-summary-list app-govuk-summary-list--top-border govuk-!-margin-bottom-8'
+  }) 
+}}
+{% endif %}
 
-      {{ summary.heading("Supplier questions", id="clarification-questions") }}
-      {{ summary.top_link("Answer a supplier question", url_for('.add_supplier_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id)) }}
-      {% call(question) summary.list_table(
-        brief.clarificationQuestions,
-        field_headings=[
-          "Question",
-          "Answer"
-        ],
-        field_headings_visible=False,
-        empty_message="No questions or answers have been published"
-      ) %}
-
-        {% call summary.row() %}
-          {% call summary.field(first=True, wide=False) -%}
-            <span aria-label="question">{{ question.number }}.</span>
-            {{ question.question | preserve_line_breaks }}
-          {%- endcall %}
-          {{ summary.text(question.answer) | preserve_line_breaks }}
-        {% endcall %}
-      {% endcall %}
-
-    </div>
-  </div>
-
-  <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
-     href="{{ url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+<p class="govuk-body">
+  <a class="govuk-link govuk-!-margin-top-6"
+    href="{{ url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
     Return to overview
   </a>
+</p>
 
 {% endblock %}
