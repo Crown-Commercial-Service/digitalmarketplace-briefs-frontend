@@ -16,3 +16,12 @@ body {
 .visual-emphasis {
   font-weight: bold;
 }
+
+/*
+ * GOV.UK Frontend is considering adding alignment override classes,
+ * but in the meantime this is a simple way to align things to the right.
+ * This should be used lightly - action buttons in tables is one example.
+ */
+.app-align-right {
+  text-align: right;
+}
