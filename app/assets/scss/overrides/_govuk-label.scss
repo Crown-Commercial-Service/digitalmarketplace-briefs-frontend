@@ -13,3 +13,8 @@
 
   margin-bottom: govuk-spacing(2);
 }
+
+.govuk-label--l {
+  @include govuk-font($size: 36, $weight: bold);
+  margin-bottom: govuk-spacing(3);
+}
