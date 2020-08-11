@@ -30,56 +30,6 @@
 
 {% block mainContent %}
   <div class="govuk-grid-row">
-    {% block before_heading %}
-      {% if delete_requested %}
-        <div class="govuk-grid-column-full">
-          <form action="{{ url_for('buyers.delete_a_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <input type="hidden" name="delete_confirmed" value="true" />
-            {%
-              with
-              message = "Are you sure you want to delete these requirements?",
-              type = "destructive",
-              action = govukButton({
-                "text": "Yes, delete",
-                "classes": "govuk-button--warning app-banner-action",
-              })
-            %}
-              {% include "toolkit/notification-banner.html" %}
-            {% endwith %}
-          </form>
-        </div>
-      {% endif %}
-      {% if withdraw_requested %}
-        <div class="govuk-grid-column-full">
-          <form action="{{ url_for('buyers.withdraw_a_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <input type="hidden" name="withdraw_confirmed" value="true" />
-            {% set withdraw_text = "You should only withdraw your requirements if you:" %}
-            {% set withdraw_list_items = [
-                "want to change something that may affect whether suppliers apply, for example, the budget range or role",
-                "can no longer offer the work"
-              ]
-            %}
-            {%
-              with
-              heading = "Are you sure you want to withdraw these requirements?",
-              banner_content = "<p class='govuk-body'>{}</p><ul class='govuk-list govuk-list--bullet'><li>{}</li></ul>".format(withdraw_text, withdraw_list_items|join("</li><li>"))|safe,
-              type = "destructive",
-              action = govukButton({
-                "text": "Withdraw requirements",
-                "classes": "govuk-button--warning app-banner-action",
-              })
-            %}
-              {% include "toolkit/notification-banner.html" %}
-            {% endwith %}
-          </form>
-        </div>
-      {% endif %}
-    {% endblock %}
-  </div>
-
-  <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">{{ brief.get('title', brief['lotName']) }}</h1>
     </div>
@@ -279,13 +229,9 @@
       {% if brief.status == 'closed' %}
         <a class="govuk-link" href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirements</a>
       {% elif brief.status == 'live' %}
-        {% if not withdraw_requested %}
-          <a class="govuk-link" href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, withdraw_requested=True) }}">Withdraw requirements</a>
-        {% endif %}
+        <a class="govuk-link" href="{{ url_for('buyers.withdraw_a_brief_warning', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Withdraw requirements</a>
       {% elif brief.status == 'draft' %}
-        {% if not delete_requested %}
-          <a class="govuk-link" href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, delete_requested=True) }}">Delete draft requirements</a>
-        {% endif %}
+        <a class="govuk-link" href="{{ url_for('buyers.delete_a_brief_warning', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Delete draft requirements</a>
       {% endif %}
     </div>
   </div>
