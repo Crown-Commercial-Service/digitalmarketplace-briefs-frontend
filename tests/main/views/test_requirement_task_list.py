@@ -85,11 +85,10 @@ class TestBriefSummaryPage(BaseApplicationTest):
         ]
 
         assert "Awarded to " not in page_html
-        assert 'Are you sure you want to delete these requirements?' not in page_html  # Delete banner hidden
         assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
             (
                 "Delete draft requirements",
-                "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234?delete_requested=True"  # noqa
+                "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/delete"  # noqa
             )
         ]
 
@@ -109,12 +108,10 @@ class TestBriefSummaryPage(BaseApplicationTest):
         ).single_result_response()
 
         res = self.client.get(
-            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234?delete_requested=True"  # noqa
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234"  # noqa
         )
 
         assert res.status_code == 200
-        page_html = res.get_data(as_text=True)
-        assert ('Are you sure you want to delete these requirements?' in page_html) == banner_displayed
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_live_brief_summary_page_for_live_and_expired_framework(self, framework_status):
@@ -155,11 +152,10 @@ class TestBriefSummaryPage(BaseApplicationTest):
         ]
 
         assert "Awarded to " not in page_html
-        assert 'Are you sure you want to withdraw these requirements?' not in page_html  # Withdraw banner hidden
         assert self._get_links(document, self.SIDE_LINKS_XPATH) == [
             (
                 'Withdraw requirements',
-                "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234?withdraw_requested=True"  # noqa
+                "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/withdraw"  # noqa
             )
         ]
 
@@ -183,8 +179,6 @@ class TestBriefSummaryPage(BaseApplicationTest):
         )
 
         assert res.status_code == 200
-        page_html = res.get_data(as_text=True)
-        assert ('Are you sure you want to withdraw these requirements?' in page_html) == banner_displayed
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_show_closed_brief_summary_page_for_live_and_expired_framework(self, framework_status):
