@@ -7,6 +7,7 @@ from flask_login import current_user
 from app import data_api_client
 from .. import main, content_loader
 from ..helpers.buyers_helpers import get_framework_and_lot, is_brief_correct
+from dmcontent.html import text_to_html
 
 from dmapiclient import HTTPError
 from dmutils.flask import timed_render_template as render_template
@@ -29,10 +30,13 @@ def supplier_questions(framework_slug, lot_slug, brief_id):
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id, allowed_statuses=['live']):
         abort(404)
 
-    brief['clarificationQuestions'] = [
-        dict(question, number=index + 1)
-        for index, question in enumerate(brief['clarificationQuestions'])
-    ]
+    # Get Q&A in format suitable for govukSummaryList
+    for index, question in enumerate(brief['clarificationQuestions']):
+        question["key"] = {
+            "html": f"{str(index + 1)}. "
+                    f"{text_to_html(question['question'], format_links=True, preserve_line_breaks=True)}"
+        }
+        question["value"] = {"html": text_to_html(question["answer"], format_links=True, preserve_line_breaks=True)}
 
     return render_template(
         "buyers/supplier_questions.html",
