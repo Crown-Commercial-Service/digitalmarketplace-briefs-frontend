@@ -53,6 +53,7 @@ $govuk-global-styles: true;
 // Overrides
 @import "overrides/_notifications_banner";
 @import "overrides/_govuk-label";
+@import "overrides/_govuk-hint";
 @import "overrides/_summary-list.scss";
 @import "overrides/_question-advice.scss";
 @import "overrides/_dmspeak.scss";
