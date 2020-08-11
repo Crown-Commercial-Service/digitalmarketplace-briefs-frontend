@@ -1,5 +1,7 @@
 {% extends "_base_page.html" %}
+
 {% import "toolkit/forms/macros/forms.html" as forms %}
+{% from "govuk/components/label/macro.njk" import govukLabel %}
 
 {% block pageTitle %}
   {{ question.question }} – Digital Marketplace
@@ -31,6 +33,8 @@
             {% if is_govuk_frontend %}
               {% set govuk_forms = {"govukInput": govukInput} %}
               {% set form = govuk_frontend_from_question(question, brief, errors) %}
+              {{ govukLabel(form.label) }}
+              {{ question.question_advice }}
               {{ govuk_forms[form.macro_name](form.params) }}
             {% elif errors and errors[question.id] %}
               {{ forms[question.type](question, brief, errors) }}
