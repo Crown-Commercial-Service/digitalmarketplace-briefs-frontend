@@ -1,0 +1,6 @@
+// We want to put the question advice or other text in the hint box for
+// govuk-frontend components, but have it styled as normal text.
+
+.app-hint--text {
+  @extend %govuk-body-m;
+}
