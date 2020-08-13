@@ -2,6 +2,7 @@
 
 {% import "toolkit/forms/macros/forms.html" as forms %}
 {% from "govuk/components/label/macro.njk" import govukLabel %}
+{% from "digitalmarketplace/components/list-input/macro.njk" import dmListInput %}
 
 {% block pageTitle %}
   {{ question.question }} – Digital Marketplace
@@ -31,10 +32,14 @@
       <div class="govuk-grid-column-two-thirds">
           {% if question.type != 'multiquestion' %}
             {% if is_govuk_frontend %}
-              {% set govuk_forms = {"govukInput": govukInput} %}
+              {% set govuk_forms = {"govukInput": govukInput, "dmListInput": dmListInput} %}
               {% set form = govuk_frontend_from_question(question, brief, errors) %}
-              {{ govukLabel(form.label) }}
-              {{ question.question_advice }}
+              {%- if form.label %}
+                {{ govukLabel(form.label) }}
+              {% endif -%}
+              {% if not form.params.question_advice %}
+                {{ question.question_advice }}
+              {% endif %}
               {{ govuk_forms[form.macro_name](form.params) }}
             {% elif errors and errors[question.id] %}
               {{ forms[question.type](question, brief, errors) }}
