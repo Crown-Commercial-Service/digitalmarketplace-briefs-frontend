@@ -12,6 +12,7 @@ mock
 pytest
 pytest-cov
 python-dotenv  # used to load .flaskenv
+syrupy
 watchdog
 
 git+https://github.com/alphagov/digitalmarketplace-test-utils.git@2.7.0#egg=digitalmarketplace-test-utils==2.7.0
