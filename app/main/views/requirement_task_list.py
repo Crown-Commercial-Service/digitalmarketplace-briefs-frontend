@@ -9,7 +9,6 @@ from ..helpers.buyers_helpers import (
     count_unanswered_questions,
     get_framework_and_lot,
     is_brief_correct,
-    section_has_at_least_one_required_question,
 )
 
 
@@ -39,20 +38,33 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
     call_off_contract_url = content_loader.get_message(brief['frameworkSlug'], 'urls', 'call_off_contract_url')
     framework_agreement_url = content_loader.get_message(brief['frameworkSlug'], 'urls', 'framework_agreement_url')
 
-    completed_sections = {}
+    sections_status = {
+        'previewable': True,
+        'publishable': True
+    }
     for section in sections:
         required, optional = count_unanswered_questions([section])
-        if section_has_at_least_one_required_question(section):
-            completed_sections[section.slug] = True if required == 0 else False
-        else:
-            completed_sections[section.slug] = True if optional == 0 else False
+        if section.is_empty:
+            if required > 0:
+                sections_status[section.slug] = 'to_do'
+                sections_status['previewable'] = False
+                sections_status['publishable'] = False
+            elif optional > 0:
+                sections_status[section.slug] = 'optional'
+        elif not section.is_empty:
+            if required > 0:
+                sections_status[section.slug] = 'in_progress'
+                sections_status['previewable'] = False
+                sections_status['publishable'] = False
+            else:
+                sections_status[section.slug] = 'done'
 
     brief['clarificationQuestions'] = [
         dict(question, number=index + 1)
         for index, question in enumerate(brief['clarificationQuestions'])
     ]
 
-    publish_requirements_section_links = [
+    publish_requirements_section_instructions = [
         {
             'href': url_for(
                 ".preview_brief",
@@ -61,7 +73,9 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
                 brief_id=brief['id']
             ),
             'text': 'Preview your requirements',
-            'allowed_statuses': ['draft']
+            'allowed_statuses': ['draft'],
+            'startable': sections_status['previewable'],
+            'active_tag': 'Optional'
         },
         {
             'href': url_for(
@@ -71,8 +85,12 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
                 brief_id=brief['id']
             ),
             'text': 'Publish your requirements',
-            'allowed_statuses': ['draft']
+            'allowed_statuses': ['draft'],
+            'startable': sections_status['publishable'],
+            'active_tag': 'To do'
         },
+    ]
+    publish_requirements_section_links = [
         {
             'href': url_for(
                 ".view_brief_timeline",
@@ -100,10 +118,11 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         confirm_remove=request.args.get("confirm_remove", None),
         brief=section.unformat_data(brief),
         sections=sections,
-        completed_sections=completed_sections,
+        sections_status=sections_status,
         step_sections=[section.step for section in sections if hasattr(section, 'step')],
         call_off_contract_url=call_off_contract_url,
         framework_agreement_url=framework_agreement_url,
         awarded_brief_response_supplier_name=awarded_brief_response_supplier_name,
-        publish_requirements_section_links=publish_requirements_section_links
+        publish_requirements_section_links=publish_requirements_section_links,
+        publish_requirements_section_instructions=publish_requirements_section_instructions
     ), 200

@@ -57,5 +57,5 @@ $govuk-global-styles: true;
 @import "overrides/_summary-list.scss";
 @import "overrides/_question-advice.scss";
 @import "overrides/_dmspeak.scss";
-
-
+@import "overrides/_task-list";
+@import "overrides/_tags";
