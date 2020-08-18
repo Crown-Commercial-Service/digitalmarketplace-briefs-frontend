@@ -1,0 +1,71 @@
+{% extends "_base_page.html" %}
+
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% block pageTitle %}
+  {{ brief.title or brief.lotName }}: Are you sure you want to withdraw these requirements? – Digital Marketplace
+{% endblock %}
+
+{% block breadcrumb %}
+  {{ govukBreadcrumbs({
+    "items": [
+        {
+          "href": "/",
+          "text": "Digital Marketplace"
+      },
+      {
+          "href": url_for("buyers.buyer_dashboard"),
+          "text": "Your account"
+      },
+      {
+          "href": url_for("buyers.buyer_dos_requirements"),
+          "text": "Your requirements"
+      },
+      {
+        "href": url_for(
+            ".view_brief_overview",
+            framework_slug=brief.framework.slug,
+            lot_slug=brief['lotSlug'],
+            brief_id=brief['id']),
+        "text": brief['title']
+      },
+      {
+          "text": "Are you sure you want to withdraw these requirements?"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block mainContent %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-xl">{{ brief.get('title', brief['lotName']) }}</span>
+        <h1 class="govuk-heading-xl">Are you sure you want to withdraw these requirements?</h1>
+
+        <p class="govuk-body">Only withdraw your requirements if:</p>
+        <ul class="govuk-list govuk-list--bullet">
+        <li>you want to change something that may affect whether suppliers apply</li>
+        <li>the work is no longer available</li>
+        </ul>
+
+        {{ govukWarningText({
+        "text": "This action is final and cannot be undone.",
+        "iconFallbackText": "Warning",
+        "classes": "govuk-!-margin-bottom-8"
+        }) }}
+
+        <form method="post" action="{{ url_for('buyers.withdraw_a_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            
+            {{ govukButton({
+                "text": "Withdraw requirements",
+                "classes": "govuk-button--warning govuk-!-margin-right-3",
+                "name": "withdraw_confirmed"
+            }) }}
+
+            <a class="govuk-button govuk-button--secondary" href="{{ url_for('buyers.view_brief_overview', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel</a>
+
+        </form>
+    </div>
+  </div>
+{% endblock %}

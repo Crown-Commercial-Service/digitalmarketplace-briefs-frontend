@@ -3,6 +3,7 @@ import mock
 from dmtestutils.api_model_stubs import BriefStub, FrameworkStub, LotStub
 
 from ....helpers import BaseApplicationTest
+from lxml import html
 
 
 class TestDeleteBriefSubmission(BaseApplicationTest):
@@ -24,11 +25,54 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
                 LotStub(slug='digital-specialists', allows_brief=True).response()
             ]
         ).single_result_response()
+        self.brief = BriefStub(
+            user_id=123,
+            framework_slug='digital-outcomes-and-specialists-4',
+            lot_slug="digital-specialists",
+            status='draft'
+        ).response()
+        self.data_api_client.get_brief.return_value = {"briefs": self.brief}
         self.login_as_buyer()
 
     def teardown_method(self, method):
         self.data_api_client_patch.stop()
         super().teardown_method(method)
+
+    def test_delete_brief_warning_page_displays_correctly(self):
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/delete"
+        )
+
+        assert res.status_code == 200
+        document = html.fromstring(res.get_data(as_text=True))
+        self.assert_breadcrumbs(res, extra_breadcrumbs=[
+            (
+                'I need a thing to do a thing',
+                '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234'
+            ),
+            (
+                "Are you sure you want to delete these requirements?",
+            )
+        ])
+
+        page_title = document.xpath('//h1')[0].text_content()
+        title_caption = document.cssselect('span.govuk-caption-xl')[0].text_content()
+        assert title_caption == self.brief.get('title')
+        assert page_title == "Are you sure you want to delete these requirements?"
+
+        url = (
+            '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/'
+            'digital-specialists/1234/delete'
+        )
+        assert document.xpath('//form[@action="{}"]'.format(url.format(brief_id=1234)))[0] is not None
+
+        submit_button = document.cssselect('button[name="delete_confirmed"]')
+        cancel_link = document.xpath("//a[normalize-space()='Cancel']")
+
+        assert len(submit_button) == 1
+        assert len(cancel_link) == 1
+
+        assert cancel_link[0].attrib['href'] == "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234" # noqa
 
     def test_delete_brief_submission(self):
         for framework_status in ['live', 'expired']:
@@ -40,17 +84,18 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
                 ]
             ).single_result_response()
 
-            res = self.client.post(
-                "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/delete"
-            )
+        res = self.client.post(
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/delete",
+            data={"delete_confirmed": "True"}
+        )
 
-            assert res.status_code == 302
-            assert self.data_api_client.delete_brief.called
-            assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-            self.assert_flashes(
-                "Your requirements ‘I need a thing to do a thing’ were deleted",
-                expected_category="success"
-            )
+        assert res.status_code == 302
+        assert self.data_api_client.delete_brief.called
+        assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
+        self.assert_flashes(
+            "Your requirements ‘I need a thing to do a thing’ were deleted",
+            expected_category="success"
+        )
 
     def test_404_if_framework_is_not_live_or_expired(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:

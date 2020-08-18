@@ -34,8 +34,6 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
 
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
     sections = content.summary(brief)
-    delete_requested = request.args.get('delete_requested') and brief['status'] == 'draft'
-    withdraw_requested = request.args.get('withdraw_requested') and brief['status'] == 'live'
 
     content_loader.load_messages(brief['frameworkSlug'], ['urls'])
     call_off_contract_url = content_loader.get_message(brief['frameworkSlug'], 'urls', 'call_off_contract_url')
@@ -104,8 +102,6 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         sections=sections,
         completed_sections=completed_sections,
         step_sections=[section.step for section in sections if hasattr(section, 'step')],
-        delete_requested=delete_requested,
-        withdraw_requested=withdraw_requested,
         call_off_contract_url=call_off_contract_url,
         framework_agreement_url=framework_agreement_url,
         awarded_brief_response_supplier_name=awarded_brief_response_supplier_name,

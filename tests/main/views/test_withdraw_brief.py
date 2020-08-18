@@ -5,6 +5,8 @@ from dmtestutils.api_model_stubs import BriefStub, FrameworkStub, LotStub
 
 from ...helpers import BaseApplicationTest
 
+from lxml import html
+
 
 class TestWithdrawBriefSubmission(BaseApplicationTest):
 
@@ -23,11 +25,64 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
                 LotStub(slug='digital-specialists', allows_brief=True).response()
             ]
         ).single_result_response()
+
+        self.brief = BriefStub(
+            user_id=123,
+            framework_slug='digital-outcomes-and-specialists-4',
+            lot_slug="digital-specialists",
+            status='draft'
+        ).response()
+
         self.login_as_buyer()
 
     def teardown_method(self, method):
         self.data_api_client_patch.stop()
         super().teardown_method(method)
+
+    @pytest.mark.parametrize('framework_status', ['live', 'expired'])
+    def test_withdraw_brief_warning_page_displays_correctly(self, framework_status):
+        self.data_api_client.get_framework.return_value = FrameworkStub(
+            slug='digital-outcomes-and-specialists-4',
+            status=framework_status,
+            lots=[LotStub(slug='digital-specialists', allows_brief=True).response()]
+        ).single_result_response()
+        self.data_api_client.get_brief.return_value = BriefStub(
+            framework_slug='digital-outcomes-and-specialists-4',
+            status='live',
+        ).single_result_response()
+
+        res = self.client.get(
+            "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/withdraw"
+        )
+
+        assert res.status_code == 200
+        document = html.fromstring(res.get_data(as_text=True))
+        self.assert_breadcrumbs(res, extra_breadcrumbs=[
+            (
+                'I need a thing to do a thing',
+                '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234'
+            ),
+            (
+                "Are you sure you want to withdraw these requirements?",
+            )
+        ])
+
+        page_title = document.xpath('//h1')[0].text_content()
+        title_caption = document.cssselect('span.govuk-caption-xl')[0].text_content()
+        assert title_caption == self.brief.get('title')
+        assert page_title == "Are you sure you want to withdraw these requirements?"
+
+        assert document.xpath(
+            '//form[@action="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/withdraw"]' # noqa
+        )[0] is not None
+
+        submit_button = document.cssselect('button[name="withdraw_confirmed"]')
+        cancel_link = document.xpath("//a[normalize-space()='Cancel']")
+
+        assert len(submit_button) == 1
+        assert len(cancel_link) == 1
+
+        assert cancel_link[0].attrib['href'] == "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234" # noqa
 
     @pytest.mark.parametrize('framework_status', ['live', 'expired'])
     def test_withdraw_brief_submission(self, framework_status):
@@ -96,6 +151,6 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
 
         res = self.client.post(
             "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-outcomes/1234/withdraw",
-            data={"delete_confirmed": True})
+            data={"withdraw_confirmed": True})
 
         assert res.status_code == 404
