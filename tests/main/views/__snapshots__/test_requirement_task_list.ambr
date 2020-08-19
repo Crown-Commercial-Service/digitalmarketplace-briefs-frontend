@@ -47,7 +47,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -79,7 +79,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -105,7 +105,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -135,7 +135,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -159,7 +159,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -237,7 +237,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -269,7 +269,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -295,7 +295,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -325,7 +325,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -349,7 +349,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -427,7 +427,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -459,7 +459,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -485,7 +485,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -515,7 +515,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -539,7 +539,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -615,7 +615,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -647,7 +647,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -673,7 +673,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -703,7 +703,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -727,7 +727,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -803,7 +803,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -835,7 +835,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -861,7 +861,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -891,7 +891,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -915,7 +915,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -991,7 +991,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1023,7 +1023,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1049,7 +1049,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1079,7 +1079,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1103,7 +1103,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1179,7 +1179,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1211,7 +1211,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1235,7 +1235,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/responses">View and shortlist suppliers</a></li>
@@ -1267,7 +1267,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers">How to evaluate suppliers</a></li>
@@ -1293,7 +1293,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services">How to award a contract</a></li>
@@ -1375,7 +1375,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1407,7 +1407,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1431,7 +1431,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/responses">View and shortlist suppliers</a></li>
@@ -1463,7 +1463,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers">How to evaluate suppliers</a></li>
@@ -1489,7 +1489,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services">How to award a contract</a></li>
@@ -1646,7 +1646,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1724,7 +1724,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1752,7 +1752,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1782,7 +1782,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers">How to evaluate suppliers</a></li>
@@ -1808,7 +1808,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services">How to award a contract</a></li>
@@ -1888,7 +1888,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/timeline">View question and answer dates</a></li>
@@ -1922,7 +1922,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/supplier-questions">Publish questions and answers</a></li>
@@ -1952,7 +1952,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -1982,7 +1982,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers">How to evaluate suppliers</a></li>
@@ -2008,7 +2008,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services">How to award a contract</a></li>
@@ -2088,7 +2088,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/timeline">View question and answer dates</a></li>
@@ -2122,7 +2122,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/supplier-questions">Publish questions and answers</a></li>
@@ -2152,7 +2152,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                 
@@ -2182,7 +2182,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-evaluate-digital-outcomes-and-specialists-suppliers">How to evaluate suppliers</a></li>
@@ -2208,7 +2208,7 @@
               
               <!-- Non-task list links -->
               
-                <ul class="govuk-list">
+                <ul class="govuk-list dm-task-list__links">
                 
                   
                     <li><a class="govuk-link dm-task-list__link" href="https://www.gov.uk/guidance/how-to-award-a-contract-when-you-buy-services">How to award a contract</a></li>
