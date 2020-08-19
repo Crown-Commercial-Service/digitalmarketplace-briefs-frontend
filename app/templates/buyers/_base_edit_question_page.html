@@ -4,19 +4,36 @@
 {% from "govuk/components/label/macro.njk" import govukLabel %}
 {% from "digitalmarketplace/components/list-input/macro.njk" import dmListInput %}
 
+{%- macro show_question(is_govuk_frontend, question, brief, errors, is_only_question=True) %}
+  {% if is_govuk_frontend %}
+    {% set form = govuk_frontend_from_question(question, brief, errors, is_page_heading=is_only_question) %}
+    {% set govuk_forms = {"govukInput": govukInput, "dmListInput": dmListInput} %}
+    {%- if form.label %}
+      {{ govukLabel(form.label) }}
+    {% endif -%}
+    {% if not form.params.question_advice %}
+      {{ question.question_advice }}
+    {% endif %}
+    {{ govuk_forms[form.macro_name](form.params) }}
+  {% elif errors and errors[question.id] %}
+    {{ forms[question.type](question, brief, errors) }}
+  {% else %}
+    {{ forms[question.type](question, brief, {}) }}
+  {% endif %}
+{% endmacro -%}
+
 {% block pageTitle %}
   {{ question.question }} – Digital Marketplace
 {% endblock %}
 
 {% block mainContent %}
-
   {% set is_govuk_frontend = govuk_frontend_from_question(question) %}
 
   {% if question.type != 'multiquestion' %}
     <div class="single-question-page">
   {% endif %}
 
-  {% if not is_govuk_frontend %}
+  {% if not is_govuk_frontend or question.type == 'multiquestion' %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-l">
@@ -31,21 +48,7 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
           {% if question.type != 'multiquestion' %}
-            {% if is_govuk_frontend %}
-              {% set govuk_forms = {"govukInput": govukInput, "dmListInput": dmListInput} %}
-              {% set form = govuk_frontend_from_question(question, brief, errors) %}
-              {%- if form.label %}
-                {{ govukLabel(form.label) }}
-              {% endif -%}
-              {% if not form.params.question_advice %}
-                {{ question.question_advice }}
-              {% endif %}
-              {{ govuk_forms[form.macro_name](form.params) }}
-            {% elif errors and errors[question.id] %}
-              {{ forms[question.type](question, brief, errors) }}
-            {% else %}
-              {{ forms[question.type](question, brief, {}) }}
-            {% endif %}
+            {{ show_question(is_govuk_frontend, question, brief, errors) }}
           {% else %}
             {% if question.question_advice %}
               <span class="question-advice">
@@ -53,11 +56,8 @@
               </span>
             {% endif %}
             {% for question in question.questions %}
-              {% if errors and errors[question.id] %}
-                {{ forms[question.type](question, brief, errors) }}
-              {% else %}
-                {{ forms[question.type](question, brief, {}) }}
-              {% endif %}
+              {% set is_govuk_frontend = govuk_frontend_from_question(question) %}
+              {{ show_question(is_govuk_frontend, question, brief, errors, is_only_question=False) }}
             {% endfor %}
           {% endif %}
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
