@@ -189,7 +189,7 @@
             {% endif %}
             <!-- Non-task list links -->
             {% if step.links %}
-              <ul class="govuk-list">
+              <ul class="govuk-list dm-task-list__links">
               {% for link in step.links %}
                 {% if brief.status in link.allowed_statuses %}
                   <li><a class="govuk-link dm-task-list__link" href="{{ link.href }}">{{ link.text }}</a></li>
