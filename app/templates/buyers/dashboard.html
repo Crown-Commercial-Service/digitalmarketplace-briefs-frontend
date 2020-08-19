@@ -32,7 +32,7 @@
 
   {% if draft_briefs is undefined or draft_briefs|length == 0 %} 
     <h2 class="govuk-heading-m">Unpublished requirements</h2>
-    <p class="summary-item-no-content">You don’t have any unpublished requirements</p>
+    <p class="app-no-summary-content">You don’t have any unpublished requirements</p>
   {% else %}
     <table class="govuk-table govuk-!-margin-bottom-7" id="unpublished_requirements">
       <caption class="govuk-table__caption govuk-heading-m">Unpublished requirements</caption>
@@ -75,7 +75,7 @@
 
   {% if live_briefs is undefined or live_briefs|length == 0 %} 
     <h2 class="govuk-heading-m">Published requirements</h2>
-    <p class="summary-item-no-content">You don’t have any published requirements</p>
+    <p class="app-no-summary-content">You don’t have any published requirements</p>
   {% else %}
     <table class="govuk-table govuk-!-margin-bottom-7" id="published_requirements">
       <caption class="govuk-table__caption govuk-heading-m">Published requirements</caption>
@@ -110,7 +110,7 @@
 
   {% if closed_briefs is undefined or closed_briefs|length == 0 %} 
     <h2 class="govuk-heading-m">Closed requirements</h2>
-    <p class="summary-item-no-content">You don’t have any closed requirements</p>
+    <p class="app-no-summary-content">You don’t have any closed requirements</p>
   {% else %}
     <table class="govuk-table govuk-!-margin-bottom-7" id="published_requirements">
       <caption class="govuk-table__caption govuk-heading-m">Closed requirements</caption>
