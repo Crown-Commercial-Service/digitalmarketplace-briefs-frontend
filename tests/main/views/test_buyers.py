@@ -143,11 +143,21 @@ class TestBuyerDashboard(BaseApplicationTest):
 
         assert tables[2].xpath('.//tbody/tr/td')[1].text_content().strip() == "Sunday 21 February 2016"
 
-        assert closed_row_cells[2].xpath('.//a')[0].text_content() == "View responses"
+        # Text including visually hidden text
+        assert closed_row_cells[2].xpath('.//a')[0].text_content() == (
+            "View responses for A closed brief with brief responses"
+        )
+        # Visible text only
+        assert closed_row_cells[2].xpath('.//a/text()')[0] == "View responses"
         assert closed_row_cells[2].xpath('.//a/@href')[0] == \
             '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/22/responses'
 
-        assert closed_row_cells[2].xpath('.//a')[1].text_content() == "Let suppliers know the outcome"
+        # Text including visually hidden text
+        assert closed_row_cells[2].xpath('.//a')[1].text_content() == (
+            "Let suppliers know the outcome of A closed brief with brief responses"
+        )
+        # Visible text only
+        assert closed_row_cells[2].xpath('.//a/text()')[1] == "Let suppliers know the outcome"
         assert closed_row_cells[2].xpath('.//a/@href')[1] == \
             '/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/22/award'
 
