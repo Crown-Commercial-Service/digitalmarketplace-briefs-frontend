@@ -730,7 +730,7 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
             assert (document.xpath('//h1')[0]).text_content().strip() == "Question and answer dates"
             assert all(
                 date in
-                [e.text_content() for e in document.xpath('//main//th/span')]
+                [e.text_content().strip() for e in document.xpath('//main//dt')]
                 for date in ['2 April', '8 April', '15 April', '16 April']
             )
 

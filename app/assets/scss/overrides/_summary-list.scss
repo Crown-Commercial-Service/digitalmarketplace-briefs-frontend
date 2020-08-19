@@ -29,3 +29,18 @@
         font-weight: $govuk-font-weight-regular;
     }
 }
+
+/*
+ * When a summary list is empty, we display a paragraph styled to look like
+ * a row.
+ */
+.app-no-summary-content {
+    color: $secondary-text-colour;
+    @include core-16;
+    margin: 0 0 15px 0;
+    border-top: 1px solid $border-colour;
+    border-bottom: 1px solid $border-colour;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    max-width: 100%;
+  }

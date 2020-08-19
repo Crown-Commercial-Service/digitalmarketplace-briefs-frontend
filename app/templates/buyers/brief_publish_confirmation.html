@@ -69,56 +69,73 @@
       {%- endfor %}
       </ul>
     {% elif brief.lotSlug != 'digital-specialists' or brief.requirementsLength -%}
-      {% import "toolkit/summary-table.html" as summary %}
-        {% call summary.mapping_table(
-        row_bold_borders=True,
-        text_large = True,
-        no_bottom_border=True,
-        caption="If you publish today, you must be aware of the following dates:" if not published,
-        caption_visible=not published,
-        field_headings=[
-          "Date",
-          "Notice",
-        ],
-        field_headings_visible=False
-      ) %}
-        {% call summary.row(no_border=True) %}
-          {{ summary.field_heading_date("Today" if not published else (brief.publishedAt | shortdateformat), scope='row') }}
-          {{ summary.text("Suppliers can apply and ask questions about your requirements.") }}
-        {% endcall %}
-        {% if brief.questionAndAnswerSessionDetails %}
-          {% call summary.row(bold_border=True) %}
-            {{ summary.field_heading_date("Before {}".format(dates.questions_close | shortdateformat), rowspan='3', scope='row') }}
-            {{ summary.text_bold("Details of your question and answer session") }}
-            {% if not published %}
-              {{ summary.edit_link(
-                    "Edit",
-                    url_for('.edit_brief_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=question_and_answers.slug, question_id=question_and_answers.id),
-                    hidden_text="question and answer session details"
-                 )
-              }}
-            {% endif %}
-          {% endcall %}
-          {% call summary.row(no_border=True) %}
-            {{ summary.text(brief.questionAndAnswerSessionDetails) }}
-          {% endcall %}
-          {% call summary.row(no_border=True) %}
-            {{ summary.text_bold("You must hold your question and answer session before {}.".format(dates.questions_close | shortdateformat), border=True) }}
-          {% endcall %}
-        {% endif %}
-        {% call summary.row(bold_border=True) %}
-          {{ summary.field_heading_date(dates.questions_close | shortdateformat, scope='row') }}
-          {{ summary.text("The last day suppliers can ask questions.") }}
-        {% endcall %}
-        {% call summary.row(bold_border=True) %}
-          {{ summary.field_heading_date(dates.answers_close | shortdateformat, scope='row') }}
-          {{ summary.text("You must have published answers to all suppliers’ questions.") }}
-        {% endcall %}
-        {% call summary.row(bold_border=True) %}
-          {{ summary.field_heading_date(dates.closing_date | shortdateformat, scope='row') }}
-          {{ summary.text("The last day suppliers can apply.") }}
-        {% endcall %}
-      {% endcall %}
+
+      {%- if not published %}<h2 class="govuk-heading-s">If you publish today, you must be aware of the following dates:</h2>{% endif -%}
+
+      {%- if brief.questionAndAnswerSessionDetails %}
+        {% set questionDetails %}
+          <p class="govuk-body govuk-!-font-weight-bold">Details of your question and answer session</p>
+          <p class="govuk-body">{{ brief.questionAndAnswerSessionDetails }}</p>
+          <p class="govuk-bodt govuk-!-font-weight-bold">You must hold your question and answer session before {{ dates.questions_close | shortdateformat }}</p>
+        {% endset %}
+        {% set questionAndAnswerSessionDetailRow = {
+          "key": {"text": "Before {}".format(dates.questions_close | shortdateformat)},
+          "value": {"html": questionDetails},
+          "actions": {
+            "items": [
+              {
+                "href": url_for('.edit_brief_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, section_slug=question_and_answers.slug, question_id=question_and_answers.id),
+                "text": "Edit",
+                "visuallyHiddenText": "question and answer session details"
+              }
+            ]
+          } if not published and questionDetails
+        } %}
+      
+        {{ govukSummaryList({
+          "rows": [
+            {
+            "key": {"text": "Today" if not published else (brief.publishedAt | shortdateformat)},
+              "value": {"text": "Suppliers can apply and ask questions about your requirements."}
+            },
+            questionAndAnswerSessionDetailRow,
+            {
+              "key": {"text": dates.questions_close | shortdateformat },
+              "value": {"text": "The last day suppliers can ask questions."}
+            },
+            {
+              "key": {"text": dates.answers_close | shortdateformat },
+              "value": {"text": "You must have published answers to all suppliers’ questions."}
+            },
+            {
+              "key": {"text": dates.closing_date | shortdateformat },
+              "value": {"text": "The last day suppliers can apply."}
+            }
+          ]
+        })}}
+      {% else %}
+        {{ govukSummaryList({
+          "rows": [
+            {
+            "key": {"text": "Today" if not published else (brief.publishedAt | shortdateformat)},
+              "value": {"text": "Suppliers can apply and ask questions about your requirements."}
+            },
+            {
+              "key": {"text": dates.questions_close | shortdateformat },
+              "value": {"text": "The last day suppliers can ask questions."}
+            },
+            {
+              "key": {"text": dates.answers_close | shortdateformat },
+              "value": {"text": "You must have published answers to all suppliers’ questions."}
+            },
+            {
+              "key": {"text": dates.closing_date | shortdateformat },
+              "value": {"text": "The last day suppliers can apply."}
+            }
+          ]
+        })}}
+      {% endif -%}
+
       {% if not published %}
         <form action="{{ url_for('.publish_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}" method="POST">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -127,6 +144,7 @@
           }) }}
         </form>
       {% endif %}
+
     {%- endif %}
     <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
        href="{{ url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">

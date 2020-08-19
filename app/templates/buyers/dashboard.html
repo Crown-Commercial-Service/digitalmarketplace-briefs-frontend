@@ -1,5 +1,4 @@
 {% extends "_base_page.html" %}
-{% import "toolkit/summary-table.html" as summary %}
 
 {% block pageTitle %}
   Your requirements - Digital Marketplace
@@ -25,140 +24,151 @@
 
 {% block mainContent %}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-          <h1 class="govuk-heading-xl">Your requirements</h1>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">Your requirements</h1>
     </div>
+  </div>
 
-
-{{ summary.heading("Unpublished requirements", id="unpublished_requirements") }}
-{% call(item) summary.list_table(
-    draft_briefs,
-    caption="Unpublished requirements",
-    empty_message="You don’t have any unpublished requirements",
-    field_headings=[
-        "Name",
-        "Created",
-        "Unanswered questions",
-        summary.hidden_field_heading("Make a copy")
-    ],
-    field_headings_visible=True
-) %}
-
-    {% call summary.row() %}
-        {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id)) }}
-
-        {{ summary.text(item.createdAt|dateformat) }}
-
-        {% if item.unanswered_required > 0 and item.unanswered_optional > 0 %}
-            {{ summary.text("{} required<br>{} optional".format(item.unanswered_required, item.unanswered_optional)|safe) }}
-        {% elif item.unanswered_required > 0 %}
-            {{ summary.text("{} required".format(item.unanswered_required)) }}
-        {% elif item.unanswered_optional > 0 %}
-            {{ summary.text("{} optional".format(item.unanswered_optional)) }}
-        {% else %}
-            {{ summary.text() }}
-        {% endif %}
-        {% call summary.field(action=True) %}
-          <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
-            {{ govukButton({
-              "text": "Make a copy",
-              "classes": "govuk-button--secondary govuk-!-margin-0",
-            }) }}
-          </form>
-        {% endcall %}
-    {% endcall %}
-{% endcall %}
-
-{{ summary.heading("Published requirements", id="published_requirements") }}
-{% call(item) summary.list_table(
-    live_briefs,
-    caption="Published requirements",
-    empty_message="You don’t have any published requirements",
-    field_headings=[
-        "Name",
-        "Published",
-        "Closing",
-        summary.hidden_field_heading("Make a copy")
-    ],
-    field_headings_visible=True
-) %}
-
-    {% call summary.row() %}
-        {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id)) }}
-        {{ summary.text(item.publishedAt|dateformat) }}
-        {{ summary.text(item.applicationsClosedAt|dateformat) }}
-        {% call summary.field(action=True) %}
-          <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
-            {{ govukButton({
-              "text": "Make a copy",
-              "classes": "govuk-button--secondary govuk-!-margin-0",
-            }) }}
-          </form>
-        {% endcall %}
-    {% endcall %}
-{% endcall %}
-
-{{ summary.heading("Closed requirements", id="closed_requirements") }}
-{% call(item) summary.list_table(
-    closed_briefs,
-    caption="Closed requirements",
-    empty_message="You don’t have any requirements that are closed",
-    field_headings=[
-        "Name",
-        "Closed",
-        summary.hidden_field_heading("Make a copy")
-    ],
-    field_headings_visible=True
-) %}
-
-    {% call summary.row() %}
-        {% if item.status == "closed" %}
-          {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id)) }}
-          {{ summary.text(item.applicationsClosedAt|dateformat) }}
-          {% call summary.field(action=True) %}
-            <div class="govuk-!-padding-bottom-2">
-                <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.view_brief_responses', framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">View responses</a></p>
-                {% if item.status == "closed" %}
-                    <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.award_or_cancel_brief', framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">Let suppliers know the outcome</a></p>
-                {% endif %}
-            </div>
-            <form method="post" action="{{ url_for('.copy_brief', framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
-                {{ govukButton({
-                  "text": "Make a copy",
-                  "classes": "govuk-button--secondary govuk-!-margin-0",
-                }) }}
-            </form>
-          {% endcall %}
-        {% elif item.status == "withdrawn" %}
-          {{ summary.service_link(item.title, url_for("external.get_brief_by_id", framework_family=item.framework.family, brief_id=item.id)) }}
-          {{ summary.text("Withdrawn") }}
-          {% call summary.field(action=True) %}
-            <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">
+  {% if draft_briefs is undefined or draft_briefs|length == 0 %} 
+    <h2 class="govuk-heading-m">Unpublished requirements</h2>
+    <p class="app-no-summary-content">You don’t have any unpublished requirements</p>
+  {% else %}
+    <table class="govuk-table govuk-!-margin-bottom-7" id="unpublished_requirements">
+      <caption class="govuk-table__caption govuk-heading-m">Unpublished requirements</caption>
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">Name</th>
+          <th scope="col" class="govuk-table__header">Created</th>
+          <th scope="col" class="govuk-table__header">Unanswered questions</th>
+          <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Make a copy</span></th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {%- for brief in draft_briefs %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell"><a class="govuk-link" href="{{url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id)}}">{{ brief.title }}</a></td>
+          <td class="govuk-table__cell">{{ brief.createdAt|dateformat }}</td>
+          <td class="govuk-table__cell">
+          {% if brief.unanswered_required > 0 and brief.unanswered_optional > 0 %}
+              {{ "{} required<br>{} optional".format(brief.unanswered_required, brief.unanswered_optional)|safe }}
+          {% elif brief.unanswered_required > 0 %}
+              {{ "{} required".format(brief.unanswered_required) }}
+          {% elif brief.unanswered_optional > 0 %}
+              {{ "{} optional".format(brief.unanswered_optional) }}
+          {% endif %}
+          </td>
+          <td class="govuk-table__cell app-align-right">
+            <form method="post" action="{{ url_for('.copy_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
               {{ govukButton({
                 "text": "Make a copy",
                 "classes": "govuk-button--secondary govuk-!-margin-0",
               }) }}
             </form>
-          {% endcall %}
-        {% elif item.status in ["awarded", "cancelled", "unsuccessful"] %}
-          {{ summary.service_link(item.title, url_for(".view_brief_overview", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id)) }}
-          {{ summary.text(item.applicationsClosedAt|dateformat) }}
-          {% call summary.field(action=True) %}
-            <form method="post" action="{{ url_for(".copy_brief", framework_slug=item.framework.slug, lot_slug=item.lot, brief_id=item.id) }}">
+          </td>
+        </tr>
+        {% endfor -%}
+      </tbody>
+    </table>
+  {% endif %}
+
+  {% if live_briefs is undefined or live_briefs|length == 0 %} 
+    <h2 class="govuk-heading-m">Published requirements</h2>
+    <p class="app-no-summary-content">You don’t have any published requirements</p>
+  {% else %}
+    <table class="govuk-table govuk-!-margin-bottom-7" id="published_requirements">
+      <caption class="govuk-table__caption govuk-heading-m">Published requirements</caption>
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">Name</th>
+          <th scope="col" class="govuk-table__header">Published</th>
+          <th scope="col" class="govuk-table__header">Closing</th>
+          <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Make a copy</span></th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {%- for brief in live_briefs %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell"><a class="govuk-link" href="{{url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id)}}">{{ brief.title }}</a></td>
+          <td class="govuk-table__cell">{{ brief.publishedAt|dateformat }}</td>
+          <td class="govuk-table__cell">{{ brief.applicationsClosedAt|dateformat }}</td>
+          <td class="govuk-table__cell app-align-right">
+            <form method="post" action="{{ url_for('.copy_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
               {{ govukButton({
                 "text": "Make a copy",
                 "classes": "govuk-button--secondary govuk-!-margin-0",
               }) }}
             </form>
-          {% endcall %}
-        {% endif %}
-     {% endcall %}
-{% endcall %}
+          </td>
+        </tr>
+        {% endfor -%}
+      </tbody>
+    </table>
+  {% endif %}
+
+  {% if closed_briefs is undefined or closed_briefs|length == 0 %} 
+    <h2 class="govuk-heading-m">Closed requirements</h2>
+    <p class="app-no-summary-content">You don’t have any closed requirements</p>
+  {% else %}
+    <table class="govuk-table govuk-!-margin-bottom-7" id="published_requirements">
+      <caption class="govuk-table__caption govuk-heading-m">Closed requirements</caption>
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">Name</th>
+          <th scope="col" class="govuk-table__header">Closed</th>
+          <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Make a copy</span></th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {%- for brief in closed_briefs %}
+        <tr class="govuk-table__row">
+          {% if brief.status == "closed" %}
+            <td class="govuk-table__cell"><a class="govuk-link" href="{{url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id)}}">{{ brief.title }}</a></td>
+            <td class="govuk-table__cell">{{ brief.applicationsClosedAt|dateformat }}</td>
+            <td class="govuk-table__cell app-align-right">
+              <div class="govuk-!-padding-bottom-2">
+                  <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.view_brief_responses', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">View responses</a></p>
+                  <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">Let suppliers know the outcome</a></p>
+              </div>
+              <form method="post" action="{{ url_for('.copy_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
+                  {{ govukButton({
+                    "text": "Make a copy",
+                    "classes": "govuk-button--secondary govuk-!-margin-0",
+                  }) }}
+              </form>
+            </td>
+          {% elif brief.status == "withdrawn" %}
+            <td class="govuk-table__cell"><a class="govuk-link" href="{{url_for('external.get_brief_by_id', framework_family=brief.framework.family, brief_id=brief.id)}}">{{ brief.title }}</a></td>
+            <td class="govuk-table__cell">Withdrawn</td>
+            <td class="govuk-table__cell app-align-right">
+              <form method="post" action="{{ url_for('.copy_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
+                  {{ govukButton({
+                    "text": "Make a copy",
+                    "classes": "govuk-button--secondary govuk-!-margin-0",
+                  }) }}
+              </form>
+            </td>
+          {% elif brief.status in ["awarded", "cancelled", "unsuccessful"] %}
+            <td class="govuk-table__cell"><a class="govuk-link" href="{{url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id)}}">{{ brief.title }}</a></td>
+            <td class="govuk-table__cell">{{ brief.applicationsClosedAt|dateformat }}</td>
+            <td class="govuk-table__cell app-align-right">
+              <form method="post" action="{{ url_for('.copy_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
+                  {{ govukButton({
+                    "text": "Make a copy",
+                    "classes": "govuk-button--secondary govuk-!-margin-0",
+                  }) }}
+              </form>
+            </td>
+          {% endif %}
+        </tr>
+        {% endfor -%}
+      </tbody>
+    </table>
+  {% endif %}
+
 {% endblock %}
