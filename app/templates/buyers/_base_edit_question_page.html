@@ -4,6 +4,7 @@
 {% from "govuk/components/label/macro.njk" import govukLabel %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "digitalmarketplace/components/list-input/macro.njk" import dmListInput %}
 
 {% import "toolkit/forms/macros/forms.html" as forms %}
@@ -11,7 +12,12 @@
 {%- macro show_question(is_govuk_frontend, question, brief, errors, is_only_question=True) %}
   {% if is_govuk_frontend %}
     {% set form = govuk_frontend_from_question(question, brief, errors, is_page_heading=is_only_question) %}
-    {% set govuk_forms = {"govukInput": govukInput, "govukRadios": govukRadios, "dmListInput": dmListInput} %}
+    {% set govuk_forms = {
+      "govukInput": govukInput, 
+      "govukRadios": govukRadios, 
+      "dmListInput": dmListInput, 
+      "govukCharacterCount": govukCharacterCount
+    } %}
     {%- if form.label %}
       {{ govukLabel(form.label) }}
     {% endif -%}
