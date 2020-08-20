@@ -1,20 +1,33 @@
 {% extends "_base_page.html" %}
 
-{% import "toolkit/forms/macros/forms.html" as forms %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "govuk/components/label/macro.njk" import govukLabel %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
 {% from "digitalmarketplace/components/list-input/macro.njk" import dmListInput %}
+
+{% import "toolkit/forms/macros/forms.html" as forms %}
 
 {%- macro show_question(is_govuk_frontend, question, brief, errors, is_only_question=True) %}
   {% if is_govuk_frontend %}
     {% set form = govuk_frontend_from_question(question, brief, errors, is_page_heading=is_only_question) %}
-    {% set govuk_forms = {"govukInput": govukInput, "dmListInput": dmListInput} %}
+    {% set govuk_forms = {"govukInput": govukInput, "govukRadios": govukRadios, "dmListInput": dmListInput} %}
     {%- if form.label %}
       {{ govukLabel(form.label) }}
     {% endif -%}
-    {% if not form.params.question_advice %}
-      {{ question.question_advice }}
+    {% if form.fieldset %}
+      {% call govukFieldset(form.fieldset) %}
+        {% if not form.params.question_advice %}
+          {{ question.question_advice }}
+        {% endif %}
+        {{ govuk_forms[form.macro_name](form.params) }}
+      {% endcall %}
+    {% else %}
+      {% if not form.params.question_advice %}
+        {{ question.question_advice }}
+      {% endif %}
+      {{ govuk_forms[form.macro_name](form.params) }}
     {% endif %}
-    {{ govuk_forms[form.macro_name](form.params) }}
   {% elif errors and errors[question.id] %}
     {{ forms[question.type](question, brief, errors) }}
   {% else %}
