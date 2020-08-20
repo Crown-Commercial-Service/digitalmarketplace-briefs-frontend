@@ -18,3 +18,7 @@
   @include govuk-font($size: 36, $weight: bold);
   margin-bottom: govuk-spacing(3);
 }
+
+.govuk-radios__label {
+  @include govuk-font($size: 19)
+}
