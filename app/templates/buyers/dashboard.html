@@ -62,7 +62,7 @@
             <form method="post" action="{{ url_for('.copy_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
               {{ govukButton({
-                "text": "Make a copy",
+                "html": 'Make a copy<span class="govuk-visually-hidden"> of ' + brief.title + '</span>',
                 "classes": "govuk-button--secondary govuk-!-margin-0",
               }) }}
             </form>
@@ -97,7 +97,7 @@
             <form method="post" action="{{ url_for('.copy_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
               {{ govukButton({
-                "text": "Make a copy",
+                "html": 'Make a copy<span class="govuk-visually-hidden"> of ' + brief.title + '</span>',
                 "classes": "govuk-button--secondary govuk-!-margin-0",
               }) }}
             </form>
@@ -129,13 +129,13 @@
             <td class="govuk-table__cell">{{ brief.applicationsClosedAt|dateformat }}</td>
             <td class="govuk-table__cell app-align-right">
               <div class="govuk-!-padding-bottom-2">
-                  <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.view_brief_responses', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">View responses</a></p>
-                  <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">Let suppliers know the outcome</a></p>
+                  <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.view_brief_responses', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">View responses<span class="govuk-visually-hidden"> for {{ brief.title }}</span></a></p>
+                  <p class="govuk-body"><a class="govuk-link" href="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">Let suppliers know the outcome<span class="govuk-visually-hidden"> of {{ brief.title }}</span></a></p>
               </div>
               <form method="post" action="{{ url_for('.copy_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
                   {{ govukButton({
-                    "text": "Make a copy",
+                    "html": 'Make a copy<span class="govuk-visually-hidden"> of ' + brief.title + '</span>',
                     "classes": "govuk-button--secondary govuk-!-margin-0",
                   }) }}
               </form>
@@ -147,7 +147,7 @@
               <form method="post" action="{{ url_for('.copy_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
                   {{ govukButton({
-                    "text": "Make a copy",
+                    "html": 'Make a copy<span class="govuk-visually-hidden"> of ' + brief.title + '</span>',
                     "classes": "govuk-button--secondary govuk-!-margin-0",
                   }) }}
               </form>
@@ -159,7 +159,7 @@
               <form method="post" action="{{ url_for('.copy_brief', framework_slug=brief.framework.slug, lot_slug=brief.lot, brief_id=brief.id) }}">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token_value or csrf_token() }}" />
                   {{ govukButton({
-                    "text": "Make a copy",
+                    "html": 'Make a copy<span class="govuk-visually-hidden"> of ' + brief.title + '</span>',
                     "classes": "govuk-button--secondary govuk-!-margin-0",
                   }) }}
               </form>
