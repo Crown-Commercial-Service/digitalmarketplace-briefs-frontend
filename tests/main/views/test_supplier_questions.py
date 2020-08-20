@@ -341,7 +341,7 @@ class TestAddBriefClarificationQuestion(BaseApplicationTest):
         document = html.fromstring(res.get_data(as_text=True))
 
         assert res.status_code == 400
-        assert len(document.cssselect(".validation-message")) == 1, res.get_data(as_text=True)
+        assert len(document.cssselect(".govuk-form-group--error")) == 1, res.get_data(as_text=True)
 
     def test_api_error(self):
         brief_json = BriefStub(
