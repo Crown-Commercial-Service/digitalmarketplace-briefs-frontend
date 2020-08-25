@@ -672,10 +672,10 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         res = self.client.post(self.url.format(brief_id=123))
 
         document = html.fromstring(res.get_data(as_text=True))
-        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
+        error_message = document.xpath('//span[@class="govuk-error-message"]')[0].text_content()
 
         assert res.status_code == 400
-        assert "Select if you have awarded a contract." in validation_message
+        assert "Select if you have awarded a contract." in error_message
         assert self.data_api_client.cancel_brief.called is False
 
     def test_yes_redirects_to_award_form_page(self):
@@ -720,7 +720,7 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         res = self.client.post(self.url.format(brief_id=self.brief['id']), data={'award_or_cancel_decision': 'foo'})
 
         document = html.fromstring(res.get_data(as_text=True))
-        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
+        error_message = document.xpath('//span[@class="govuk-error-message"]')[0].text_content()
 
         assert res.status_code == 400
-        assert "Not a valid choice" in validation_message
+        assert "Not a valid choice" in error_message
