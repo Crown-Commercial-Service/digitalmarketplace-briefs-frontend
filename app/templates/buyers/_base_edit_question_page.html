@@ -3,6 +3,7 @@
 {% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "govuk/components/label/macro.njk" import govukLabel %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "digitalmarketplace/components/list-input/macro.njk" import dmListInput %}
@@ -14,7 +15,8 @@
     {% set form = govuk_frontend_from_question(question, brief, errors, is_page_heading=is_only_question) %}
     {% set govuk_forms = {
       "govukInput": govukInput, 
-      "govukRadios": govukRadios, 
+      "govukRadios": govukRadios,
+      "govukCheckboxes": govukCheckboxes,
       "dmListInput": dmListInput, 
       "govukCharacterCount": govukCharacterCount
     } %}
