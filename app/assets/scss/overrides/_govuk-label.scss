@@ -19,6 +19,6 @@
   margin-bottom: govuk-spacing(3);
 }
 
-.govuk-radios__label, .govuk-checkboxes__label {
+.govuk-radios__label, .govuk-checkboxes__label, .govuk-date-input__label {
   @include govuk-font($size: 19)
 }
