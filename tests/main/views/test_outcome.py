@@ -87,9 +87,14 @@ class TestAwardBrief(BaseApplicationTest):
 
         document = html.fromstring(res.get_data(as_text=True))
         for i, brief_response in enumerate([(2, 'Aobbins'), (90, 'Bobbins'), (4444, 'Cobbins'), (23, 'Dobbins')]):
-            input_id = document.xpath('//input[@id="input-brief_response-{}"]/@value'.format(i + 1))[0]
-            assert int(input_id) == brief_response[0]
-            label = document.xpath('//label[@for="input-brief_response-{}"]'.format(i + 1))[0]
+            if i == 0:
+                input_id = "brief_response"
+            else:
+                input_id = "brief_response-{}".format(i + 1)
+
+            input_value = document.xpath(f'//input[@id="{input_id}"]/@value')[0]
+            assert int(input_value) == brief_response[0]
+            label = document.xpath(f'//label[@for="{input_id}"]')[0]
             assert self._strip_whitespace(label.text_content()) == brief_response[1]
 
     def test_award_brief_get_populates_form_with_a_previously_chosen_brief_response(self):
@@ -107,8 +112,10 @@ class TestAwardBrief(BaseApplicationTest):
         res = self.client.get(self.url.format(brief_id=1234))
         assert res.status_code == 200
         document = html.fromstring(res.get_data(as_text=True))
-        selected_label_class = document.xpath('//label[@for="input-brief_response-2"]/@class')[0]
-        assert "selected" in selected_label_class
+        checked_option = document.xpath('//input[@id="brief_response-2"]/@checked')
+        unchecked_option = document.xpath('//input[@id="brief_response-1"]/@checked')
+        assert len(checked_option) == 1
+        assert len(unchecked_option) == 0
 
         assert self.data_api_client.find_brief_responses.call_args == mock.call(
             1234, status="submitted,pending-awarded"
@@ -149,10 +156,10 @@ class TestAwardBrief(BaseApplicationTest):
 
         assert res.status_code == 400
 
-        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
-        assert validation_message.strip() == "Select a supplier."
+        error_message = document.xpath('//span[@class="govuk-error-message"]')[0].text_content()
+        assert error_message.strip() == "Error: Select a supplier."
 
-        errors = document.xpath('//span[@id="error-brief_response"]')
+        errors = document.xpath('//span[@id="brief_response-error"]')
         # assert that a framework iteration specific message has been rendered
         assert len(errors) == 1
         assert len(errors[0].text_content()) > 0
@@ -165,11 +172,11 @@ class TestAwardBrief(BaseApplicationTest):
 
         assert res.status_code == 400
 
-        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
-        assert validation_message.strip() == "Not a valid choice"
+        error_message = document.xpath('//span[@class="govuk-error-message"]')[0].text_content()
+        assert error_message.strip() == "Error: Not a valid choice"
 
-        error_span = document.xpath('//span[@id="error-brief_response"]')[0]
-        assert self._strip_whitespace(error_span.text_content()) == "Notavalidchoice"
+        error_span = document.xpath('//span[@id="brief_response-error"]')[0]
+        assert self._strip_whitespace(error_span.text_content()) == "Error:Notavalidchoice"
 
     def test_award_brief_post_valid_form_calls_api_and_redirects_to_next_question(self):
         self.data_api_client.update_brief_award_brief_response.return_value = FrameworkStub(
