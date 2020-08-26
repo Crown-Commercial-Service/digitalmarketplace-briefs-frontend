@@ -549,10 +549,10 @@ class TestCancelBrief(BaseApplicationTest):
         res = self.client.post(self.url.format(brief_id=123))
 
         document = html.fromstring(res.get_data(as_text=True))
-        validation_message = document.xpath('//span[@class="validation-message"]')[0].text_content()
+        error_message = document.xpath('//span[@class="govuk-error-message"]')[0].text_content()
 
         assert res.status_code == 400
-        assert "Select a reason for cancelling the brief." in validation_message
+        assert "Select a reason for cancelling the brief." in error_message
 
     def test_that_no_option_chosen_does_not_trigger_update(self):
         res = self.client.post(self.url.format(brief_id=123))
