@@ -352,7 +352,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
 
         assert res.status_code == 400
         self._assert_error_summary(document)
-        error_spans = document.xpath('//span[@class="validation-message"]')
+        error_spans = document.cssselect('span.validation-message, span.govuk-error-message')
         # assert that framework iteration specific messages have been rendered
         assert len(self._strip_whitespace(error_spans[0].text_content())) > 0
         assert len(self._strip_whitespace(error_spans[1].text_content())) > 0
@@ -380,9 +380,10 @@ class TestAwardBriefDetails(BaseApplicationTest):
         self._assert_error_summary(document)
 
         # Individual error messages
-        error_spans = document.xpath('//span[@class="validation-message"]')
-        assert self._strip_whitespace(error_spans[0].text_content()) == "Enterarealstartdate."
-        assert self._strip_whitespace(error_spans[1].text_content()) == \
+        date_error_span = document.xpath('//span[@class="govuk-error-message"]')
+        value_error_span = document.xpath('//span[@class="validation-message"]')
+        assert self._strip_whitespace(date_error_span[0].text_content()) == "Error:Enterarealstartdate."
+        assert self._strip_whitespace(value_error_span[0].text_content()) == \
             "Enterthevalueinpoundsandpence,usingnumbersanddecimalsonly."
 
         # Prefilled form input
