@@ -1,6 +1,8 @@
 {% extends "_base_page.html" %}
 
 {% import "toolkit/forms/macros/forms.html" as forms %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% import "macros/show_question.html" as show_question %}
 
 {% block pageTitle %}
   {{ brief.title or brief.lotName }} – Digital Marketplace
@@ -42,13 +44,10 @@
       <h1 class="govuk-heading-l">Tell us about your contract with {{ pending_brief_response.supplierName }}</h1>
       <form method="POST" action="{{ url_for('.award_brief_details', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, brief_response_id=pending_brief_response.id) }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          {% for question in section.questions %}
-            {{ forms[question.type](
-                question,
-                data,
-                errors if errors and (errors[question.id] or question.type == 'multiquestion') else {},
-                )
-            }}
+
+          {% for question in section.questions %}  
+            {% set is_govuk_frontend = govuk_frontend_from_question(question) %}
+            {{ show_question.show_question(is_govuk_frontend, question, data, errors, is_only_question=False) }}
           {% endfor %}
 
           {% block save_button %}
