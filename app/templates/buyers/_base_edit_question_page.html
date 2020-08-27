@@ -1,50 +1,7 @@
 {% extends "_base_page.html" %}
 
-{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
-{% from "govuk/components/label/macro.njk" import govukLabel %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
-
-{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
-{% from "digitalmarketplace/components/list-input/macro.njk" import dmListInput %}
-
 {% import "toolkit/forms/macros/forms.html" as forms %}
-
-{%- macro show_question(is_govuk_frontend, question, brief, errors, is_only_question=True) %}
-  {% if is_govuk_frontend %}
-    {% set form = govuk_frontend_from_question(question, brief, errors, is_page_heading=is_only_question) %}
-    {% set govuk_forms = {
-      "govukInput": govukInput, 
-      "govukRadios": govukRadios,
-      "govukCheckboxes": govukCheckboxes,
-      "govukDateInput": govukDateInput, 
-      "govukRadios": govukRadios, 
-      "dmListInput": dmListInput, 
-      "govukCharacterCount": govukCharacterCount
-    } %}
-    {%- if form.label %}
-      {{ govukLabel(form.label) }}
-    {% endif -%}
-    {% if form.fieldset %}
-      {% call govukFieldset(form.fieldset) %}
-        {% if not form.params.question_advice %}
-          {{ question.question_advice }}
-        {% endif %}
-        {{ govuk_forms[form.macro_name](form.params) }}
-      {% endcall %}
-    {% else %}
-      {% if not form.params.question_advice %}
-        {{ question.question_advice }}
-      {% endif %}
-      {{ govuk_forms[form.macro_name](form.params) }}
-    {% endif %}
-  {% elif errors and errors[question.id] %}
-    {{ forms[question.type](question, brief, errors) }}
-  {% else %}
-    {{ forms[question.type](question, brief, {}) }}
-  {% endif %}
-{% endmacro -%}
+{% import "macros/show_question.html" as show_question %}
 
 {% block pageTitle %}
   {{ question.question }} – Digital Marketplace
@@ -72,7 +29,7 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
           {% if question.type != 'multiquestion' %}
-            {{ show_question(is_govuk_frontend, question, brief, errors) }}
+            {{ show_question.show_question(is_govuk_frontend, question, brief, errors) }}
           {% else %}
             {% if question.question_advice %}
               <span class="question-advice">
@@ -81,7 +38,7 @@
             {% endif %}
             {% for question in question.questions %}
               {% set is_govuk_frontend = govuk_frontend_from_question(question) %}
-              {{ show_question(is_govuk_frontend, question, brief, errors, is_only_question=False) }}
+              {{ show_question.show_question(is_govuk_frontend, question, brief, errors, is_only_question=False) }}
             {% endfor %}
           {% endif %}
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
