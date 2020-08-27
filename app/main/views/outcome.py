@@ -16,7 +16,7 @@ from ..forms.award_or_cancel import AwardOrCancelBriefForm
 from dmapiclient import HTTPError
 from dmutils.flask import timed_render_template as render_template
 from dmutils.forms.errors import govuk_errors
-from dmutils.forms.helpers import get_errors_from_wtform
+from dmutils.forms.helpers import get_errors_from_wtform, govuk_options
 
 BRIEF_UPDATED_MESSAGE = "You’ve updated ‘{brief[title]}’"
 
@@ -97,6 +97,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
         )
 
     form = AwardedBriefResponseForm(brief_responses)
+    form_options = govuk_options(form.brief_response.toolkit_macro_options)
 
     if form.validate_on_submit():
         try:
@@ -126,6 +127,7 @@ def award_brief(framework_slug, lot_slug, brief_id):
         "buyers/award.html",
         brief=brief,
         form=form,
+        form_options=form_options,
         errors=errors
     ), 200 if not errors else 400
 
@@ -172,6 +174,7 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
         )
 
     form = CancelBriefForm(brief, label_text)
+    form_options = govuk_options(form.cancel_reason.toolkit_macro_options)
 
     if form.validate_on_submit():
         new_status = form.data.get('cancel_reason')
@@ -201,6 +204,7 @@ def cancel_brief(framework_slug, lot_slug, brief_id):
         "buyers/cancel_brief.html",
         brief=brief,
         form=form,
+        form_options=form_options,
         errors=errors,
         previous_page_url=previous_page_url
     ), 200 if not errors else 400

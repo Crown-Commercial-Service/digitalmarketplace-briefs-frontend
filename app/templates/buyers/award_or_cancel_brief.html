@@ -1,6 +1,5 @@
 {% extends "_base_page.html" %}
-
-{% import "toolkit/forms/macros/forms.html" as forms %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% block pageTitle %}
   {{ brief.title or brief.lotName }} – Digital Marketplace
@@ -47,20 +46,28 @@
             <a class="govuk-link" href="{{ url_for('external.get_brief_by_id', framework_family=brief.framework.family, brief_id=brief.id) }}">View the outcome of the requirements</a>
           </p>
       {% else %}
-          <h1 class="govuk-heading-l">{{ form.award_or_cancel_decision.label.text }}</h1>
           <form method="POST" action="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            {%
-                  with
-                  name = "award_or_cancel_decision",
-                  question = form.award_or_cancel_decision.label.text,
-                  type = "radio",
-                  options = form.award_or_cancel_decision.toolkit_macro_options,
-                  value = form.award_or_cancel_decision.data,
-                  error = errors.get('award_or_cancel_decision', {}).get('message', None)
-                  %}
-              {% include "toolkit/forms/selection-buttons.html" %}
-            {% endwith %}
+
+            {{ govukRadios({
+              "idPrefix": "input-award_or_cancel_decision",
+              "name": "award_or_cancel_decision",
+              "items": [
+                {"id": "award_or_cancel_decision", "text": "Yes", "value": "yes"},
+                {"text": "No", "value": "no"},
+                {"text": "We are still evaluating suppliers", "value": "back"},
+              ],
+              "errorMessage": {
+                "text": errors.get('award_or_cancel_decision', {}).get('message', None)
+              } if errors,
+              "fieldset": {
+                "legend": {
+                  "text": form.award_or_cancel_decision.label.text,
+                  "isPageHeading": True,
+                  "classes": "govuk-fieldset__legend--l",
+                }
+              }
+            })}}
 
             {% block save_button %}
               {{ govukButton({
