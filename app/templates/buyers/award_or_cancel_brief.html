@@ -45,7 +45,11 @@
           <a class="govuk-link" href="{{ url_for('external.get_brief_by_id', framework_family=brief.framework.family, brief_id=brief.id) }}">View the outcome of the requirements</a>
         </p>
     {% else %}
-        <form method="POST" action="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+        <form
+          action="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+          method="POST"
+          novalidate
+        >
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
           {{ govukRadios({

@@ -38,7 +38,11 @@
 {% block mainContent %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <form method="POST" action="{{ url_for(request.endpoint, framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+      <form
+        action="{{ url_for(request.endpoint, framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+        method="POST"
+        novalidate
+      >
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         
         <div class="govuk-form-group {%- if errors %} govuk-form-group--error{% endif %}">
