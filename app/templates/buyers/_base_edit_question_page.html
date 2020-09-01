@@ -10,10 +10,6 @@
 {% block mainContent %}
   {% set is_govuk_frontend = govuk_frontend_from_question(question) %}
 
-  {% if question.type != 'multiquestion' %}
-    <div class="single-question-page">
-  {% endif %}
-
   {% if not is_govuk_frontend or question.type == 'multiquestion' %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -49,7 +45,4 @@
 
   </form>
 
-  {% if question.type != 'multiquestion' %}
-    </div>
-  {% endif %}
 {% endblock %}

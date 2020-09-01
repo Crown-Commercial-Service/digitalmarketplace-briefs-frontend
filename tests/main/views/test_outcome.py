@@ -669,11 +669,11 @@ class TestAwardOrCancelBrief(BaseApplicationTest):
         res = self.client.get(self.url.format(brief_id=self.brief["id"]))
 
         document = html.fromstring(res.get_data(as_text=True))
-        page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
-        view_outcome_link = document.xpath('//div[@class="single-question-page"]//a')[0].text_content()
+        page_title = document.cssselect("h1")[0].text.strip()
+        view_outcome_link = document.cssselect("main a.govuk-link")[0].text.strip()
 
         assert res.status_code == 200
-        assert page_title == "RequirementsalreadyupdatedforIneedathingtodoathing"
+        assert page_title == "Requirements already updated for I need a thing to do a thing"
         assert view_outcome_link == "View the outcome of the requirements"
 
     def test_that_no_option_chosen_triggers_error(self):
