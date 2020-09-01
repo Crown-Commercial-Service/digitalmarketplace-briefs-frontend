@@ -42,7 +42,11 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-l">Tell us about your contract with {{ pending_brief_response.supplierName }}</h1>
-      <form method="POST" action="{{ url_for('.award_brief_details', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, brief_response_id=pending_brief_response.id) }}">
+      <form
+        action="{{ url_for('.award_brief_details', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id, brief_response_id=pending_brief_response.id) }}"
+        method="POST"
+        novalidate
+      >
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
           {% for question in section.questions %}  

@@ -38,61 +38,63 @@
 {% block mainContent %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <div class="single-question-page">
-        <form method="POST" action="{{ url_for(request.endpoint, framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          
-          <div class="govuk-form-group {%- if errors %} govuk-form-group--error{% endif %}">
-            <fieldset class="govuk-fieldset" {%- if errors %} aria-describedby="cancel_reason-error" {% endif -%}>
-              <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                <h1 class="govuk-fieldset__heading">
-                  {{ form.cancel_reason.label.text }}
-                </h1>
-              </legend>
-          
-              <p class="govuk-body">
-                  This information will be added to your requirements. Suppliers will receive a link to view the update.
-              </p>
-              <p class="govuk-body">
-                  You’ll still need to contact suppliers to give them feedback.
-              </p>
+      <form
+        action="{{ url_for(request.endpoint, framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+        method="POST"
+        novalidate
+      >
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        
+        <div class="govuk-form-group {%- if errors %} govuk-form-group--error{% endif %}">
+          <fieldset class="govuk-fieldset" {%- if errors %} aria-describedby="cancel_reason-error" {% endif -%}>
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+              <h1 class="govuk-fieldset__heading">
+                {{ form.cancel_reason.label.text }}
+              </h1>
+            </legend>
+        
+            <p class="govuk-body">
+                This information will be added to your requirements. Suppliers will receive a link to view the update.
+            </p>
+            <p class="govuk-body">
+                You’ll still need to contact suppliers to give them feedback.
+            </p>
 
-              <div class="govuk-radios">
-                {% if errors %}
-                  {{ govukErrorMessage({
-                    "id": "cancel_reason-error",
-                    "text": errors.get('cancel_reason', {}).get('message', None)
-                  })}}
+            <div class="govuk-radios">
+              {% if errors %}
+                {{ govukErrorMessage({
+                  "id": "cancel_reason-error",
+                  "text": errors.get('cancel_reason', {}).get('message', None)
+                })}}
+              {% endif %}
+              {% for item in form_options %}
+                {% set checked = item.value == form.cancel_reason.data %}
+                {% if item %}
+                  {%- if loop.first -%}
+                    {%- set id = "cancel_reason" %}
+                  {% else %}
+                    {%- set id = "cancel_reason-" ~ loop.index -%}
+                  {%- endif -%}
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="{{ id }}" name="cancel_reason" type="radio" value="{{ item.value }}" {%- if checked %} checked {% endif -%}>
+                    <label class="govuk-label govuk-radios__label" for="{{ id }}">
+                      {{ item.text }}
+                    </label>
+                  </div>
                 {% endif %}
-                {% for item in form_options %}
-                  {% set checked = item.value == form.cancel_reason.data %}
-                  {% if item %}
-                    {%- if loop.first -%}
-                      {%- set id = "cancel_reason" %}
-                    {% else %}
-                      {%- set id = "cancel_reason-" ~ loop.index -%}
-                    {%- endif -%}
-                    <div class="govuk-radios__item">
-                      <input class="govuk-radios__input" id="{{ id }}" name="cancel_reason" type="radio" value="{{ item.value }}" {%- if checked %} checked {% endif -%}>
-                      <label class="govuk-label govuk-radios__label" for="{{ id }}">
-                        {{ item.text }}
-                      </label>
-                    </div>
-                  {% endif %}
-                {% endfor %}
-              </div>
-            </fieldset>
-          </div>
+              {% endfor %}
+            </div>
+          </fieldset>
+        </div>
 
-          {% block save_button %}
-            {{ govukButton({
-              "text": "Update requirements",
-              "name": "submit",
-            }) }}
-          {% endblock %}
-        </form>
-        <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block" href="{{ previous_page_url }}">Previous page</a>
-      </div>
+        {% block save_button %}
+          {{ govukButton({
+            "text": "Update requirements",
+            "name": "submit",
+          }) }}
+        {% endblock %}
+      </form>
+      <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block" href="{{ previous_page_url }}">Previous page</a>
     </div>
   </div>
 {% endblock %}

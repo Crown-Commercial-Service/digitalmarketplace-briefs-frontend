@@ -39,64 +39,67 @@
 {% block mainContent %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <div class="single-question-page">
-      <form method="POST" action="{{ url_for('.award_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <form
+      action="{{ url_for('.award_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+      method="POST"
+      novalidate
+    >
 
-        <div class="govuk-form-group {%- if errors %} govuk-form-group--error{% endif %}">
-          <fieldset class="govuk-fieldset" {%- if errors %} aria-describedby="brief_response-error" {% endif -%}>
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-              <h1 class="govuk-fieldset__heading">
-                Who won the {{ brief.title }} contract?
-              </h1>
-            </legend>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-            <p class="govuk-body">
-                This information will be added to your requirements. Suppliers will receive a link to view the update.
-            </p>
-            <p class="govuk-body">
-                You’ll still need to contact suppliers to give them feedback.
-            </p>
+      <div class="govuk-form-group {%- if errors %} govuk-form-group--error{% endif %}">
+        <fieldset class="govuk-fieldset" {%- if errors %} aria-describedby="brief_response-error" {% endif -%}>
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+            <h1 class="govuk-fieldset__heading">
+              Who won the {{ brief.title }} contract?
+            </h1>
+          </legend>
 
-            <div class="govuk-radios">
-              {% if errors %}
-                {{ govukErrorMessage({
-                  "id": "brief_response-error",
-                  "text": errors.get('brief_response', {}).get('message', None)
-                })}}
+          <p class="govuk-body">
+              This information will be added to your requirements. Suppliers will receive a link to view the update.
+          </p>
+          <p class="govuk-body">
+              You’ll still need to contact suppliers to give them feedback.
+          </p>
+
+          <div class="govuk-radios">
+            {% if errors %}
+              {{ govukErrorMessage({
+                "id": "brief_response-error",
+                "text": errors.get('brief_response', {}).get('message', None)
+              })}}
+            {% endif %}
+            {% for item in form_options %}
+              {% set checked = item.value == form.brief_response.data %}
+              {% if item %}
+                {%- if loop.first -%}
+                  {%- set id = "brief_response" %}
+                {% else %}
+                  {%- set id = "brief_response-" ~ loop.index -%}
+                {%- endif -%}
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="{{ id }}" name="brief_response" type="radio" value="{{ item.value }}" {%- if checked %} checked {% endif -%}>
+                  <label class="govuk-label govuk-radios__label" for="{{ id }}">
+                    {{ item.text }}
+                  </label>
+                </div>
               {% endif %}
-              {% for item in form_options %}
-                {% set checked = item.value == form.brief_response.data %}
-                {% if item %}
-                  {%- if loop.first -%}
-                    {%- set id = "brief_response" %}
-                  {% else %}
-                    {%- set id = "brief_response-" ~ loop.index -%}
-                  {%- endif -%}
-                  <div class="govuk-radios__item">
-                    <input class="govuk-radios__input" id="{{ id }}" name="brief_response" type="radio" value="{{ item.value }}" {%- if checked %} checked {% endif -%}>
-                    <label class="govuk-label govuk-radios__label" for="{{ id }}">
-                      {{ item.text }}
-                    </label>
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </div>
-          </fieldset>
-        </div>
+            {% endfor %}
+          </div>
+        </fieldset>
+      </div>
 
-        {% block save_button %}
-          {{ govukButton({
-            "text": "Save and continue",
-            "name": "save_and_continue",
-          }) }}
-        {% endblock %}
-      </form>
-      <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
-          href="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief['lotSlug'], brief_id=brief['id']) }}">
-        Previous page
-      </a>
-    </div>
+      {% block save_button %}
+        {{ govukButton({
+          "text": "Save and continue",
+          "name": "save_and_continue",
+        }) }}
+      {% endblock %}
+    </form>
+    <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
+        href="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief['lotSlug'], brief_id=brief['id']) }}">
+      Previous page
+    </a>
   </div>
 </div>
 {% endblock %}

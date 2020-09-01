@@ -39,45 +39,47 @@
 {% block mainContent %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <div class="single-question-page">
-        {% if already_awarded %}
-          <h1 class="govuk-heading-l">Requirements already updated for {{ brief.title }}</h1>
-          <p class="govuk-body">
-            <a class="govuk-link" href="{{ url_for('external.get_brief_by_id', framework_family=brief.framework.family, brief_id=brief.id) }}">View the outcome of the requirements</a>
-          </p>
-      {% else %}
-          <form method="POST" action="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      {% if already_awarded %}
+        <h1 class="govuk-heading-l">Requirements already updated for {{ brief.title }}</h1>
+        <p class="govuk-body">
+          <a class="govuk-link" href="{{ url_for('external.get_brief_by_id', framework_family=brief.framework.family, brief_id=brief.id) }}">View the outcome of the requirements</a>
+        </p>
+    {% else %}
+        <form
+          action="{{ url_for('.award_or_cancel_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
+          method="POST"
+          novalidate
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-            {{ govukRadios({
-              "idPrefix": "input-award_or_cancel_decision",
-              "name": "award_or_cancel_decision",
-              "items": [
-                {"id": "award_or_cancel_decision", "text": "Yes", "value": "yes"},
-                {"text": "No", "value": "no"},
-                {"text": "We are still evaluating suppliers", "value": "back"},
-              ],
-              "errorMessage": {
-                "text": errors.get('award_or_cancel_decision', {}).get('message', None)
-              } if errors,
-              "fieldset": {
-                "legend": {
-                  "text": form.award_or_cancel_decision.label.text,
-                  "isPageHeading": True,
-                  "classes": "govuk-fieldset__legend--l",
-                }
+          {{ govukRadios({
+            "idPrefix": "input-award_or_cancel_decision",
+            "name": "award_or_cancel_decision",
+            "items": [
+              {"id": "award_or_cancel_decision", "text": "Yes", "value": "yes"},
+              {"text": "No", "value": "no"},
+              {"text": "We are still evaluating suppliers", "value": "back"},
+            ],
+            "errorMessage": {
+              "text": errors.get('award_or_cancel_decision', {}).get('message', None)
+            } if errors,
+            "fieldset": {
+              "legend": {
+                "text": form.award_or_cancel_decision.label.text,
+                "isPageHeading": True,
+                "classes": "govuk-fieldset__legend--l",
               }
-            })}}
+            }
+          })}}
 
-            {% block save_button %}
-              {{ govukButton({
-                "text": "Save and continue",
-                "name": "submit",
-              }) }}
-            {% endblock %}
-          </form>
-        {% endif %}
-      </div>
+          {% block save_button %}
+            {{ govukButton({
+              "text": "Save and continue",
+              "name": "submit",
+            }) }}
+          {% endblock %}
+        </form>
+      {% endif %}
     </div>
   </div>
 {% endblock %}
