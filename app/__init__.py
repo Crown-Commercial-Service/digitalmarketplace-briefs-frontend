@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, session
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
+import jinja2
 
 import dmapiclient
 import dmcontent.govuk_frontend
@@ -53,6 +54,9 @@ def create_app(config_name):
     application.jinja_env.globals["govuk_frontend_from_question"] = (
         dmcontent.govuk_frontend.from_question
     )
+
+    # allow looser attribute access in templates
+    application.jinja_env.undefined = jinja2.ChainableUndefined
 
     @application.before_request
     def remove_trailing_slash():
