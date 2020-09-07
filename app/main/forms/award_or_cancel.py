@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import RadioField, validators
+from dmutils.forms.helpers import govuk_options
 
 
 class AwardOrCancelBriefForm(FlaskForm):
@@ -19,4 +20,6 @@ class AwardOrCancelBriefForm(FlaskForm):
         super(AwardOrCancelBriefForm, self).__init__(*args, **kwargs)
         brief_name = brief.get('title', brief.get('lotName', ''))
         self.award_or_cancel_decision.label.text = "Have you awarded a contract for {}?".format(brief_name)
-        self.award_or_cancel_decision.toolkit_macro_options = [{'value': i[0], 'label': i[1]} for i in self.choices]
+        self.award_or_cancel_decision.govuk_options = govuk_options(
+            [{'value': i[0], 'label': i[1]} for i in self.choices]
+        )

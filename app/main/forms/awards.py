@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import RadioField, validators
+from dmutils.forms.helpers import govuk_options
 
 
 class AwardedBriefResponseForm(FlaskForm):
@@ -27,4 +28,6 @@ class AwardedBriefResponseForm(FlaskForm):
         )
 
         self.brief_response.choices = [(br['id'], br['name']) for br in brief_responses]
-        self.brief_response.toolkit_macro_options = [{"value": br['id'], "label": br['name']} for br in brief_responses]
+        self.brief_response.govuk_options = govuk_options(
+            [{"value": br['id'], "label": br['name']} for br in brief_responses]
+        )
