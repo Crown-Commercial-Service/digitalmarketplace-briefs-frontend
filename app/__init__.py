@@ -7,8 +7,6 @@ import dmcontent.govuk_frontend
 from dmutils import init_app
 from dmutils.user import User
 
-from govuk_frontend_jinja.flask_ext import init_govuk_frontend
-
 from config import configs
 
 
@@ -21,9 +19,6 @@ def create_app(config_name):
     application = Flask(__name__,
                         static_folder='static/',
                         static_url_path=configs[config_name].STATIC_URL_PATH)
-
-    # allow using govuk-frontend Nunjucks templates
-    init_govuk_frontend(application)
 
     init_app(
         application,

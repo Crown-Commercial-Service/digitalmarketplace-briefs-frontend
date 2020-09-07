@@ -67,9 +67,13 @@ class Config(object):
 
     @staticmethod
     def init_app(app):
+        class GOVUKFrontendJinjaLoader(jinja2.PackageLoader):
+            # work around the fact that the filenames are different in govuk_frontend_jinja
+            def get_source(self, environment, template):
+                return super().get_source(environment, template.replace(".njk", ".html"))
+
         repo_root = os.path.abspath(os.path.dirname(__file__))
         digitalmarketplace_govuk_frontend = os.path.join(repo_root, "node_modules", "digitalmarketplace-govuk-frontend")
-        govuk_frontend = os.path.join(repo_root, "node_modules", "govuk-frontend")
         template_folders = [
             os.path.join(repo_root, 'app', 'templates'),
             os.path.join(digitalmarketplace_govuk_frontend),
@@ -77,7 +81,10 @@ class Config(object):
         ]
         jinja_loader = jinja2.ChoiceLoader([
             jinja2.FileSystemLoader(template_folders),
-            jinja2.PrefixLoader({'govuk': jinja2.FileSystemLoader(govuk_frontend)})
+            jinja2.PrefixLoader({
+                "govuk": GOVUKFrontendJinjaLoader("govuk_frontend_jinja"),
+                "govuk_frontend_jinja": jinja2.PackageLoader("govuk_frontend_jinja"),
+            })
         ])
         app.jinja_loader = jinja_loader
 
