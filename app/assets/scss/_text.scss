@@ -1,22 +1,3 @@
-@import "typography";
-
-body {
-  @include core-19;
-}
-
-.lede {
-  font-size: 100%;
-  margin-bottom: 2em;
-
-  @include media(desktop) {
-    width: 66%;
-  }
-}
-
-.visual-emphasis {
-  font-weight: bold;
-}
-
 /*
  * GOV.UK Frontend is considering adding alignment override classes,
  * but in the meantime this is a simple way to align things to the right.
