@@ -224,9 +224,8 @@ class BaseApplicationTest(object):
             assert expected_category == category
 
     def assert_breadcrumbs(self, response, extra_breadcrumbs=None):
-        breadcrumbs = html.fromstring(response.get_data(as_text=True)).xpath(
-            '//*[@class="govuk-breadcrumbs"]/ol/li'
-        )
+        document = html.fromstring(response.get_data(as_text=True))
+        breadcrumbs = document.cssselect(".govuk-breadcrumbs ol li")
 
         breadcrumbs_we_expect = [
             ('Digital Marketplace', '/'),
