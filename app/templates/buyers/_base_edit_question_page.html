@@ -1,6 +1,5 @@
 {% extends "_base_page.html" %}
 
-{% import "toolkit/forms/macros/forms.html" as forms %}
 {% import "macros/show_question.html" as show_question %}
 
 {% block pageTitle %}
@@ -8,9 +7,8 @@
 {% endblock %}
 
 {% block mainContent %}
-  {% set is_govuk_frontend = govuk_frontend_from_question(question) %}
 
-  {% if not is_govuk_frontend or question.type == 'multiquestion' %}
+  {% if question.type == 'multiquestion' %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-l">
@@ -20,12 +18,12 @@
   </div>
   {% endif %}
 
-  <form method="post" enctype="multipart/form-data" action="{{ request.path }}">
+  <form method="post" enctype="multipart/form-data" action="{{ request.path }}" novalidate>
 
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
           {% if question.type != 'multiquestion' %}
-            {{ show_question.show_question(is_govuk_frontend, question, brief, errors) }}
+            {{ show_question.show_question(question, brief, errors) }}
           {% else %}
             {% if question.question_advice %}
               <span class="question-advice">
@@ -33,8 +31,7 @@
               </span>
             {% endif %}
             {% for question in question.questions %}
-              {% set is_govuk_frontend = govuk_frontend_from_question(question) %}
-              {{ show_question.show_question(is_govuk_frontend, question, brief, errors, is_only_question=False) }}
+              {{ show_question.show_question(question, brief, errors, is_only_question=False) }}
             {% endfor %}
           {% endif %}
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
