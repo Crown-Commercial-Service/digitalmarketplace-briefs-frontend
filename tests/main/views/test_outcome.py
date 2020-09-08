@@ -380,11 +380,11 @@ class TestAwardBriefDetails(BaseApplicationTest):
         self._assert_error_summary(document)
 
         # Individual error messages
-        date_error_span = document.xpath('//span[@class="govuk-error-message"]')
-        value_error_span = document.xpath('//span[@class="validation-message"]')
-        assert self._strip_whitespace(date_error_span[0].text_content()) == "Error:Enterarealstartdate."
-        assert self._strip_whitespace(value_error_span[0].text_content()) == \
-            "Enterthevalueinpoundsandpence,usingnumbersanddecimalsonly."
+        error_messages = document.cssselect(".govuk-error-message")
+        assert [msg.text_content().strip() for msg in error_messages] == [
+            "Error: Enter a real start date.",
+            "Error: Enter the value in pounds and pence, using numbers and decimals only.",
+        ]
 
         # Prefilled form input
         assert document.xpath('//input[@id="input-awardedContractValue"]/@value')[0] == "incorrect"
