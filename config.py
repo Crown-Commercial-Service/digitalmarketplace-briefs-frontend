@@ -1,10 +1,7 @@
 import os
 import hashlib
-import jinja2
 from dmutils.status import get_version_label
 from dmutils.asset_fingerprint import AssetFingerprinter
-
-basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 def get_asset_fingerprint(asset_file_path):
@@ -64,29 +61,6 @@ class Config(object):
     DM_PLAIN_TEXT_LOGS = False
     DM_LOG_PATH = None
     DM_APP_NAME = 'briefs-frontend'
-
-    @staticmethod
-    def init_app(app):
-        class GOVUKFrontendJinjaLoader(jinja2.PackageLoader):
-            # work around the fact that the filenames are different in govuk_frontend_jinja
-            def get_source(self, environment, template):
-                return super().get_source(environment, template.replace(".njk", ".html"))
-
-        repo_root = os.path.abspath(os.path.dirname(__file__))
-        digitalmarketplace_govuk_frontend = os.path.join(repo_root, "node_modules", "digitalmarketplace-govuk-frontend")
-        template_folders = [
-            os.path.join(repo_root, 'app', 'templates'),
-            os.path.join(digitalmarketplace_govuk_frontend),
-            os.path.join(digitalmarketplace_govuk_frontend, "digitalmarketplace", "templates"),
-        ]
-        jinja_loader = jinja2.ChoiceLoader([
-            jinja2.FileSystemLoader(template_folders),
-            jinja2.PrefixLoader({
-                "govuk": GOVUKFrontendJinjaLoader("govuk_frontend_jinja"),
-                "govuk_frontend_jinja": jinja2.PackageLoader("govuk_frontend_jinja"),
-            })
-        ])
-        app.jinja_loader = jinja_loader
 
 
 class Test(Config):
