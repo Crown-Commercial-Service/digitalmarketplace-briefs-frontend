@@ -1,14 +1,13 @@
-from pathlib import Path
-
 from flask import Flask, request, redirect, session
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
-import jinja2
 
 import dmapiclient
 import dmcontent.govuk_frontend
 from dmutils import init_app
 from dmutils.user import User
+
+from govuk_frontend_jinja.flask_ext import init_govuk_frontend
 
 from config import configs
 
@@ -18,37 +17,13 @@ data_api_client = dmapiclient.DataAPIClient()
 csrf = CSRFProtect()
 
 
-def init_jinja(app):
-    """Setup Jinja environment for app"""
-
-    # We create a hacked version of PackageLoader to work around the fact that
-    # the filenames are different in govuk_frontend_jinja
-    class GOVUKFrontendJinjaLoader(jinja2.PackageLoader):
-        def get_source(self, environment, template):
-            return super().get_source(environment, template.replace(".njk", ".html"))
-
-    repo_root = Path(__file__, "..", "..").resolve()
-    digitalmarketplace_govuk_frontend = repo_root / "node_modules" / "digitalmarketplace-govuk-frontend"
-
-    app.jinja_loader = jinja2.ChoiceLoader([
-        jinja2.FileSystemLoader([
-            repo_root / "app" / "templates",
-            digitalmarketplace_govuk_frontend,
-            digitalmarketplace_govuk_frontend / "digitalmarketplace" / "templates",
-        ]),
-        jinja2.PrefixLoader({
-            "govuk": GOVUKFrontendJinjaLoader("govuk_frontend_jinja"),
-            "govuk_frontend_jinja": jinja2.PackageLoader("govuk_frontend_jinja"),
-        })
-    ])
-
-
 def create_app(config_name):
     application = Flask(__name__,
                         static_folder='static/',
                         static_url_path=configs[config_name].STATIC_URL_PATH)
 
-    init_jinja(application)
+    # allow using govuk-frontend Nunjucks templates
+    init_govuk_frontend(application)
 
     init_app(
         application,
@@ -83,9 +58,6 @@ def create_app(config_name):
     application.jinja_env.globals["govuk_frontend_from_question"] = (
         dmcontent.govuk_frontend.from_question
     )
-
-    # allow looser attribute access in templates
-    application.jinja_env.undefined = jinja2.ChainableUndefined
 
     @application.before_request
     def remove_trailing_slash():
