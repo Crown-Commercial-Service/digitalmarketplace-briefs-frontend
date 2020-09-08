@@ -266,10 +266,7 @@ class TestAwardBriefDetails(BaseApplicationTest):
         page_title = self._strip_whitespace(document.xpath('//h1')[0].text_content())
         assert page_title == "TellusaboutyourcontractwithBananaCorp"
 
-        submit_button = document.xpath(
-            '//button[@type="submit"][normalize-space(string())=$t]',
-            t="Update requirements",
-        )
+        submit_button = document.cssselect(".govuk-button:contains('Update requirements')")
         assert len(submit_button) == 1
 
         secondary_action_link = document.xpath('//a[normalize-space(text())="Previous page"]')[0]

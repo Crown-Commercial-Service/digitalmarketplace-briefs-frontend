@@ -1,11 +1,11 @@
-name: 'Required 1'
+name: 'Unhandled Question'
 depends:
   - "on": "lot"
     being: ['digital-specialists', 'digital-outcomes']
-type: text
-filterLabel: 'Required 1'
+type: unhandled
+filterLabel: 'Unhandled Question'
 validations:
   -
     name: answer_required
     message: 'This question requires an answer.'
-question: 'Required 1'
+question: 'Unhandled Question'

@@ -240,9 +240,8 @@ class BaseApplicationTest(object):
             assert dm_alert[0].cssselect(".dm-alert__body")[0].text_content().strip() == expected_message
 
     def assert_breadcrumbs(self, response, extra_breadcrumbs=None):
-        breadcrumbs = html.fromstring(response.get_data(as_text=True)).xpath(
-            '//*[@class="govuk-breadcrumbs"]/ol/li'
-        )
+        document = html.fromstring(response.get_data(as_text=True))
+        breadcrumbs = document.cssselect(".govuk-breadcrumbs ol li")
 
         breadcrumbs_we_expect = [
             ('Digital Marketplace', '/'),
