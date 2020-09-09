@@ -43,7 +43,7 @@
   </div>
 </div>
 
-<p id="clarification-questions" class="govuk-body govuk-!-font-size-24"><a href="{{url_for('.add_supplier_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id)}}">Answer a supplier question</a></p>
+<p id="clarification-questions" class="govuk-body govuk-!-font-size-24"><a class="govuk-link" href="{{url_for('.add_supplier_question', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id)}}">Answer a supplier question</a></p>
 {% if brief.clarificationQuestions is undefined or brief.clarificationQuestions|length == 0 %} 
 <p class="app-no-summary-content">No questions or answers have been published</p>
 {% else %}
