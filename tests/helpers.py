@@ -223,6 +223,22 @@ class BaseApplicationTest(object):
             assert expected_message in message, "Didn't find '{}' in '{}'".format(expected_message, message)
             assert expected_category == category
 
+    def assert_flashes_with_dm_alert(self, expected_message, expected_category):
+        # Test a flash message renders as a dmAlert. The flash message
+        # should show on the next page visited (whether or not it is the
+        # page expected from the redirect).
+        res = self.client.get("/buyers/404")
+        assert res.status_code == 404
+
+        document = html.fromstring(res.get_data(as_text=True))
+        dm_alert = document.cssselect(".dm-alert")
+        assert len(dm_alert) == 1
+
+        if expected_category == "success":
+            assert dm_alert[0].cssselect(".dm-alert__title")[0].text_content().strip() == expected_message
+        else:
+            assert dm_alert[0].cssselect(".dm-alert__body")[0].text_content().strip() == expected_message
+
     def assert_breadcrumbs(self, response, extra_breadcrumbs=None):
         breadcrumbs = html.fromstring(response.get_data(as_text=True)).xpath(
             '//*[@class="govuk-breadcrumbs"]/ol/li'

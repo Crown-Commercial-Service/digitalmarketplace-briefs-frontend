@@ -92,10 +92,11 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
         assert res.status_code == 302
         assert self.data_api_client.delete_brief.called
         assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-        self.assert_flashes(
-            "Your requirements ‘I need a thing to do a thing’ were deleted",
-            expected_category="success"
-        )
+
+        expected_message = "Your requirements ‘I need a thing to do a thing’ were deleted"
+        expected_category = "success"
+        self.assert_flashes(expected_message, expected_category)
+        self.assert_flashes_with_dm_alert(expected_message, expected_category)
 
     def test_404_if_framework_is_not_live_or_expired(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
