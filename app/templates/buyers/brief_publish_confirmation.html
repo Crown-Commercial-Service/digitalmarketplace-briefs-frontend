@@ -146,10 +146,12 @@
       {% endif %}
 
     {%- endif %}
-    <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
-       href="{{ url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
-      Return to overview
-    </a>
+    <p class="govuk-body">
+      <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
+        href="{{ url_for('.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
+        Return to overview
+      </a>
+    </p>
   </div>
 </div>
 

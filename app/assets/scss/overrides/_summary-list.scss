@@ -37,7 +37,7 @@
 .app-no-summary-content {
     color: $secondary-text-colour;
     @include core-16;
-    margin: 0 0 15px 0;
+    margin-bottom: govuk-spacing(7);
     border-top: 1px solid $border-colour;
     border-bottom: 1px solid $border-colour;
     padding-top: 10px;
