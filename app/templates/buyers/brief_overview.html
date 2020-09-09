@@ -256,13 +256,15 @@
         {% endwith %}
     </div>
     <div class="govuk-grid-column-one-third">
-      {% if brief.status == 'closed' %}
-        <a class="govuk-link" href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirements</a>
-      {% elif brief.status == 'live' %}
-        <a class="govuk-link" href="{{ url_for('buyers.withdraw_a_brief_warning', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Withdraw requirements</a>
-      {% elif brief.status == 'draft' %}
-        <a class="govuk-link" href="{{ url_for('buyers.delete_a_brief_warning', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Delete draft requirements</a>
-      {% endif %}
+      <p class="govuk-body">
+        {% if brief.status == 'closed' %}
+          <a class="govuk-link" href="{{ url_for('buyers.cancel_brief', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Cancel requirements</a>
+        {% elif brief.status == 'live' %}
+          <a class="govuk-link" href="{{ url_for('buyers.withdraw_a_brief_warning', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Withdraw requirements</a>
+        {% elif brief.status == 'draft' %}
+          <a class="govuk-link" href="{{ url_for('buyers.delete_a_brief_warning', framework_slug=framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">Delete draft requirements</a>
+        {% endif %}
+      </p>
     </div>
   </div>
 {% endblock %}
