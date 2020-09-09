@@ -104,10 +104,10 @@ class TestWithdrawBriefSubmission(BaseApplicationTest):
         assert res.status_code == 302
         assert self.data_api_client.delete_brief.call_args_list == []
         assert res.location == "http://localhost{}".format(self.briefs_dashboard_url)
-        self.assert_flashes(
-            "You’ve withdrawn your requirements for ‘I need a thing to do a thing’",
-            expected_category="success"
-        )
+
+        expected_flash_message = ("You’ve withdrawn your requirements for ‘I need a thing to do a thing’", "success")
+        self.assert_flashes(*expected_flash_message)
+        self.assert_flashes_with_dm_alert(*expected_flash_message)
 
     @pytest.mark.parametrize('framework_status', ['coming', 'open', 'pending', 'standstill'])
     def test_404_if_framework_is_not_live_or_expired(self, framework_status):

@@ -64,12 +64,16 @@ class TestApplication(BaseApplicationTest):
                 data={'anything': 'here'},
             )
 
-            self.assert_flashes("Your session has expired. Please log in again.", expected_category="error")
             assert res.status_code == 302
 
             # POST requests will not preserve the request path on redirect
             assert res.location == 'http://localhost/user/login'
             assert validate_csrf.call_args_list == [mock.call(None)]
+
+            expected_message = "Your session has expired. Please log in again."
+            expected_category = "error"
+            self.assert_flashes(expected_message, expected_category)
+            self.assert_flashes_with_dm_alert(expected_message, expected_category)
 
     def test_should_use_local_cookie_page_on_cookie_message(self):
         res = self.client.get('/buyers')

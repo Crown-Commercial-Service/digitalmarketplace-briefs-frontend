@@ -247,7 +247,11 @@ class TestBuyerRoleRequired(BaseApplicationTest):
         assert res.location == 'http://localhost/user/login?next={}'.format(
             self.briefs_dashboard_url.replace('/', '%2F')
         )
-        self.assert_flashes('You must log in with a buyer account to see this page.', expected_category='error')
+
+        expected_message = "You must log in with a buyer account to see this page."
+        expected_category = "error"
+        self.assert_flashes(expected_message, expected_category)
+        self.assert_flashes_with_dm_alert(expected_message, expected_category)
 
     def test_buyer_pages_ok_if_logged_in_as_buyer(self):
         self.login_as_buyer()
