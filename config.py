@@ -1,6 +1,8 @@
 import os
 import hashlib
 import jinja2
+import json
+import dmcontent.govuk_frontend
 from dmutils.status import get_version_label
 from dmutils.asset_fingerprint import AssetFingerprinter
 
@@ -80,6 +82,11 @@ class Config(object):
             jinja2.PrefixLoader({'govuk': jinja2.FileSystemLoader(govuk_frontend)})
         ])
         app.jinja_loader = jinja_loader
+
+        # Set the govuk_frontend_version to account for version-based quirks (eg: v3 Error Summary links to radios)
+        with open(os.path.join(repo_root, "node_modules", "govuk-frontend", "package.json")) as package_json_file:
+            package_json = json.load(package_json_file)
+            dmcontent.govuk_frontend.govuk_frontend_version = list(map(int, package_json["version"].split(".")))
 
 
 class Test(Config):
