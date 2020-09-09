@@ -61,10 +61,10 @@
             }) }}
           {% endblock %}
       </form>
-      <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
+      <p class="govuk-body"><a class="govuk-link"
          href="{{ url_for('.award_brief', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
         Previous page
-      </a>
+      </a></p>
     </div>
   </div>
 {% endblock %}

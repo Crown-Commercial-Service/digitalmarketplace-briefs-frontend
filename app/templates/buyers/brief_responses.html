@@ -67,10 +67,10 @@
           </ol>
           
           <div class="govuk-width-full">
-            <a class="govuk-link" 
+            <p class="govuk-body"><a class="govuk-link" 
                 href="{{ url_for('buyers.download_brief_responses', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
                 download
-            >Download supplier responses to this requirement (ODS)</a>
+            >Download supplier responses to this requirement (ODS)</a></p>
           </div>
 
         {% else %}
@@ -84,10 +84,10 @@
           </p>
 
           <div class="govuk-width-full">
-            <a class="govuk-link" 
+            <p class="govuk-body"><a class="govuk-link" 
                 href="{{ url_for('buyers.download_brief_responses', framework_slug=brief.frameworkSlug, lot_slug=brief.lotSlug, brief_id=brief.id) }}"
                 download
-            >Download supplier responses to ‘{{ brief.get('title', brief['lotName']) }}’ (CSV)</a>
+            >Download supplier responses to ‘{{ brief.get('title', brief['lotName']) }}’ (CSV)</a></p>
           </div>
 
         {% endif %}
@@ -108,10 +108,10 @@
             <li>rewriting your requirements</li>
         </ul>
       {% endif %}
-      <a class="govuk-link govuk-!-margin-top-6 govuk-!-display-inline-block"
+      <p class="govuk-body"><a class="govuk-link"
          href="{{ url_for('buyers.view_brief_overview', framework_slug=brief.framework.slug, lot_slug=brief.lotSlug, brief_id=brief.id) }}">
         Back to overview
-      </a>
+      </a></p>
     </div>
 </div>
 {% endblock %}
