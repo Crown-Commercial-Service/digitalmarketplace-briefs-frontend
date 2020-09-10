@@ -2,7 +2,7 @@ name: 'Required 2'
 depends:
   - "on": "lot"
     being: ['digital-specialists']
-type: boolean
+type: text
 filterLabel: 'Required 2'
 validations:
   -

@@ -4,6 +4,7 @@ from lxml import html
 
 from dmcontent.content_loader import ContentLoader
 from dmtestutils.api_model_stubs import BriefStub, FrameworkStub, LotStub
+from jinja2.exceptions import UndefinedError
 
 from ....helpers import BaseApplicationTest
 
@@ -78,11 +79,22 @@ class TestEditBriefSubmission(BaseApplicationTest):
         assert res.status_code == 200
         document = html.fromstring(res.get_data(as_text=True))
         secondary_action_link = document.xpath('//a[normalize-space(text())="Return to section 4"]')[0]
-        assert document.xpath('//h1')[0].text_content().strip() == "Optional 2"
+        assert document.xpath('//h1')[0].text_content().strip() == "Optional 2 (optional)"
         assert secondary_action_link.get('href').strip() == "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists/1234/section-4"  # noqa
         self._test_breadcrumbs_on_question_page(
             response=res, has_summary_page=True, section_name='Section 4', question='Optional 2'
         )
+
+    @mock.patch("app.main.views.create_a_brief.edit.content_loader", autospec=True)
+    def test_edit_brief_submission_raises_error_if_question_type_not_known(self, content_loader):
+        with pytest.raises(UndefinedError):
+            content_fixture = ContentLoader('tests/fixtures/content')
+            content_fixture.load_manifest('dos', 'data', 'edit_brief_fail')
+            content_loader.get_manifest.return_value = content_fixture.get_manifest('dos', 'edit_brief_fail')
+
+            self.client.get(
+                "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/digital-specialists"
+                "/1234/edit/section-1/unhandled")
 
     @mock.patch("app.main.views.create_a_brief.edit.content_loader", autospec=True)
     def test_edit_brief_submission_return_link_to_section_summary_if_other_questions(self, content_loader):
@@ -134,11 +146,9 @@ class TestEditBriefSubmission(BaseApplicationTest):
         document = html.fromstring(res.get_data(as_text=True))
         assert document.xpath('//h1')[0].text_content().strip() == "Required 3"
         assert document.xpath(
-            '//*[@id="required3_1"]//span[contains(@class, "question-heading")]'
-        )[0].text_content().strip() == "Required 3_1"
+            '//label[contains(@for, "required3_1")]')[0].text_content().strip() == "Required 3_1"
         assert document.xpath(
-            '//*[@id="required3_2"]//span[contains(@class, "question-heading")]'
-        )[0].text_content().strip() == "Required 3_2"
+            '//label[contains(@for, "required3_2")]')[0].text_content().strip() == "Required 3_2"
 
     def test_404_if_brief_does_not_belong_to_user(self):
         self.data_api_client.get_brief.return_value = BriefStub(user_id=234).single_result_response()
@@ -271,13 +281,13 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
             "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
             "digital-specialists/1234/edit/section-1/required1",
             data={
-                "required1": True
+                "required1": "Answer"
             })
 
         assert res.status_code == 302
         self.data_api_client.update_brief.assert_called_with(
             '1234',
-            {"required1": True},
+            {"required1": "Answer"},
             page_questions=['required1'],
             updated_by='buyer@email.com'
         )
@@ -295,13 +305,13 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
             "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
             "digital-specialists/1234/edit/section-4/optional2",
             data={
-                "optional2": True
+                "optional2": "Answer"
             })
 
         assert res.status_code == 302
         self.data_api_client.update_brief.assert_called_with(
             '1234',
-            {"optional2": True},
+            {"optional2": "Answer"},
             page_questions=['optional2'],
             updated_by='buyer@email.com'
         )
@@ -319,13 +329,13 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
             "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/"
             "digital-specialists/1234/edit/section-2/required2",
             data={
-                "required2": True
+                "required2": "Answer"
             })
 
         assert res.status_code == 302
         self.data_api_client.update_brief.assert_called_with(
             '1234',
-            {"required2": True},
+            {"required2": "Answer"},
             page_questions=['required2'],
             updated_by='buyer@email.com'
         )

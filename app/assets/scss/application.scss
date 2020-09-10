@@ -1,61 +1,21 @@
 // Path to assets for use with file-url()
 $path: "/buyers/static/images/";
 
-// Temporarily needed until all components have migrated to govuk-frontend
-// and elements which need to be styled should have class names associated to them
-@import "overrides/govuk-template/_govuk-template";
-
-// Digital Marketplace Front-end toolkit shared CSS placeholders used by other DM toolkit styles
-@import "toolkit/shared_placeholders/_temporary-messages.scss";
-@import "toolkit/shared_placeholders/_placeholders.scss";
-@import "toolkit/shared_placeholders/_dm-typography.scss";
-@import "toolkit/shared_placeholders/_mixins.scss";
-
-// Digital Marketplace Front-end toolkit shared styles between multiple apps
-@import "toolkit/shared_scss/_lists.scss";
-@import "toolkit/shared_scss/_dmspeak.scss";
-
-// Digital Marketplace Front-end toolkit styles (only import the files you need)
-@import "toolkit/_buttons.scss";
-@import "toolkit/_document.scss";
-@import "toolkit/_instruction-list.scss";
-@import "toolkit/_notification-banners.scss";
-@import "toolkit/_page-headings.scss";
-@import "toolkit/_proposition-header.scss";
-@import "toolkit/forms/_dates.scss";
-@import "toolkit/forms/_hint.scss";
-@import "toolkit/forms/_list-entry.scss";
-@import "toolkit/forms/_questions.scss";
-@import "toolkit/forms/_selection-buttons.scss";
-@import "toolkit/forms/_textboxes.scss";
-@import "toolkit/forms/_validation.scss";
-@import "toolkit/forms/_word-counter.scss";
-
-// GOV.UK Design System (compatible with old toolkit/elements)
+// GOV.UK Design System
 $govuk-assets-path: '/buyers/static/';
 $govuk-images-path: '/buyers/static/images/';
 $govuk-fonts-path: '/buyers/static/fonts/';
-$govuk-compatibility-govukfrontendtoolkit: true;
-$govuk-compatibility-govukelements: true;
-$govuk-global-styles: true;
-@import "node_modules/govuk-frontend/all";
+@import "node_modules/govuk-frontend/govuk/all";
 
 // Digital Marketplace Components
 @import "node_modules/digitalmarketplace-govuk-frontend/digitalmarketplace/all";
 
 // App specific styles
-@import "_brief_submission.scss";
 @import "_text.scss";
-@import "_statistics.scss";
 @import "_iframe_preview.scss";
 
 // Overrides
-@import "overrides/_notifications_banner";
 @import "overrides/_govuk-label";
-@import "overrides/_govuk-hint";
 @import "overrides/_summary-list.scss";
 @import "overrides/_text-input.scss";
-@import "overrides/_question-advice.scss";
-@import "overrides/_dmspeak.scss";
 @import "overrides/_task-list";
-@import "overrides/_tags";

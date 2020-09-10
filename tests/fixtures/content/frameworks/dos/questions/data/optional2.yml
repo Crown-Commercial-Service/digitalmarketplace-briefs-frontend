@@ -2,7 +2,7 @@ name: 'Optional 2'
 depends:
   - "on": "lot"
     being: ['digital-specialists']
-type: boolean
+type: text
 filterLabel: 'Optional 2'
 question: 'Optional 2'
 optional: true

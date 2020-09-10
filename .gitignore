@@ -5,8 +5,6 @@ venv*
 node_modules
 npm-debug.log
 app/static/*
-govuk_template
-digital_marketplace_frontend_toolkit
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -67,9 +65,7 @@ target/
 node_modules
 npm-debug.log
 app/assets/scss/govuk
-app/assets/scss/toolkit
 app/templates/govuk
-app/templates/toolkit
 app/content
 
 # Front end generated assets

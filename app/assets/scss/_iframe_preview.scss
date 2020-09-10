@@ -43,4 +43,12 @@ $app-mobile-border-bottom-width: 68px;
   @include govuk-media-query($from: tablet) {
       width: 30%;
   }
+
+  h2 span:nth-child(1) {
+    @include govuk-font($size: 24, $weight: bold);
+  }
+
+  h2 span:nth-child(2) {
+    @include govuk-font($size: 19, $weight: bold);
+  }
 }

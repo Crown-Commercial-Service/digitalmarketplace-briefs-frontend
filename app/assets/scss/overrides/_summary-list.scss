@@ -35,11 +35,11 @@
  * a row.
  */
 .app-no-summary-content {
-    color: $secondary-text-colour;
-    @include core-16;
+    color: $govuk-secondary-text-colour;
+    @include govuk-font(16);
     margin-bottom: govuk-spacing(7);
-    border-top: 1px solid $border-colour;
-    border-bottom: 1px solid $border-colour;
+    border-top: 1px solid $govuk-border-colour;
+    border-bottom: 1px solid $govuk-border-colour;
     padding-top: 10px;
     padding-bottom: 10px;
     max-width: 100%;
