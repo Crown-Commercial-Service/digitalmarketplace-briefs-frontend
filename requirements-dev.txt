@@ -39,7 +39,7 @@ requests==2.23.0          # via -c requirements.txt, coveralls
 six==1.14.0               # via -c requirements.txt, freezegun, packaging, pip-tools, python-dateutil
 syrupy==0.6.1             # via -r requirements-dev.in
 typing-extensions==3.7.4.2  # via syrupy
-urllib3==1.25.8           # via -c requirements.txt, requests
+urllib3==1.25.10          # via -c requirements.txt, requests
 watchdog==0.10.2          # via -r requirements-dev.in
 wcwidth==0.1.8            # via pytest
 zipp==3.0.0               # via importlib-metadata
