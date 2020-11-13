@@ -38,6 +38,7 @@ class Config(object):
     DM_DATA_API_URL = None
     DM_DATA_API_AUTH_TOKEN = None
     DM_NOTIFY_API_KEY = None
+    DM_REDIS_SERVICE_NAME = None
 
     NOTIFY_TEMPLATES = {
         "create_user_account": "84f5d812-df9d-4ab8-804a-06f64f5abd30",
