@@ -27,6 +27,8 @@ class BaseApplicationTest(object):
         data_api_client.find_frameworks.return_value = self._get_frameworks_list_fixture_data()
         self.app_env_var_mock = mock.patch.dict('gds_metrics.os.environ', {'PROMETHEUS_METRICS_PATH': '/_metrics'})
         self.app_env_var_mock.start()
+        self.session_mock = mock.patch('dmutils.session.init_app')
+        self.session_mock.start()
 
         self.app = create_app('test')
         self.app.register_blueprint(login_for_tests)
@@ -38,6 +40,7 @@ class BaseApplicationTest(object):
     def teardown_method(self, method):
         self.teardown_login()
         self.app_env_var_mock.stop()
+        self.session_mock.stop()
 
     @staticmethod
     def user(id, email_address, supplier_id, supplier_name, name,
