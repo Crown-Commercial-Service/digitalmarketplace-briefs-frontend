@@ -1,16 +1,13 @@
 -c requirements.txt
 
-pip-tools>5.0.0
+pip-tools>=5.4.0
 
-coverage
-coveralls
 cssselect
 flake8
 freezegun
 lxml
 mock
 pytest
-pytest-cov
 python-dotenv  # used to load .flaskenv
 syrupy
 watchdog
