@@ -1,7 +1,5 @@
 {% extends "_base_page.html" %}
 
-{% import "macros/show_question.html" as show_question %}
-
 {% block pageTitle %}
   {{ question.question }} – Digital Marketplace
 {% endblock %}
@@ -23,7 +21,7 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
           {% if question.type != 'multiquestion' %}
-            {{ show_question.show_question(question, brief, errors) }}
+            {{ render_question(question, brief, errors) }}
           {% else %}
             {% if question.question_advice %}
               <span class="question-advice">
@@ -31,7 +29,7 @@
               </span>
             {% endif %}
             {% for question in question.questions %}
-              {{ show_question.show_question(question, brief, errors, is_only_question=False) }}
+              {{ render_question(question, brief, errors, is_page_heading=False) }}
             {% endfor %}
           {% endif %}
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
