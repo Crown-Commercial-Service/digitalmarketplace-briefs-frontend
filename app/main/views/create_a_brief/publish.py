@@ -63,9 +63,10 @@ def preview_brief_source(framework_slug, lot_slug, brief_id):
 
     important_dates = get_publishing_dates(brief)
 
-    display_content = content_loader.get_manifest(brief['frameworkSlug'], 'display_brief').filter(
-        {'lot': brief['lotSlug']}
-    )
+    display_content = content_loader.get_manifest(brief['frameworkSlug'], 'display_brief').filter({
+        "lot": brief["lotSlug"],  # 'lot' is deprecated so we can't rely on it being in brief object
+        **brief,
+    })
 
     # Get attributes in format suitable for govukSummaryList
     brief_summary = display_content.summary(brief)
