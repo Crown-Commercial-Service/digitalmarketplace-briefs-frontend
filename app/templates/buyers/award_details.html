@@ -1,8 +1,5 @@
 {% extends "_base_page.html" %}
 
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
-{% import "macros/show_question.html" as show_question %}
-
 {% block pageTitle %}
   {{ brief.title or brief.lotName }} – Digital Marketplace
 {% endblock %}
@@ -48,8 +45,8 @@
       >
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-          {% for question in section.questions %}  
-            {{ show_question.show_question(question, data, errors, is_only_question=False) }}
+          {% for question in section.questions %}
+            {{ render_question(question, data, errors, is_page_heading=False) }}
           {% endfor %}
 
           {% block save_button %}

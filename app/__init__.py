@@ -55,8 +55,8 @@ def create_app(config_name):
     csrf.init_app(application)
 
     # We want to be able to access this function from within all templates
-    application.jinja_env.globals["govuk_frontend_from_question"] = (
-        dmcontent.govuk_frontend.from_question
+    application.jinja_env.globals["render_question"] = (
+        dmcontent.govuk_frontend.render_question
     )
 
     @application.before_request
