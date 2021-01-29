@@ -30,8 +30,11 @@ jobs:
       with:
         path: venv
         key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: venv-${{ runner.os }}-${{ matrix.python-version }}-
+
+    - name: Install python dependencies
+      run: make requirements-dev
+      if: steps.python-cache.outputs.cache-hit != 'true'
 
     - name: Run python tests
-      run: |
-        make requirements-dev
-        make test
+      run: make test
