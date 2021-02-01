@@ -20,18 +20,7 @@
 
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-          {% if question.type != 'multiquestion' %}
-            {{ render_question(question, brief, errors) }}
-          {% else %}
-            {% if question.question_advice %}
-              <span class="question-advice">
-                {{ question.question_advice }}
-              </span>
-            {% endif %}
-            {% for question in question.questions %}
-              {{ render_question(question, brief, errors, is_page_heading=False) }}
-            {% endfor %}
-          {% endif %}
+          {{ render_question(question, brief, errors) }}
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           {% block save_button %}{% endblock %}
 
