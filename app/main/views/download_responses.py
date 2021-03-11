@@ -14,6 +14,17 @@ from dmutils.views import DownloadFileView
 
 
 class DownloadBriefResponsesView(DownloadFileView):
+    """
+    Generate a spreadsheet with the responses to an opportunity
+
+    This view allows a buyer to download all the responses to their opportunity
+    as a spreadsheet (ODS), so they can mark the responses offline.
+
+    If the opportunity was on DOS1 this view will generate a CSV, at some
+    point it would be nice to remove the CSV code, however currently users can
+    still download their old responses.
+    """
+
     def get_responses(self, brief):
         return get_sorted_responses_for_brief(brief, self.data_api_client)
 
@@ -24,6 +35,7 @@ class DownloadBriefResponsesView(DownloadFileView):
     def determine_filetype(self, file_context=None, **kwargs):
         responses = file_context['responses']
 
+        # CSV if DOS1, ODS otherwise
         if responses and 'essentialRequirementsMet' in responses[0]:
             return DownloadFileView.FILETYPES.ODS
 
@@ -64,6 +76,8 @@ class DownloadBriefResponsesView(DownloadFileView):
         return result.questions if result else []
 
     def generate_csv_rows(self, file_context):
+        # This method works for DOS1 only
+
         column_headings = []
         question_key_sequence = []
         boolean_list_questions = []
