@@ -24,11 +24,11 @@ flake8==3.7.9
     # via -r requirements-dev.in
 freezegun==0.3.15
     # via -r requirements-dev.in
-importlib-metadata==3.5.0
+importlib-metadata==3.7.3
     # via
     #   pluggy
     #   pytest
-lxml==4.6.2
+lxml==4.6.3
     # via -r requirements-dev.in
 mccabe==0.6.1
     # via flake8
@@ -78,7 +78,7 @@ watchdog==0.10.2
     # via -r requirements-dev.in
 wcwidth==0.1.8
     # via pytest
-zipp==3.4.0
+zipp==3.4.1
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
