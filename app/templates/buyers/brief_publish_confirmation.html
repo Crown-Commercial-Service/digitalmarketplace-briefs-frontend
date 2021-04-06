@@ -76,7 +76,7 @@
         {% set questionDetails %}
           <p class="govuk-body govuk-!-font-weight-bold">Details of your question and answer session</p>
           <p class="govuk-body">{{ brief.questionAndAnswerSessionDetails }}</p>
-          <p class="govuk-bodt govuk-!-font-weight-bold">You must hold your question and answer session before {{ dates.questions_close | shortdateformat }}</p>
+          <p class="govuk-body govuk-!-font-weight-bold">You must hold your question and answer session before {{ dates.questions_close | shortdateformat }}</p>
         {% endset %}
         {% set questionAndAnswerSessionDetailRow = {
           "key": {"text": "Before {}".format(dates.questions_close | shortdateformat)},
