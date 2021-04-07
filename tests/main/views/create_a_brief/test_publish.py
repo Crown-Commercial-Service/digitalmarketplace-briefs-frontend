@@ -716,6 +716,7 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
             brief_json['briefs']['clarificationQuestionsPublishedBy'] = u"2016-04-14T23:59:00.00000Z"
             brief_json['briefs']['applicationsClosedAt'] = u"2016-04-16T23:59:00.00000Z"
             brief_json['briefs']['specialistRole'] = 'communicationsManager'
+            brief_json['briefs']['questionAndAnswerSessionDetails'] = 'question and answer session details'
             brief_json['briefs']["clarificationQuestionsAreClosed"] = True
             self.data_api_client.get_brief.return_value = brief_json
 
@@ -731,8 +732,9 @@ class TestViewQuestionAndAnswerDates(BaseApplicationTest):
             assert all(
                 date in
                 [e.text_content().strip() for e in document.xpath('//main//dt')]
-                for date in ['2 April', '8 April', '15 April', '16 April']
+                for date in ['2 April', 'Before 8 April', '8 April', '15 April', '16 April']
             )
+            assert 'question and answer session details' in document.xpath('//main//dd')[1].text_content().strip()
 
     def test_404_if_framework_is_not_live_or_expired(self):
         for framework_status in ['coming', 'open', 'pending', 'standstill']:
