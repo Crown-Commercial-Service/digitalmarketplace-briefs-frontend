@@ -1,7 +1,8 @@
 {% extends "_base_page.html" %}
+{% set heading = "Publish your requirements and evaluation criteria" if not published else "Question and answer dates" %}
 
 {% block pageTitle %}
-  Your account - Digital Marketplace
+{{ heading }} - Digital Marketplace
 {% endblock %}
 
 {% block breadcrumb %}
@@ -28,7 +29,7 @@
         "text": brief['title']
       },
       {
-        "text": "Publish your requirements and evaluation criteria" if not published else "Question and answer dates"
+        "text": heading
       }
     ]
   }) }}
@@ -38,7 +39,6 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    {% set heading = "Publish your requirements and evaluation criteria" if not published else "Question and answer dates" %}
     <h1 class="govuk-heading-l">{{ heading }}</h1>
     {% if not published -%}
       <p class="govuk-body">All requirements are published on the Digital Marketplace where anyone can see them.</p>
