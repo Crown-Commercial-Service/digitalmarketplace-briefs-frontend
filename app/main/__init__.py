@@ -18,37 +18,37 @@ _local = Local()
 
 
 def _make_content_loader_factory():
-    master_cl = ContentLoader('app/content')
-    master_cl.load_manifest('digital-outcomes-and-specialists', 'briefs', 'edit_brief')
-    master_cl.load_manifest('digital-outcomes-and-specialists', 'brief-responses', 'output_brief_response')
-    master_cl.load_manifest('digital-outcomes-and-specialists', 'brief-responses', 'legacy_output_brief_response')
-    master_cl.load_manifest('digital-outcomes-and-specialists', 'clarification_question', 'clarification_question')
-    master_cl.load_manifest('digital-outcomes-and-specialists', 'briefs', 'award_brief')
+    primary_cl = ContentLoader('app/content')
+    primary_cl.load_manifest('digital-outcomes-and-specialists', 'briefs', 'edit_brief')
+    primary_cl.load_manifest('digital-outcomes-and-specialists', 'brief-responses', 'output_brief_response')
+    primary_cl.load_manifest('digital-outcomes-and-specialists', 'brief-responses', 'legacy_output_brief_response')
+    primary_cl.load_manifest('digital-outcomes-and-specialists', 'clarification_question', 'clarification_question')
+    primary_cl.load_manifest('digital-outcomes-and-specialists', 'briefs', 'award_brief')
 
-    master_cl.load_manifest('digital-outcomes-and-specialists-2', 'briefs', 'edit_brief')
-    master_cl.load_manifest('digital-outcomes-and-specialists-2', 'brief-responses', 'output_brief_response')
-    master_cl.load_manifest('digital-outcomes-and-specialists-2', 'clarification_question', 'clarification_question')
-    master_cl.load_manifest('digital-outcomes-and-specialists-2', 'briefs', 'award_brief')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-2', 'briefs', 'edit_brief')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-2', 'brief-responses', 'output_brief_response')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-2', 'clarification_question', 'clarification_question')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-2', 'briefs', 'award_brief')
 
-    master_cl.load_manifest('digital-outcomes-and-specialists-3', 'briefs', 'edit_brief')
-    master_cl.load_manifest('digital-outcomes-and-specialists-3', 'brief-responses', 'output_brief_response')
-    master_cl.load_manifest('digital-outcomes-and-specialists-3', 'clarification_question', 'clarification_question')
-    master_cl.load_manifest('digital-outcomes-and-specialists-3', 'briefs', 'award_brief')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-3', 'briefs', 'edit_brief')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-3', 'brief-responses', 'output_brief_response')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-3', 'clarification_question', 'clarification_question')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-3', 'briefs', 'award_brief')
 
-    master_cl.load_manifest('digital-outcomes-and-specialists-4', 'briefs', 'edit_brief')
-    master_cl.load_manifest('digital-outcomes-and-specialists-4', 'briefs', 'display_brief')
-    master_cl.load_manifest('digital-outcomes-and-specialists-4', 'brief-responses', 'output_brief_response')
-    master_cl.load_manifest('digital-outcomes-and-specialists-4', 'clarification_question', 'clarification_question')
-    master_cl.load_manifest('digital-outcomes-and-specialists-4', 'briefs', 'award_brief')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-4', 'briefs', 'edit_brief')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-4', 'briefs', 'display_brief')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-4', 'brief-responses', 'output_brief_response')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-4', 'clarification_question', 'clarification_question')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-4', 'briefs', 'award_brief')
 
-    master_cl.load_manifest('digital-outcomes-and-specialists-5', 'briefs', 'edit_brief')
-    master_cl.load_manifest('digital-outcomes-and-specialists-5', 'briefs', 'display_brief')
-    master_cl.load_manifest('digital-outcomes-and-specialists-5', 'brief-responses', 'output_brief_response')
-    master_cl.load_manifest('digital-outcomes-and-specialists-5', 'clarification_question', 'clarification_question')
-    master_cl.load_manifest('digital-outcomes-and-specialists-5', 'briefs', 'award_brief')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-5', 'briefs', 'edit_brief')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-5', 'briefs', 'display_brief')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-5', 'brief-responses', 'output_brief_response')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-5', 'clarification_question', 'clarification_question')
+    primary_cl.load_manifest('digital-outcomes-and-specialists-5', 'briefs', 'award_brief')
 
-    # seal master_cl in a closure by returning a function which will only ever return an independent copy of it
-    return lambda: deepcopy(master_cl)
+    # seal primary_cl in a closure by returning a function which will only ever return an independent copy of it
+    return lambda: deepcopy(primary_cl)
 
 
 _content_loader_factory = _make_content_loader_factory()
