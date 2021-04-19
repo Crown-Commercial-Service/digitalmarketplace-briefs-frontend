@@ -8,7 +8,7 @@ from flask_login import current_user
 from app import data_api_client
 from .buyers import CLOSED_PUBLISHED_BRIEF_STATUSES
 from .. import main, content_loader
-from ..helpers.buyers_helpers import get_framework_and_lot, get_sorted_responses_for_brief, is_brief_correct
+from ..helpers.buyers_helpers import get_framework_and_lot, get_sorted_responses_for_brief, is_brief_correct_debug
 
 from dmutils.views import DownloadFileView
 
@@ -52,8 +52,8 @@ class DownloadBriefResponsesView(DownloadFileView):
 
         brief = self.data_api_client.get_brief(kwargs['brief_id'])["briefs"]
 
-        if not is_brief_correct(brief, kwargs['framework_slug'],
-                                kwargs['lot_slug'], current_user.id):
+        if not is_brief_correct_debug(brief, kwargs['framework_slug'],
+                                      kwargs['lot_slug'], current_user.id):
             abort(404)
 
         if brief['status'] not in CLOSED_PUBLISHED_BRIEF_STATUSES:
