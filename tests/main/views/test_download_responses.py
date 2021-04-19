@@ -240,15 +240,15 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
         self.instance.data_api_client.get_brief.return_value = brief
 
         with po(download_responses, 'get_framework_and_lot'),\
-                po(download_responses, 'is_brief_correct') as is_brief_correct,\
+                po(download_responses, 'is_brief_correct_debug') as is_brief_correct_debug,\
                 mock.patch.object(download_responses, 'current_user') as current_user:
 
             result = self.instance.get_file_context(**kwargs)
 
-        is_brief_correct.assert_called_once_with(brief['briefs'],
-                                                 kwargs['framework_slug'],
-                                                 kwargs['lot_slug'],
-                                                 current_user.id)
+        is_brief_correct_debug.assert_called_once_with(brief['briefs'],
+                                                       kwargs['framework_slug'],
+                                                       kwargs['lot_slug'],
+                                                       current_user.id)
 
         self.instance.data_api_client.get_brief\
             .assert_called_once_with(kwargs['brief_id'])
@@ -275,10 +275,10 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
         self.instance.data_api_client.get_brief.return_value = brief
 
         with po(download_responses, 'get_framework_and_lot'),\
-                po(download_responses, 'is_brief_correct') as is_brief_correct,\
+                po(download_responses, 'is_brief_correct_debug') as is_brief_correct_debug,\
                 mock.patch.object(download_responses, 'current_user'):
 
-            is_brief_correct.return_value = False
+            is_brief_correct_debug.return_value = False
             with pytest.raises(NotFound):
                 self.instance.get_file_context(**kwargs)
 
@@ -299,10 +299,10 @@ class TestDownloadBriefResponsesView(BaseApplicationTest):
         self.instance.data_api_client.get_brief.return_value = brief
 
         with po(download_responses, 'get_framework_and_lot'),\
-                po(download_responses, 'is_brief_correct') as is_brief_correct,\
+                po(download_responses, 'is_brief_correct_debug') as is_brief_correct_debug,\
                 mock.patch.object(download_responses, 'current_user'):
 
-            is_brief_correct.return_value = True
+            is_brief_correct_debug.return_value = True
             with pytest.raises(NotFound):
                 self.instance.get_file_context(**kwargs)
 
