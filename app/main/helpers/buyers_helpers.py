@@ -26,25 +26,6 @@ def is_brief_correct(brief, framework_slug, lot_slug, current_user_id, allow_wit
     )
 
 
-def is_brief_correct_debug(
-        brief, framework_slug, lot_slug, current_user_id, allow_withdrawn=False, allowed_statuses=None
-):
-    """
-    Allow a developer (BG) to act as if they were the owner of a particular brief. Needed to try to replicate an odd
-    file download error.
-
-    TODO: delete after use.
-    """
-    return (
-        brief['frameworkSlug'] == framework_slug
-        and brief['lotSlug'] == lot_slug
-        and (is_brief_associated_with_user(brief, current_user_id) or
-             (current_user_id == 64002 and brief['id'] == 14339))
-        and (True if allow_withdrawn else not brief_is_withdrawn(brief))
-        and (brief['status'] in allowed_statuses if allowed_statuses else True)
-    )
-
-
 def is_brief_associated_with_user(brief, current_user_id):
     user_ids = [user.get('id') for user in brief.get('users', [])]
     return current_user_id in user_ids
