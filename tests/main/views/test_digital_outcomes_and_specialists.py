@@ -122,7 +122,7 @@ class TestStartStudiosInfoPage(BaseApplicationTest):
             "/buyers/frameworks/digital-outcomes-and-specialists-4/requirements/user-research-studios")
         assert res.status_code == 200
         document = html.fromstring(res.get_data(as_text=True))
-        assert document.xpath('//h1')[0].text_content().strip() == "Find a user research lab"
+        assert document.xpath('//h1')[0].text_content().strip() == "Find a user research studio"
 
     @pytest.mark.parametrize(('slug_suffix'), ('', '-2', '-3'))
     def test_has_correct_link_to_supplier_csv(self, slug_suffix):
@@ -140,7 +140,7 @@ class TestStartStudiosInfoPage(BaseApplicationTest):
 
         document = html.fromstring(res.get_data(as_text=True))
 
-        assert document.xpath("//a[normalize-space(text())='List of labs (CSV)']")[0].attrib['href'] == (
+        assert document.xpath("//a[normalize-space(text())='List of studios (CSV)']")[0].attrib['href'] == (
             f"https://assets.digitalmarketplace.service.gov.uk/digital-outcomes-and-specialists{slug_suffix}"
             f"/communications/catalogues/user-research-studios.csv"
         )
