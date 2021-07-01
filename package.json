@@ -16,7 +16,8 @@
     "gulp-include": "^2.4.1",
     "gulp-sass": "^5.0.0",
     "gulp-shell": "^0.8.0",
-    "gulp-uglify": "^3.0.2"
+    "gulp-uglify": "^3.0.2",
+    "sass": "^1.35.1"
   },
   "scripts": {
     "test": "standard \"gulpfile.js\"",
