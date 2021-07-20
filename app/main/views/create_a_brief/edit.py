@@ -66,6 +66,10 @@ def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, ques
 
     update_data = question.get_data(request.form)
 
+    if 'socialWeighting' in request.form:
+        if request.form['socialWeighting'] == '0':
+            update_data['socialValueCriteria'] = None
+
     try:
         data_api_client.update_brief(
             brief_id,
