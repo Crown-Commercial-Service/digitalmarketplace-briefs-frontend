@@ -48,7 +48,12 @@ def count_unanswered_questions(sections):
     unanswered_required, unanswered_optional = (0, 0)
     for section in sections:
         for question in section.questions:
-            if question.answer_required:
+            # socialValueCriteria is only required if socialWeighting is not 0
+            if question.id == 'socialValueCriteria' and question.answer_required:
+                social_weighting_value = section.get_question('socialWeighting').get('value', '0%')
+                if social_weighting_value != '0%':
+                    unanswered_required += 1
+            elif question.answer_required:
                 unanswered_required += 1
             elif question.value in ['', [], None]:
                 unanswered_optional += 1
