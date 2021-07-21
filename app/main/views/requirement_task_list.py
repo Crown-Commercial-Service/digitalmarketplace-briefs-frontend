@@ -8,7 +8,7 @@ from .. import main, content_loader
 from ..helpers.buyers_helpers import (
     count_unanswered_questions,
     get_framework_and_lot,
-    is_brief_correct,
+    is_brief_correct
 )
 
 
@@ -31,7 +31,9 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
         awarded_brief_response_supplier_name = data_api_client.get_brief_response(
             brief['awardedBriefResponseId'])["briefResponses"]["supplierName"]
 
-    content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
+    content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter(
+        {'lot': brief['lotSlug'], 'socialWeighting': brief.get('socialWeighting', None)}
+    )
     sections = content.summary(brief)
 
     content_loader.load_messages(brief['frameworkSlug'], ['urls'])

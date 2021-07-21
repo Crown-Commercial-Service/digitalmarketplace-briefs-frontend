@@ -12,7 +12,7 @@ from ...helpers.buyers_helpers import (
     brief_can_be_edited,
     count_unanswered_questions,
     get_framework_and_lot,
-    is_brief_correct,
+    is_brief_correct
 )
 
 
@@ -27,7 +27,7 @@ def edit_brief_question(framework_slug, lot_slug, brief_id, section_slug, questi
         abort(404)
 
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter(
-        {'lot': brief['lotSlug']}
+        {'lot': brief['lotSlug'], 'socialWeighting': brief.get('socialWeighting', None)}
     )
     section = content.get_section(section_slug)
     if section is None or not section.editable:
@@ -55,7 +55,9 @@ def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, ques
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id) or not brief_can_be_edited(brief):
         abort(404)
 
-    content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
+    content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter(
+        {'lot': brief['lotSlug'], 'socialWeighting': brief.get('socialWeighting', None)}
+    )
     section = content.get_section(section_id)
     if section is None or not section.editable:
         abort(404)
@@ -68,7 +70,12 @@ def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, ques
 
     if 'socialWeighting' in request.form:
         if request.form['socialWeighting'] == '0':
-            update_data['socialValueCriteria'] = None
+            # If socialValueCriteria is None, it fails to publish, so we set a value
+            update_data['socialValueCriteria'] = ['Not evaluated']
+        elif request.form['socialWeighting'] != '' and int(request.form['socialWeighting']) in range(10, 21):
+            # We need to wipe our custom value if the user selects a valid socialWeighting
+            if 'socialValueCriteria' in brief and brief['socialValueCriteria'] == ['Not evaluated']:
+                update_data['socialValueCriteria'] = None
 
     try:
         data_api_client.update_brief(
@@ -126,7 +133,9 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id) or not brief_can_be_edited(brief):
         abort(404)
 
-    content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
+    content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter(
+        {'lot': brief['lotSlug'], 'socialWeighting': brief.get('socialWeighting', None)}
+    )
     sections = content.summary(brief)
     section = sections.get_section(section_slug)
 
@@ -135,19 +144,22 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
 
     section.summary_list = []
     for question in section.questions:
-        section.summary_list.append(
-            to_summary_list_row(
-                question,
-                action_link=url_for(
-                    'buyers.edit_brief_question',
-                    framework_slug=framework_slug,
-                    lot_slug=lot_slug,
-                    brief_id=brief_id,
-                    section_slug=section_slug,
-                    question_id=question.id
+        if question.id == 'socialValueCriteria' and 'Not evaluated' in question.filter_value:
+            section.summary_list.append(to_summary_list_row(question))
+        else:
+            section.summary_list.append(
+                to_summary_list_row(
+                    question,
+                    action_link=url_for(
+                        'buyers.edit_brief_question',
+                        framework_slug=framework_slug,
+                        lot_slug=lot_slug,
+                        brief_id=brief_id,
+                        section_slug=section_slug,
+                        question_id=question.id
+                    )
                 )
             )
-        )
 
     # Show preview link if all mandatory questions have been answered
     unanswered_required, unanswered_optional = count_unanswered_questions(sections)

@@ -11,7 +11,7 @@ from ...helpers.buyers_helpers import (
     brief_can_be_edited,
     count_unanswered_questions,
     get_framework_and_lot,
-    is_brief_correct,
+    is_brief_correct
 )
 
 
@@ -69,6 +69,9 @@ def preview_brief_source(framework_slug, lot_slug, brief_id):
     })
 
     # Get attributes in format suitable for govukSummaryList
+    if 'socialWeighting' in brief and brief['socialWeighting'] == 0:
+        brief['socialValueCriteria'] = ['Not evaluated']
+
     brief_summary = display_content.summary(brief)
     for section in brief_summary:
         section.summary_list = to_summary_list_rows(
@@ -100,7 +103,9 @@ def publish_brief(framework_slug, lot_slug, brief_id):
     if not is_brief_correct(brief, framework_slug, lot_slug, current_user.id) or not brief_can_be_edited(brief):
         abort(404)
 
-    content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
+    content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter(
+        {'lot': brief['lotSlug'], 'socialWeighting': brief.get('socialWeighting', None)}
+    )
     brief_users = brief['users'][0]
     brief_user_name = brief_users['name']
 
