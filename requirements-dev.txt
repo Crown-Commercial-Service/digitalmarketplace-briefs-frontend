@@ -8,10 +8,6 @@ attrs==19.3.0
     # via
     #   pytest
     #   syrupy
-click==7.0
-    # via
-    #   -c requirements.txt
-    #   pip-tools
 colored==1.4.2
     # via syrupy
 cssselect==1.1.0
@@ -36,8 +32,6 @@ packaging==20.1
     # via pytest
 pathtools==0.1.2
     # via watchdog
-pip-tools==5.5.0
-    # via -r requirements-dev.in
 pluggy==0.13.1
     # via pytest
 py==1.10.0
@@ -72,6 +66,3 @@ watchdog==0.10.2
     # via -r requirements-dev.in
 wcwidth==0.1.8
     # via pytest
-
-# The following packages are considered to be unsafe in a requirements file:
-# pip
