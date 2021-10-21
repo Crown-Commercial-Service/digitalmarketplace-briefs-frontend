@@ -13,7 +13,7 @@ This app contains:
 
 ## Quickstart
 
-It's recommended to use the [DM Runner](https://github.com/alphagov/digitalmarketplace-runner)
+It's recommended to use the [DM Runner](https://github.com/Crown-Commercial-Service/digitalmarketplace-runner)
 tool, which will install and run the app as part of the full suite of apps.
 
 If you want to run the app as a stand-alone process, clone the repo then run:
@@ -31,7 +31,7 @@ By default, the app will be served at [http://127.0.0.1:5005/buyers](http://127.
 
 (If you are using DM Runner you can skip this section.)
 
-The Briefs Frontend app requires access to the [API app](https://github.com/alphagov/digitalmarketplace-api).
+The Briefs Frontend app requires access to the [API app](https://github.com/Crown-Commercial-Service/digitalmarketplace-api).
 The location and access token for this service are set with environment variables in `config.py`.
 
 For development, you can either point the environment variables to use the
@@ -46,7 +46,7 @@ export DM_DATA_API_AUTH_TOKEN=<auth_token_accepted_by_api>
 Where `DM_DATA_API_AUTH_TOKEN` is a token accepted by the Data API 
 instance pointed to by `DM_API_URL`.
 
-Note: The login is handled in the [User Frontend app](https://github.com/alphagov/digitalmarketplace-user-frontend),
+Note: The login is handled in the [User Frontend app](https://github.com/Crown-Commercial-Service/digitalmarketplace-user-frontend),
 so this needs to be running as well, to login as a buyer.
 
 ## Testing
@@ -90,7 +90,7 @@ Front-end code (both development and production) is compiled using [Node](http:/
 ### Requirements
 
 You need Node (try to install the version we use in production -
- see the [base docker image](https://github.com/alphagov/digitalmarketplace-docker-base/blob/master/base.docker)).
+ see the [base docker image](https://github.com/Crown-Commercial-Service/digitalmarketplace-docker-base/blob/main/base.docker)).
 
 To check the version you're running, type:
 
@@ -120,7 +120,7 @@ You can also run `npm audit fix` to make minor updates to `package-lock.json`.
 
 ## Contributing
 
-This repository is maintained by the Digital Marketplace team at the [Government Digital Service](https://github.com/alphagov).
+This repository is maintained by the Digital Marketplace team at the [Crown Commercial Service](https://github.com/Crown-Commercial-Service).
 
 If you have a suggestion for improvement, please raise an issue on this repo.
 
@@ -129,7 +129,7 @@ If you have a suggestion for improvement, please raise an issue on this repo.
 If you have discovered a security vulnerability in this code, we appreciate your help in disclosing it to us in a
 responsible manner.
 
-Please follow the [GDS vulnerability reporting steps](https://github.com/alphagov/.github/blob/master/SECURITY.md),
+Please follow the [CCS vulnerability reporting steps](https://www.crowncommercial.gov.uk/about-ccs/vulnerability-disclosure-policy/),
 giving details of any issue you find. Appropriate credit will be given to those reporting confirmed issues.
 
 ## Licence
