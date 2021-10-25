@@ -17,7 +17,7 @@
     "gulp-sass": "^5.0.0",
     "gulp-shell": "^0.8.0",
     "gulp-uglify": "^3.0.2",
-    "sass": "^1.43.2"
+    "sass": "^1.43.3"
   },
   "scripts": {
     "test": "standard \"gulpfile.js\"",
