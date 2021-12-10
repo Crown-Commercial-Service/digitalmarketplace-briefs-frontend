@@ -76,3 +76,4 @@ app/static
 local.nix
 
 .idea/
+.snyk
