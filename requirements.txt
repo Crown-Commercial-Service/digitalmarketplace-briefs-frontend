@@ -91,7 +91,9 @@ mailchimp3==3.0.17
 markdown==2.6.11
     # via digitalmarketplace-content-loader
 markupsafe==1.1.1
-    # via jinja2
+    # via
+    #   jinja2
+    #   wtforms
 notifications-python-client==6.3.0
     # via digitalmarketplace-utils
 odfpy==1.4.1
@@ -136,5 +138,5 @@ werkzeug==1.0.1
     #   flask-login
 workdays==1.4
     # via digitalmarketplace-utils
-wtforms==2.2.1
+wtforms==2.3.3
     # via flask-wtf

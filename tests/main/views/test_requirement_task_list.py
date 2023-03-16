@@ -50,7 +50,7 @@ class BaseRequirementsTaskListPageTest:
         return html.tostring(task_list[0]).decode()
 
     def test_can_view_requirements_task_list_page(self, brief):
-        assert self.get_requirements_task_list_page(brief)
+        assert self.get_requirements_task_list_page(brief) is not None
 
     def test_requirements_task_list_page_title_starts_with_brief_title(self, brief, requirements_task_list_page):
         page_title = requirements_task_list_page.find("head/title").text.strip()

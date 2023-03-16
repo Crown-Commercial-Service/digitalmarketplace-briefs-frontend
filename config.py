@@ -52,7 +52,7 @@ class Config(object):
 
     SECRET_KEY = None
     SHARED_EMAIL_KEY = None
-    INVITE_EMAIL_SALT = 'InviteEmailSalt'
+    INVITE_EMAIL_TOKEN_NS = 'InviteEmailSalt'
 
     STATIC_URL_PATH = '/buyers/static'
     ASSET_PATH = STATIC_URL_PATH + '/'
