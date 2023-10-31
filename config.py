@@ -115,6 +115,18 @@ class Development(Config):
     SHARED_EMAIL_KEY = "very_secret"
 
 
+class NativeAWS(Config):
+    DEBUG = False
+    DM_APP_NAME = 'briefs-frontend'
+    DM_HTTP_PROTO = 'https'
+    # DM_LOGIN_URL will be read from env vars - used to avoid incorrect host/port
+    # redirect from Flask-Login package
+    DM_LOGIN_URL = None
+    # SESSION_COOKIE_DOMAIN will be read from env vars - set to subdomain to
+    # allow session share between "www.' and "admin."
+    SESSION_COOKIE_DOMAIN = None
+
+
 class Live(Config):
     """Base config for deployed environments"""
     DEBUG = False
@@ -143,6 +155,7 @@ class Production(Live):
 
 configs = {
     'development': Development,
+    'native-aws': NativeAWS,
     'test': Test,
 
     'preview': Preview,
